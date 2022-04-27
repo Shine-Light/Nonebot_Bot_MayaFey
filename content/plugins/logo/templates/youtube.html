@@ -1,0 +1,98 @@
+<html>
+  <head>
+    <style>
+      @font-face {
+        font-family: "Oswald";
+        font-style: normal;
+        font-weight: 400;
+        src: local("Oswald Regular"), local("Oswald-Regular");
+      }
+      body {
+        margin: 0;
+      }
+      .logo {
+        overflow: scroll;
+        text-align: center;
+        background-color: #ffffff;
+        padding: 30px 30px;
+        white-space: nowrap;
+        display: inline-block;
+        font-family: "Oswald", sans-serif, "Microsoft YaHei";
+      }
+      .l,
+      .r {
+        display: inline-block;
+        white-space: nowrap;
+        font-size: 100px;
+      }
+      .l {
+        color: #090909;
+        margin-right: 15px;
+      }
+      .r {
+        z-index: 1;
+        position: relative;
+        background-color: #e62117;
+        color: #ffffff;
+        padding: 8px 15px 15px 15px;
+        box-sizing: border-box;
+        font-weight: bold;
+        border-radius: 100px;
+        min-width: 200px;
+      }
+      .span {
+        display: block;
+        min-width: 90px;
+      }
+      .lt,
+      .lb,
+      .rt,
+      .rb {
+        z-index: -1;
+        position: absolute;
+        height: calc(50% + 1px);
+        pointer-events: none;
+      }
+      .lb {
+        transform: rotate(180deg) scaleX(-1);
+      }
+      .rb {
+        transform: rotate(180deg);
+      }
+      .rt {
+        transform: rotate(180deg) scaleY(-1);
+      }
+      .lt,
+      .lb {
+        left: -10px;
+      }
+      .rt,
+      .rb {
+        right: -10px;
+      }
+      .lt,
+      .rt {
+        top: 0;
+      }
+      .lb,
+      .rb {
+        bottom: 0;
+      }
+      .img {
+        max-width: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="logo">
+      <div class="l">{{ left_text }}</div>
+      <div class="r">
+        <span>{{ right_text }}</span>
+        <img src="./images/corner.png" alt="lt" class="lt" />
+        <img src="./images/corner.png" alt="lb" class="lb" />
+        <img src="./images/corner.png" alt="rt" class="rt" />
+        <img src="./images/corner.png" alt="rb" class="rb" />
+      </div>
+    </div>
+  </body>
+</html>

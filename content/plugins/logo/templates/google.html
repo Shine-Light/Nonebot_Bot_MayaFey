@@ -1,0 +1,46 @@
+<html>
+  <head>
+    <style>
+      @font-face {
+        font-family: "Product Sans";
+        font-style: normal;
+        src: local("Product Sans Regular"), url("./fonts/Product\ Sans\ Regular.ttf");
+      }
+      body {
+        margin: 0;
+      }
+      .logo {
+        overflow: scroll;
+        text-align: center;
+        background-color: #ffffff;
+        padding: 30px;
+        font-size: 100px;
+        letter-spacing: -10px;
+        white-space: nowrap;
+        display: inline-block;
+        font-family: "Product Sans";
+      }
+      .red {
+        color: #db4437;
+      }
+      .green {
+        color: #0f9d58;
+      }
+      .blue {
+        color: #4285f4;
+      }
+      .yellow {
+        color: #f4b400;
+      }
+    </style>
+  </head>
+  <body>
+    {% set colors = ["blue", "red", "yellow", "blue", "green", "red"] %}
+    <div class="logo">
+      {% for t in text %}
+      {% set index = loop.index0 % 6 %}
+      <span class="{{ colors[index] }}">{{ t }}</span>
+      {% endfor %}
+    </div>
+  </body>
+</html>
