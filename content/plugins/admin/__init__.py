@@ -124,7 +124,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             await kick_.finish("不能含有@全体成员")
 
 
-set_g_admin = on_command("管理员+", priority=3, block=True, rule=SUPERUSER)
+set_g_admin = on_command("管理员+", priority=3, block=True, permission=SUPERUSER)
 
 
 @set_g_admin.handle()
@@ -156,7 +156,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             await set_g_admin.finish("指令不正确 或 不能含有@全体成员")
 
 
-unset_g_admin = on_command("管理员-", priority=3, block=True, rule=SUPERUSER)
+unset_g_admin = on_command("管理员-", priority=3, block=True, permission=SUPERUSER)
 @unset_g_admin.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     """
