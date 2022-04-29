@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS `credit` (
   `gid` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '群号',
   `uid` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'QQ号',
   `credit` int(11) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='积分表';mayafey
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='积分表';
 
 -- 数据导出被取消选择。
 
@@ -31,7 +31,7 @@ CREATE TABLE IF NOT EXISTS `sign` (
   `gid` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '群号',
   `uid` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'QQ号',
   `date_last` date DEFAULT NULL COMMENT '最后签到日期',
-  `count_all` int(10) unsigned DEFAULT NULL COMMENmysqlmysqlmayafeymayafeyT '签到总数',
+  `count_all` int(10) unsigned DEFAULT NULL COMMENT '签到总数',
   `count_continue` int(10) unsigned DEFAULT NULL COMMENT '连续签到数'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='签到表';
 
