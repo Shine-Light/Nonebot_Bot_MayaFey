@@ -23,3 +23,24 @@ timezone = "Asia/Shanghai"
 @scheduler.scheduled_job("cron", hour=6, timezone=timezone)
 async def _():
     cursor.execute(f"USE {database}")
+
+
+def execute_sql(path):
+    results, result = "", []
+    with open(path, "r", encoding="utf-8") as sqls:
+        for sql in sqls.readlines():
+            sql = sql.replace("\n", "").replace("\r", "")
+            if not sql.startswith("--") and not sql.endswith("--") and sql != "":
+                if not sql.startswith("--"):
+                    results = results + sql
+
+        for i in results.split(";"):
+            if i == "":
+                pass
+            elif i.startswith("/*"):
+                result.append(i + ";")
+            else:
+                result.append(i + ";")
+
+    for x in result:
+        cursor.execute(x)

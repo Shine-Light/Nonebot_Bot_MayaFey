@@ -21,7 +21,8 @@ driver = get_driver()
 
 @run_preprocessor
 async def check_updating(matcher: Matcher, event: GroupMessageEvent):
-    if "utils" in matcher.plugin_name:
+    module_names = matcher.module_name
+    if "init" in module_names or "utils" in module_names:
         return
     state: bool = json_tools.json_load(path.updating_path)['updating']
     if state:

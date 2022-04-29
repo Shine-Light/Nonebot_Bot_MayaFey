@@ -20,6 +20,9 @@ unset = ["question", "ban_word", "word_cloud", "ban_pic"]
 
 @run_preprocessor
 async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
+    module_names = matcher.module_name
+    if "init" in module_names or "utils" in module_names:
+        return
     plugin_name = matcher.plugin_name
     uid = str(event.user_id)
     gid = event.group_id

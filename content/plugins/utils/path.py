@@ -21,7 +21,8 @@ audio_path = res_path / "audio"
 video_path = res_path / "video"
 # 图片总目录
 img_path = res_path / "img"
-# 群聊小游戏总目录
+# 数据库总目录
+database_path = res_path / "database"
 
 # 翻译文件
 translate_path = config_path / "translate.json"
@@ -68,6 +69,8 @@ update_path = plugin_path / "update"
 update_cfg_path = config_path / "update"
 # 更新检测文件
 updating_path = update_cfg_path / "updating.json"
+# 表结构SQL
+sql_base = database_path / "bot.sql"
 
 # 俄罗斯轮盘游戏配置
 russian_path = config_path / "russian"

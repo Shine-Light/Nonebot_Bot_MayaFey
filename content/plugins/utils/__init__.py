@@ -21,6 +21,9 @@ fts = "%Y-%m"
 
 
 async def init(bot: Bot, event: GroupMessageEvent):
+    # 数据库初始化
+    database_mysql.execute_sql(sql_base)
+
     # 用户表初始化开始
     members = await bot.call_api(api="get_group_member_list", group_id=event.group_id)
     cursor.execute(f"SELECT * FROM users WHERE gid='{event.group_id}';")
