@@ -1,0 +1,49 @@
+[tool.poetry]
+name = "maya fey"
+version = "0.1.0"
+description = ""
+authors = ["Shine-Light <3120815902@qq.com>"]
+
+[[tool.poetry.source]]
+name = "tsinghua"
+url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+default = true
+
+[tool.poetry.dependencies]
+python = "^3.9"
+aiocache = "^0.11.1"
+aiocqhttp = "^1.4.2"
+aiofiles = "^0.8.0"
+aiohttp = "^3.8.1"
+emoji = "^1.7.0"
+fontTools = "^4.32.0"
+httpx = "^0.21.3"
+imageio = "^2.14.1"
+jieba = "^0.42.1"
+Jinja2 = "^3.0.3"
+loguru = "^0.6.0"
+Markdown = "^3.3.6"
+nonebot2 = "^2.0.0-beta.2"
+nonebot-adapter-cqhttp = "^2.0.0-beta.1"
+nonebot-plugin-apscheduler = "^0.1.2"
+nonebot-plugin-htmlrender = "^0.0.4.5"
+Pillow = "^9.1.0"
+playwright = "^1.17.2"
+pydantic = "^1.9.0"
+PyMySQL = "^0.9.3"
+requests = "^2.27.1"
+tencentcloud_sdk_python = "^3.0.595"
+typing_extensions = "^4.2.0"
+ujson = "^5.1.0"
+wordcloud = "^1.8.1"
+
+[tool.poetry.dev-dependencies]
+nb-cli = "^0.6.0"
+
+[tool.nonebot]
+plugins = ["nonebot_plugin_apscheduler"]
+plugin_dirs = ["content/plugins"]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

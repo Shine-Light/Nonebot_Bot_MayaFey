@@ -1,0 +1,73 @@
+"""
+@Author: Shine_Light
+@Version: 1.0
+@Date: 2022/3/27 18:01
+"""
+from pathlib import Path
+
+# 插件配置总目录
+config_path = Path() / "config"
+# 资源目录
+res_path = Path() / "resource"
+# 插件总目录
+plugin_path = Path() / "content" / "plugins"
+# 字体总目录
+font_path = res_path / "font"
+# 文本总目录
+txt_path = res_path / "txt"
+# 音频总目录
+audio_path = res_path / "audio"
+# 视频总目录
+video_path = res_path / "video"
+# 图片总目录
+img_path = res_path / "img"
+# 群聊小游戏总目录
+
+# 翻译文件
+translate_path = config_path / "translate.json"
+# 词云插件配置目录
+admin_path = config_path / "word_cloud"
+# 词云插件配置
+word_path = config_path / "word_cloud" / "word_config.txt"
+# 聊天记录目录
+words_contents_path = txt_path / "words"
+# 词云图片目录
+re_img_path = img_path / "admin"
+# 词云字体
+ttf_name = font_path / "msyhblod.ttf"
+# 内置违禁词
+limit_word_path = txt_path / "违禁词.txt"
+limit_word_path_easy = txt_path / "违禁词_简单.txt"
+# 自定义违禁词配置目录
+word_list_urls = config_path / "ban_word"
+# 违禁词等级文件
+level_path = word_list_urls / "level.json"
+# 插件控制配置目录
+control_path = config_path / "control"
+# 入群欢迎文本
+welcome_path_base = config_path / "welcome"
+# 回归欢迎文本
+back_path_base = config_path / "back"
+# 插件调用统计目录
+total_base = config_path / "total"
+# 插件调用统计_不录入
+total_unable = config_path / "total" / "unable.txt"
+# 自定义问答配置目录
+question_base = config_path / "question"
+# 权限控制配置目录
+permission_base = config_path / "permission"
+# 权限控制普通配置
+permission_common_base = permission_base / "common"
+# 权限控制特殊配置
+permission_special_base = permission_base / "special"
+# 表情包制作配置
+memes_path = config_path / "memes"
+# 更新插件目录
+update_path = plugin_path / "update"
+# 更新插件配置
+update_cfg_path = config_path / "update"
+# 更新检测文件
+updating_path = update_cfg_path / "updating.json"
+
+# 俄罗斯轮盘游戏配置
+russian_path = config_path / "russian"
