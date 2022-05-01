@@ -23,7 +23,7 @@ fts = "%Y-%m"
 async def init(bot: Bot, event: GroupMessageEvent):
     # 数据库初始化
     database_mysql.execute_sql(sql_base)
-
+    cursor.execute(f"USE {database_mysql.database};")
     # 用户表初始化开始
     members = await bot.call_api(api="get_group_member_list", group_id=event.group_id)
     cursor.execute(f"SELECT * FROM users WHERE gid='{event.group_id}';")
@@ -138,7 +138,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await sign.tools.init(bot, event)
         await word_cloud.tools.init()
         await welcome.tools.init(gid)
-        await bot_init.send("初始化成功")
+        await bot_init.send("初始化成功,该项目完全免费,如果你是收费获得的，请立即退款并举报")
     # 初始化异常
     except Exception as e:
         await bot_init.send("初始化出错:" + str(e))

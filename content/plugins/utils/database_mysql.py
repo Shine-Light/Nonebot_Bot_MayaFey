@@ -15,7 +15,7 @@ user = get_driver().config.mysql_user
 password = get_driver().config.mysql_password
 database = get_driver().config.mysql_db
 
-connect = pymysql.connect(host=host, user=user, passwd=password, db=database, autocommit=True)
+connect = pymysql.connect(host=host, user=user, passwd=password, autocommit=True)
 cursor = connect.cursor()
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler

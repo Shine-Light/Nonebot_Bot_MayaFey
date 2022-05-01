@@ -10,7 +10,7 @@ from nonebot.internal.matcher import Matcher
 from nonebot.message import run_preprocessor
 from ..utils.path import *
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
-from ..utils import json_tools
+from ..utils import json_tools, other
 
 fts = "%Y-%m"
 
@@ -28,6 +28,10 @@ async def total(matcher: Matcher, event: GroupMessageEvent):
     plugin_name = matcher.plugin_name
     gid = str(event.group_id)
     total_path = total_base / month / f"{gid}.json"
+    if not Path.exists(total_base / month):
+        await other.mk("dir", total_base / month, content=None)
+    if not Path.exists(total_path):
+        await other.mk("file", total_path, 'w', content=json.dumps({}))
     js: dict = json.loads(open(total_path, 'r', encoding='utf-8').read())
     if plugin_name in js:
         js.update({plugin_name: int(js[plugin_name]) + 1})

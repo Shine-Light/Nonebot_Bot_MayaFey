@@ -46,7 +46,7 @@ async def updating(bot: Bot):
                     shutil.rmtree(str(path.update_path / "version" / version_old))
         try:
             json_tools.json_write(path.updating_path, {"updating": False, "error": "", "gid": ""})
-            await bot.send_group_msg(message="更新成功", group_id=gid)
+            await bot.send_group_msg(message="更新成功,请自行执行一次初始化命令", group_id=gid)
             await bot.send_group_msg(message=Message([MessageSegment.image(await tools.get_update_log()),
                                                       MessageSegment.text(
                                                           "完整日志地址:http://cdn.shinelight.xyz/nonebot/log.md")]),
