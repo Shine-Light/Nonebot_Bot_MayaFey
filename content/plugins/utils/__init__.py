@@ -9,7 +9,7 @@ import time
 
 from . import database_mysql
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
-from nonebot import on_command
+from nonebot import on_command, get_driver
 from .. import credit, plugin_control, ban_word, word_cloud, welcome, sign
 from .path import *
 from .other import mk
@@ -66,6 +66,12 @@ async def init(bot: Bot, event: GroupMessageEvent):
             role = member['role']
             cursor.execute(f"INSERT INTO users VALUES('{gid}', '{uid}', '{role}', 0, TRUE);")
             db.commit()
+
+    # 根超级用户处理
+    SUPERUSERS = get_driver().config.superusers
+    for superuser in SUPERUSERS:
+        cursor.execute(f"UPDATE users SET role='Van' WHERE uid='{superuser}'")
+
     # 用户表初始化结束
     # 目录初始化开始
     if not os.path.exists(config_path):
