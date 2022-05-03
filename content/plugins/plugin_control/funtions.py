@@ -18,8 +18,6 @@ plugin_url = plugin_path
 dirs = os.listdir(plugin_url)
 # 插件列表
 plugins: list = []
-# 不可关闭插件
-not_set: list = ["plugin_control", "utils", "withdraw", "notices", "total", "permission", "flash"]
 
 
 async def init(gid: str):

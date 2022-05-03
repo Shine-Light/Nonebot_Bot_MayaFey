@@ -443,13 +443,14 @@ class RussianManager:
         :param msg: 排行榜类型
         :param group_id: 群号
         """
-        if msg in ["/胜场排行", "/胜利排行", "/胜场排名", "/胜利排名"]:
+        msg = msg.strip()
+        if msg in ["胜场排行", "胜利排行", "胜场排名", "胜利排名"]:
             return await rank(self._player_data, group_id, "win_rank")
-        if msg in ["/败场排行", "/失败排行", "/败场排名", "/失败排名"]:
+        if msg in ["败场排行", "失败排行", "败场排名", "失败排名"]:
             return await rank(self._player_data, group_id, "lose_rank")
-        if msg == "/欧洲人排行":
+        if msg == "欧洲人排行":
             return await rank(self._player_data, group_id, "make_gold")
-        if msg == "/慈善家排行":
+        if msg == "慈善家排行":
             return await rank(self._player_data, group_id, "lose_gold")
 
     def check_game_is_start(self, group_id: int) -> bool:

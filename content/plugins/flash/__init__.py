@@ -5,7 +5,7 @@
 """
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Event, MessageSegment, Message
 from nonebot.rule import Rule
-from nonebot import on_message
+from nonebot import on_message, get_driver
 
 
 def checker():
@@ -27,6 +27,9 @@ def checker():
 flash = on_message(rule=checker(), priority=12)
 @flash.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    CQ = str(event.get_message()).split(",")
-    file = CQ[1].split("file=")[1]
-    await bot.send_private_msg(user_id=3120815902, message=Message(MessageSegment.image(file)))
+    supers = get_driver().config.superusers
+    if supers:
+        CQ = str(event.get_message()).split(",")
+        file = CQ[1].split("file=")[1]
+        for su in supers:
+            await bot.send_private_msg(user_id=int(su), message=Message(MessageSegment.image(file)))

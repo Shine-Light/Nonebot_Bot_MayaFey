@@ -71,6 +71,10 @@ update_cfg_path = config_path / "update"
 updating_path = update_cfg_path / "updating.json"
 # 表结构SQL
 sql_base = database_path / "bot.sql"
+# 不可设置插件列表
+unset_path = control_path / "unset.txt"
+# Epic限免资讯目录
+epicFree_path = config_path / "epic"
 
 # 俄罗斯轮盘游戏配置
 russian_path = config_path / "russian"

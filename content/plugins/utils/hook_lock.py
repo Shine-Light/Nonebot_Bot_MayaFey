@@ -6,7 +6,7 @@
 from nonebot.internal.matcher import Matcher
 from nonebot.message import run_preprocessor
 from nonebot.exception import IgnoredException
-from ..plugin_control import funtions
+from ..plugin_control import functions
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
 

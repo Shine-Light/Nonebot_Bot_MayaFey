@@ -62,7 +62,7 @@ async def ban_user(uid: str, gid: str, bot: Bot):
     count = users.get_ban_count(uid, gid)
     time = 0  # 10min
     if count == 1:
-        time = 600
+        time = 1800
     elif count == 2:
         time = 43200  # 12h
     else:
