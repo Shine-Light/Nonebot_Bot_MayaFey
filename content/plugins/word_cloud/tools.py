@@ -11,7 +11,7 @@ from ..utils.other import mk
 
 async def init():
     if not os.path.exists(ttf_name):
-        await mk("file", ttf_name, "wb", url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/msyhblod.ttf",
+        await mk("file", ttf_name, "wb", url="http://cdn.shinelight.xyz/nonebot/resource/msyhblod.ttf",
                  dec="资源字体")
 
 
