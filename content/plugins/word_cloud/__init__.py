@@ -157,6 +157,8 @@ async def run():
 
     for gid in txt:
         gid = gid.strip("\n")
+        if not gid:
+            break
         if await plugin_control.get_state("word_cloud", gid):
             path_temp = words_contents_path / date / f"{str(gid)}.txt"
             dir_list = os.listdir(words_contents_path / date)
@@ -183,4 +185,4 @@ async def run():
                     await bot.send_group_msg(group_id=gid, message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
                 except Exception as err:
                     await bot.send_group_msg(group_id=gid, message=f"出现错误{type(err)}:{err}")
-
+    txt.close()
