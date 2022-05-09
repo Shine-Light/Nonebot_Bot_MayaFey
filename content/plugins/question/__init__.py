@@ -5,21 +5,20 @@
 """
 import json
 
+from nonebot.params import CommandArg
 from nonebot import on_regex, on_message, on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
 from ..utils.path import *
 from ..utils import json_tools, users, database_mysql
 from .. import permission
 
-
 cursor = database_mysql.cursor
 
+# 添加问答(模糊)
+question_vague = on_regex("^模糊问.*?(答)", priority=5)
 
-# 添加问答
-question = on_regex("^[(?<=问).{1,}(?=答)]", priority=5)
 
-
-@question.handle()
+@question_vague.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
@@ -28,37 +27,87 @@ async def _(bot: Bot, event: GroupMessageEvent):
         Question = msg_meta.split("问", 1)[1].split("答", 1)[0]
         Answer = msg_meta.split("答", 1)[1]
         question_path = question_base / f"{gid}.json"
-        QAs: dict = json.loads(open(question_path, 'r', encoding='utf-8').read())
+        QAs: dict = json_tools.json_load(question_path)
         if not Answer:
-            await question.finish("添加失败,无回答内容")
+            await question_vague.finish("添加失败,无回答内容")
         try:
-            QAs.update({Question: Answer})
+            QAs.update({"vague": {Question: Answer}})
             with open(question_path, 'w', encoding="utf-8") as file:
                 file.write(json.dumps(QAs, ensure_ascii=False))
-            #
-            await question.send('添加成功')
+            await question_vague.send('添加成功')
 
         except Exception as e:
-            await question.send('添加失败:' + str(e))
+            await question_vague.send('添加失败:' + str(e))
 
     else:
-        await question.send("无权限")
+        await question_vague.send("无权限")
+
+
+# 添加问答(精准)
+question_vague = on_regex("^精准问.*?(答)", priority=5)
+
+
+@question_vague.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    gid = str(event.group_id)
+    role = users.get_role(gid, str(event.user_id))
+    if permission.tools.special_per(role, "question", gid):
+        msg_meta = str(event.get_message())
+        Question = msg_meta.split("问", 1)[1].split("答", 1)[0]
+        Answer = msg_meta.split("答", 1)[1]
+        question_path = question_base / f"{gid}.json"
+        QAs: dict = json_tools.json_load(question_path)
+        if not Answer:
+            await question_vague.finish("添加失败,无回答内容")
+        try:
+            QAs.update({"absolute": {Question: Answer}})
+            with open(question_path, 'w', encoding="utf-8") as file:
+                file.write(json.dumps(QAs, ensure_ascii=False))
+            await question_vague.send('添加成功')
+
+        except Exception as e:
+            await question_vague.send('添加失败:' + str(e))
+
+    else:
+        await question_vague.send("无权限")
 
 
 # 问答检测
 ques_in = on_message(priority=12)
+
+
 @ques_in.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
     question_path = question_base / f"{gid}.json"
-    qa: dict = json_tools.json_load(question_path)
-    # A: list = []
+    qas: dict = json_tools.json_load(question_path)
+    if not qas:
+        return
     A = ""
     meta_msg = str(event.get_message())
-    for Q in qa:
-        if Q in meta_msg:
-            A = qa[Q]
-            break
+
+    try:
+        absolute: dict = qas["absolute"]
+    except KeyError:
+        absolute = None
+    if absolute:
+        for qa in absolute:
+            if str(qa) == meta_msg:
+                A = absolute[qa]
+                break
+
+    try:
+        vague: dict = qas["vague"]
+    except KeyError:
+        vague = None
+    if vague:
+        for qa in vague:
+            if str(qa) in meta_msg:
+                A = vague[qa]
+
+
+
+
     if A:
         messages = A
         await ques_in.send(Message(messages))
@@ -67,39 +116,61 @@ async def _(bot: Bot, event: GroupMessageEvent):
 # 其他功能(删除,查看)
 ques_more = on_command(cmd="问答", aliases={"自定义问答"}, priority=5)
 @ques_more.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     uid = str(event.user_id)
     gid = str(event.group_id)
     question_path = question_base / f"{gid}.json"
-    meta_msg = str(event.get_message())
-    mode = meta_msg.split("答", 1)[1].split(" ", 1)[0]
     qas = json_tools.json_load(question_path)
     msg = ""
+    args = args.extract_plain_text()
+    mode = args.split(" ", 1)[0]
     if mode == "列表":
-        for qa in qas:
-            if qa != "test":
-                msg += qa + "\n"
+        try:
+            vague: dict = qas["vague"]
+        except KeyError:
+            vague = None
+        if vague:
+            msg += "模糊问答:\n"
+            for qa in vague:
+                msg += "\t" + qa + "\n"
+
+        try:
+            absolute: dict = qas["absolute"]
+        except KeyError:
+            absolute = None
+        if absolute:
+            msg += "精准问答:\n"
+            for qa in absolute:
+                msg += "\t" + qa + "\n"
 
         if not msg:
             msg = "无问答内容"
         else:
-            msg = "问题列表:\n" + msg
             msg = msg[:-1]
 
     elif mode == "删除" or mode == "-":
         # 成员无权限添加/删除
+        find = False
         gid = str(event.group_id)
         role = users.get_role(gid, uid)
         if permission.tools.permission_(role, "superuser"):
-            content = meta_msg.split(" ", 1)[1]
+            content = args.split(" ", 1)[1]
 
-            if content in qas:
-                qas.pop(content)
+            for qaS in qas:
+                if find:
+                    break
+                for qa in list(qas[qaS]):
+                    if content == qa:
+                        qas[qaS].pop(content)
+                        msg = "删除成功"
+                        find = True
+                        break
+
+                    else:
+                        msg = "删除失败,没有该问题"
+
+                qas.update({qaS: qas[qaS]})
                 json_tools.json_write(question_path, qas)
-                msg = "删除成功"
-
-            else:
-                msg = "删除失败,没有该插件"
 
         else:
             await ques_more.send("无权限")

@@ -158,7 +158,7 @@ async def run():
     for gid in txt:
         gid = gid.strip("\n")
         if not gid:
-            break
+            continue
         if await plugin_control.get_state("word_cloud", gid):
             path_temp = words_contents_path / date / f"{str(gid)}.txt"
             dir_list = os.listdir(words_contents_path / date)
