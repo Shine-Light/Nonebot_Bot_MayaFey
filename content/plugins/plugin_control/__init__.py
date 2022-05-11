@@ -6,6 +6,7 @@
 
 
 from nonebot import on_command
+from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment
 from .functions import *
 from ..withdraw import add_target
@@ -13,15 +14,15 @@ from ..utils.path import *
 from ..utils import htmlrender
 
 
-control = on_command(cmd="开关", priority=4)
+control = on_command(cmd="插件控制", priority=4)
 @control.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     # 不可关闭插件
     not_set: list = open(unset_path, 'r', encoding="utf-8").read().split(",")
     url = control_path / str(event.group_id) / "control.json"
     plugin_config = json_tools.json_load(url)
-    message_meta: str = str(event.get_message())
-    cmd: str = message_meta.split('关', 1)[1]
+    args = args.extract_plain_text()
+    cmd: str = args.split(' ', 1)[0]
     message = ''
     cmd_cn = translate('e2c', cmd)
     cmd_en = translate('c2e', cmd)
@@ -54,6 +55,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 line += 1
         message += plugin_list
         message = message
+        await control.send(message=Message([MessageSegment.image(await htmlrender.text_to_pic(message)),
+                                            MessageSegment.text("已隐藏不可设置插件")]))
 
     # 控制插件开关
     else:
@@ -70,5 +73,5 @@ async def _(bot: Bot, event: GroupMessageEvent):
         else:
             message = '找不到该插件'
 
-    await control.send(message=Message([MessageSegment.image(await htmlrender.text_to_pic(message)),
-                                        MessageSegment.text("已隐藏不可设置插件" + add_target(30))]))
+        await control.send(message=Message([MessageSegment.text(message)]))
+
