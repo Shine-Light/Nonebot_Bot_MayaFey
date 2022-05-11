@@ -121,15 +121,17 @@ async def _(bot: Bot, event: GroupMessageEvent):
             stop_ = await participle_simple_handle()
             string = " ".join(txt)
             try:
-                wc = WordCloud(font_path=str(ttf_name_.resolve()), width=800, height=600, mode='RGBA',
-                               background_color="#ffffff", stopwords=stop_).generate(string)
-                img = Path(re_img_path / date / f"{gid}.png")
-                wc.to_file(img)
-                dir_path = os.path.dirname(os.path.abspath(__file__))
-                dir_path = dir_path.replace(f"content{os.sep}plugins{os.sep}word_cloud", "")
-                img = f"file:///{dir_path}{tools.format_path(img)}"
-                message = Message([MessageSegment.text(f"当前时间:{localTime},今日群词云:"), MessageSegment.image(img)])
-                await bot.send(message=message, event=event)
+                # 关键词不为空
+                if string:
+                    wc = WordCloud(font_path=str(ttf_name_.resolve()), width=800, height=600, mode='RGBA',
+                                   background_color="#ffffff", stopwords=stop_).generate(string)
+                    img = Path(re_img_path / date / f"{gid}.png")
+                    wc.to_file(img)
+                    dir_path = os.path.dirname(os.path.abspath(__file__))
+                    dir_path = dir_path.replace(f"content{os.sep}plugins{os.sep}word_cloud", "")
+                    img = f"file:///{dir_path}{tools.format_path(img)}"
+                    message = Message([MessageSegment.text(f"当前时间:{localTime},今日群词云:"), MessageSegment.image(img)])
+                    await bot.send(message=message, event=event)
             except ActionFailed:
                 await cloud.send(message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
             except Exception as err:
@@ -168,19 +170,21 @@ async def run():
                 stop_ = await participle_simple_handle()
                 string = " ".join(txt)
                 try:
-                    wc = WordCloud(font_path=str(ttf_name.resolve()), width=800, height=600, mode='RGBA',
-                                   background_color="#ffffff", stopwords=stop_).generate(string)
-                    img = re_img_path / date / f"{gid}.png"
-                    wc.to_file(img)
-                    # await cloud.send(MessageSegment.image(img))
-                    dir_path = os.path.dirname(os.path.abspath(__file__))
-                    dir_path = dir_path.replace(f"content{os.sep}plugins{os.sep}word_cloud", "")
-                    dir_path = dir_path.replace("\\", "/")
-                    img = f"file:///{dir_path}{tools.format_path(img)}"
-                    await bot.send_group_msg(
-                        group_id=gid,
-                        message=Message([MessageSegment.text(f"当前时间:{localTime},今日群词云:"), MessageSegment.image(img)])
-                    )
+                    # 关键词不为空
+                    if string:
+                        wc = WordCloud(font_path=str(ttf_name.resolve()), width=800, height=600, mode='RGBA',
+                                       background_color="#ffffff", stopwords=stop_).generate(string)
+                        img = re_img_path / date / f"{gid}.png"
+                        wc.to_file(img)
+                        # await cloud.send(MessageSegment.image(img))
+                        dir_path = os.path.dirname(os.path.abspath(__file__))
+                        dir_path = dir_path.replace(f"content{os.sep}plugins{os.sep}word_cloud", "")
+                        dir_path = dir_path.replace("\\", "/")
+                        img = f"file:///{dir_path}{tools.format_path(img)}"
+                        await bot.send_group_msg(
+                            group_id=gid,
+                            message=Message([MessageSegment.text(f"当前时间:{localTime},今日群词云:"), MessageSegment.image(img)])
+                        )
                 except ActionFailed:
                     await bot.send_group_msg(group_id=gid, message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
                 except Exception as err:
