@@ -29,8 +29,8 @@ weather = on_regex(r".*?(.*)天气.*?", priority=7)
 def get_msg(msg) -> str:
     msg1 = re.search(r".*?(.*)天气.*?", msg)
     msg2 = re.search(r".*?天气(.*).*?", msg)
-    msg1 = msg1.group(1).replace(" ", "")
-    msg2 = msg2.group(1).replace(" ", "")
+    msg1 = msg1.group(1).replace(" ", "") if msg1 else None
+    msg2 = msg2.group(1).replace(" ", "") if msg2 else None
     msg = msg1 if msg1 else msg2
 
     return msg
