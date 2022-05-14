@@ -93,11 +93,16 @@ async def getEpicFree():
         game_name = game["title"]
         game_corp = game["seller"]["name"]
         game_price = game["price"]["totalPrice"]["fmtPrice"]["originalPrice"]
-        game_promotions = game["promotions"]["promotionalOffers"]
-        upcoming_promotions = game["promotions"]["upcomingPromotionalOffers"]
-        if not game_promotions and upcoming_promotions:
-          continue    # 促销即将上线，跳过
+        game_promotions = game["promotions"]
+        if not game_promotions:
+          continue    # 无促销，跳过
         else:
+          upcoming_promotions = game["promotions"]["upcomingPromotionalOffers"]
+          if upcoming_promotions:
+            continue   # 促销即将上线，跳过
+          per = game["promotions"]["promotionalOffers"][0]["promotionalOffers"][0]["discountSetting"]['discountPercentage']
+          if per is not 0:
+            continue   # 非免费,跳过
           for image in game["keyImages"]:
             game_thumbnail = image["url"] if image["type"] == "Thumbnail" else None
           for pair in game["customAttributes"]:
@@ -107,12 +112,13 @@ async def getEpicFree():
           end_date_iso = game["promotions"]["promotionalOffers"][0]["promotionalOffers"][0]["endDate"][:-1]
           end_date = datetime.fromisoformat(end_date_iso).strftime("%b.%d %H:%M")
           # API 返回不包含游戏商店 URL，此处自行拼接，可能出现少数游戏 404 请反馈
-          game_url = f"https://www.epicgames.com/store/zh-CN/p/{game['productSlug'].replace('/home', '')}"
+          msg = f"本周Epic喜加一\n"
           msg = f"[CQ:image,file={game_thumbnail}]\n\n" if game_thumbnail else ""
           msg += f"FREE now :: {game_name} ({game_price})\n\n{game_desp}\n\n"
           msg += f"游戏由 {game_pub} 发售，" if game_dev == game_pub else f"游戏由 {game_dev} 开发、{game_pub} 出版，"
+          game_url = f"https://www.epicgames.com/store/zh-CN/p/{game['productSlug'].replace('/home', '')}"
           msg += f"将在 UTC 时间 {end_date} 结束免费游玩，戳链接领取吧~\n{game_url}"
-      except (TypeError, IndexError):
+      except (TypeError, IndexError, AttributeError):
         pass
       except Exception as e:
         logger.error("组织 Epic 订阅消息错误：" + str(sys.exc_info()[0]) + "\n" + str(e))
