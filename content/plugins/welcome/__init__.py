@@ -36,18 +36,17 @@ async def _(bot: Bot, event: Event):
     data = json.loads(des.replace("'", '"'))
     gid = str(data['group_id'])
     uid = str(event.get_user_id())
-    cursor.execute(f"SELECT alive FROM users WHERE gid='{gid}' and uid='{uid}'")
-    re = cursor.fetchone()
+    re = users.get_alive(gid, uid)
     # 入群欢迎
     welcome_txt = welcome_path_base / f"{gid}.txt"
     message: str = open(welcome_txt, 'r', encoding="utf-8").read()
     # 回归欢迎
     if re:
+        cursor.execute(f"UPDATE users SET alive=TRUE WHERE uid='{uid}' AND gid='{gid}';")
         back_txt = back_path_base / f"{gid}.txt"
         message: str = open(back_txt, 'r', encoding="utf-8").read()
-
-    await member_in.send(message=Message(message), at_sender=True)
     await utils.init(bot, event)
+    await member_in.send(message=Message(message), at_sender=True)
     await credit.tools.init(bot, event)
 
 

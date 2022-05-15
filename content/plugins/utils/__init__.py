@@ -28,35 +28,26 @@ async def init(bot: Bot, event: GroupMessageEvent):
     # 用户表初始化开始
     members = await bot.call_api(api="get_group_member_list", group_id=event.group_id)
     cursor.execute(f"SELECT * FROM users WHERE gid='{event.group_id}';")
-    db.commit()
     query: tuple = cursor.fetchall()
     month = time.strftime(fts, time.localtime())
     # 已存在数据
     if query:
         l: list = []
-        added: list = []
         for member in members:
             gid = str(member['group_id'])
             uid = str(member['user_id'])
 
             for re in query:
-                # 之前加过群
-                if re[4] == 0:
-                    added.append([gid, uid])
-                # 没有加过群
-                elif re[0] == gid and re[1] == uid:
+                # 已在群内
+                if re[0] == gid and re[1] == uid:
                     l.append([gid, uid])
 
         for member in members:
             gid = str(member['group_id'])
             uid = str(member['user_id'])
-            if [gid, uid] in added:
-                sql_update = f"UPDATE users SET alive=TRUE WHERE gid='{gid}' and uid='{uid}';"
-                cursor.execute(sql_update)
-                db.commit()
-            elif [gid, uid] not in l:
+            if [gid, uid] not in l:
                 role = member['role']
-                cursor.execute(f"INSERT INTO users VALUES('{gid}','{uid}','{role}',0, TRUE);")
+                cursor.execute(f"INSERT INTO users VALUES('{gid}','{uid}','{role}',0,TRUE);")
                 db.commit()
 
     # 第一次添加

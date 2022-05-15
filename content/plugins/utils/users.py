@@ -74,3 +74,12 @@ def get_ban_count(uid: str, gid: str) -> int:
 
 def member_leave(uid, gid):
     cursor.execute(f"UPDATE users SET alive=FALSE WHERE uid='{uid}' and gid='{gid}'")
+
+
+def get_alive(uid: str, gid: str) -> bool:
+    cursor.execute(f"SELECT alive FROM users WHERE gid='{gid}' and uid='{uid}';")
+    re = cursor.fetchone()
+    if re:
+        return re[0]
+    else:
+        return False
