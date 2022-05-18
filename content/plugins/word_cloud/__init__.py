@@ -122,7 +122,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             string = " ".join(txt)
             try:
                 # 关键词不为空
-                if string:
+                if string != " ":
                     wc = WordCloud(font_path=str(ttf_name_.resolve()), width=800, height=600, mode='RGBA',
                                    background_color="#ffffff", stopwords=stop_).generate(string)
                     img = Path(re_img_path / date / f"{gid}.png")
@@ -134,6 +134,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
                     await bot.send(message=message, event=event)
             except ActionFailed:
                 await cloud.send(message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
+            except ValueError:
+                pass
             except Exception as err:
                 await cloud.send(f"出现错误{type(err)}:{err}")
 
@@ -171,7 +173,7 @@ async def run():
                 string = " ".join(txt)
                 try:
                     # 关键词不为空
-                    if string:
+                    if string != " ":
                         wc = WordCloud(font_path=str(ttf_name.resolve()), width=800, height=600, mode='RGBA',
                                        background_color="#ffffff", stopwords=stop_).generate(string)
                         img = re_img_path / date / f"{gid}.png"
@@ -187,6 +189,8 @@ async def run():
                         )
                 except ActionFailed:
                     await bot.send_group_msg(group_id=gid, message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
+                except ValueError:
+                    pass
                 except Exception as err:
                     await bot.send_group_msg(group_id=gid, message=f"出现错误{type(err)}:{err}")
     txt.close()
