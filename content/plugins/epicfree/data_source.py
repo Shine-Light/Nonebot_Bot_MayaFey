@@ -113,7 +113,7 @@ async def getEpicFree():
           end_date = datetime.fromisoformat(end_date_iso).strftime("%b.%d %H:%M")
           # API 返回不包含游戏商店 URL，此处自行拼接，可能出现少数游戏 404 请反馈
           msg = f"本周Epic喜加一\n"
-          msg = f"[CQ:image,file={game_thumbnail}]\n\n" if game_thumbnail else ""
+          msg += f"[CQ:image,file={game_thumbnail}]\n\n" if game_thumbnail else ""
           msg += f"FREE now :: {game_name} ({game_price})\n\n{game_desp}\n\n"
           msg += f"游戏由 {game_pub} 发售，" if game_dev == game_pub else f"游戏由 {game_dev} 开发、{game_pub} 出版，"
           game_url = f"https://www.epicgames.com/store/zh-CN/p/{game['productSlug'].replace('/home', '')}"

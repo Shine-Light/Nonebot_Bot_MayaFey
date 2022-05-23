@@ -135,10 +135,11 @@ async def _(bot: Bot, event: GroupMessageEvent):
             except ActionFailed:
                 await cloud.send(message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
             except ValueError:
-                pass
+                await cloud.send("无聊天记录,无法生成词云")
             except Exception as err:
                 await cloud.send(f"出现错误{type(err)}:{err}")
-
+        else:
+            await cloud.send("无聊天记录,无法生成词云")
     else:
         await cloud.send("无权限,权限需在 成员 及以上")
 
