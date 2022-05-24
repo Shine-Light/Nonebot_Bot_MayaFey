@@ -10,7 +10,8 @@ class Area():
         self.total = data['total']
         self.grade = data['total'].get('grade', '风险未确认')
         self.isUpdated = self.today['isUpdated']
-        self.wzz_add = data['today'].get('wzz_add', 0)
+        wzz_add = data['today'].get('wzz_add')
+        self.wzz_add = int(wzz_add) if wzz_add else 0
         self.all_add = self.today['confirm'] + self.wzz_add
         self.children = data.get('children', None)
 
@@ -29,7 +30,6 @@ class Area():
 
     def __eq__(self, obj):
         return (isinstance(obj, Area) and self.today == obj.today)
-
 
 class AreaList(Dict):
     def add(self, data):

@@ -8,8 +8,8 @@ import time
 
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot import on_command
-from ..utils import json_tools, other
-from ..utils.path import *
+from utils import json_tools, other
+from utils.path import *
 from ..plugin_control import translate
 
 fts = "%Y-%m"

@@ -9,7 +9,7 @@ from threading import Timer
 from nonebot import on_notice, on_request
 from . import rules
 from nonebot.adapters.onebot.v11 import Bot, NoticeEvent, GroupRequestEvent
-from ..utils import database_mysql, users
+from utils import database_mysql, users
 from .. import permission
 
 cursor = database_mysql.cursor

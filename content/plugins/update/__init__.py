@@ -3,15 +3,10 @@
 @Version: 1.0
 @Date: 2022/4/21 12:51
 """
-import shutil
-import platform
-
 from nonebot import on_command, require
 from nonebot.exception import FinishedException
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
 from . import tools
-from ..utils import json_tools, path, htmlrender
-from .. import utils
 
 
 update = on_command("更新", aliases={"update"}, priority=2, block=True)

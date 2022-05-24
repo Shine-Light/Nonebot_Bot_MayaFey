@@ -5,8 +5,8 @@
 """
 import os
 
-from ..utils.path import *
-from ..utils.other import mk
+from utils.path import *
+from utils.other import mk
 
 
 async def init():

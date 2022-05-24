@@ -5,7 +5,7 @@
 """
 import datetime
 
-from ..utils import database_mysql
+from utils import database_mysql
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 
 

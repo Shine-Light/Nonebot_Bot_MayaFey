@@ -8,7 +8,7 @@ from nonebot.typing import T_State
 from nonebot.params import State, CommandArg
 from nonebot import require, logger
 from .tools import NewsData
-from ..utils import users
+from utils import users
 from ..withdraw import add_target
 from .. import permission
 import time
@@ -94,6 +94,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State = State()):
     else:
         await city_news.send("无权限")
 
+
 added_list = on_command("疫情关注列表", priority=7)
 @added_list.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
@@ -134,12 +135,7 @@ async def update():
                 logger.info(city)
                 # 判定是否为更新后信息
                 if city.isUpdated is True:
-                    # send group or private
-
-                    try:
-                        await get_bot().send_group_msg(group_id=int(gid), message='关注城市疫情变化\n' + city.main_info)
-                    except Exception as e:
-                        await get_bot().send_private_msg(user_id=int(gid), message='关注城市疫情变化\n' + city.main_info)
+                    await get_bot().send_group_msg(group_id=int(gid), message='关注城市疫情变化\n' + city.main_info)
 
         for city in city_list:
             city.isUpdated = False

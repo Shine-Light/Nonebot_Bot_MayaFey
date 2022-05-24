@@ -5,7 +5,7 @@
 """
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
-from ..utils import requests_tools
+from utils import requests_tools
 
 url: str = "https://api.yimian.xyz/img?"
 

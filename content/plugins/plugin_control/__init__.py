@@ -10,8 +10,8 @@ from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment
 from .functions import *
 from ..withdraw import add_target
-from ..utils.path import *
-from ..utils import htmlrender
+from utils.path import *
+from utils import htmlrender
 
 
 control = on_command(cmd="插件控制", priority=4)

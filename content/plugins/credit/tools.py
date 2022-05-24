@@ -5,7 +5,7 @@
 """
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
 
-from ..utils import database_mysql
+from utils import database_mysql
 
 
 cursor = database_mysql.cursor

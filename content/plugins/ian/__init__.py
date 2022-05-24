@@ -7,6 +7,7 @@ import requests
 from nonebot.exception import IgnoredException
 from nonebot import on_command
 from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
+from utils import requests_tools
 
 url_api = 'https://tenapi.cn/yiyan/?format=text'
 
@@ -14,7 +15,11 @@ ian = on_command(cmd='一言', aliases={'一句一言', 'ian'}, priority=8)
 @ian.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     try:
-        request = requests.get(url_api)
+        proxy = requests_tools.get_proxy()
+        if proxy:
+            request = requests.get(url_api, proxies=proxy)
+        else:
+            request = requests.get(url_api)
         state = request.status_code
 
         if state not in [200]:

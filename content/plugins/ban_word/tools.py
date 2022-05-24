@@ -9,9 +9,9 @@ import os
 import httpx
 from nonebot import logger
 from nonebot.adapters.cqhttp import Bot
-from ..utils import database_mysql, json_tools, users
-from ..utils.path import *
-from ..utils.other import mk
+from utils import database_mysql, json_tools, users
+from utils.path import *
+from utils.other import mk
 
 cursor = database_mysql.cursor
 db = database_mysql.connect

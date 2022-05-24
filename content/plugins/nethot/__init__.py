@@ -5,7 +5,7 @@ import time
 from nonebot import on_command, get_driver
 from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
 from ..withdraw import add_target
-from ..utils import requests_tools
+from utils import requests_tools
 
 
 def hot_han(event: GroupMessageEvent):

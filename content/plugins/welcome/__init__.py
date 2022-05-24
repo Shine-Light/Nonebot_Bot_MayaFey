@@ -8,10 +8,10 @@ import json
 from nonebot import on_notice, on_command
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, Message
 from nonebot.rule import Rule
-from .. import utils, credit, permission
+from .. import credit, permission
 from . import tools
-from ..utils.path import *
-from ..utils import database_mysql, users
+from utils.path import *
+from utils import database_mysql, users
 
 
 cursor = database_mysql.cursor

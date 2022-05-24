@@ -8,11 +8,11 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent
 
 from .tools import *
 from ..withdraw import add_target
-from ..utils import json_tools
-from ..utils.path import *
-from ..utils import database_mysql
+from utils import json_tools
+from utils.path import *
+from utils import database_mysql
 from .. import permission
-from ..utils import users
+from utils import users
 
 
 cursor = database_mysql.cursor

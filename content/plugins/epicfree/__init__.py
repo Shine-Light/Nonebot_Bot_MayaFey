@@ -9,7 +9,7 @@ from nonebot.adapters.onebot.v11 import (Bot, Event, GroupMessageEvent,
 
 from .data_source import getEpicFree, subscribeHelper
 from ..permission.tools import permission_
-from ..utils import users
+from utils import users
 from .. import plugin_control
 
 try:

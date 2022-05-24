@@ -3,8 +3,8 @@
 @Version: 1.0
 @Date: 2022/3/30 21:13
 """
-from ..utils.path import *
-from ..utils import json_tools
+from utils.path import *
+from utils import json_tools
 
 
 # 权限等级检测
@@ -52,8 +52,8 @@ def get_role(lev: int) -> str:
 
 # role中文
 def role_cn(role: str) -> str:
-    if role == 'Van':
-        return role
+    if role == '根用户':
+        return "Van"
     elif role == 'owner':
         return "群主"
     elif role == 'admin':
@@ -71,7 +71,7 @@ def role_cn(role: str) -> str:
 # role英文
 def role_en(role: str) -> str:
     if role == 'Van':
-        return role
+        return "根用户"
     elif role == '群主':
         return "owner"
     elif role == '管理员':

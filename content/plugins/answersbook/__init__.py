@@ -1,4 +1,4 @@
-import random
+﻿import random
 from pathlib import Path
 
 from nonebot import on_endswith, on_startswith
@@ -17,9 +17,11 @@ def get_answers():
     key = random.choice(list(answers))
     return answers[key]["answer"]
 
+answers_starts = on_startswith("翻看答案")
+answers_ends = on_endswith("翻看答案")
 
-@on_startswith("翻看答案", priority=8).handle()
-@on_endswith("翻看答案", priority=8).handle()
+@answers_starts.handle()
+@answers_ends.handle()
 async def answersbook(event: GroupMessageEvent, matcher: Matcher):
     msg = event.message.extract_plain_text().replace("翻看答案", "")
     if not msg:

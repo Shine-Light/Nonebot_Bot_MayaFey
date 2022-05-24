@@ -6,7 +6,7 @@
 from nonebot import logger, on_message
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent
 from nonebot.adapters.onebot.v11.exception import ActionFailed
-from ..utils.admin_tools import banSb, image_moderation_async
+from utils.admin_tools import banSb, image_moderation_async
 
 
 find_pic = on_message(priority=12, block=False)

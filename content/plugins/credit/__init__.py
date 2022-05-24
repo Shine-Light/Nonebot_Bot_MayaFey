@@ -5,7 +5,7 @@
 """
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
-from ..utils import database_mysql
+from utils import database_mysql
 from . import tools
 from ..withdraw import add_target
 

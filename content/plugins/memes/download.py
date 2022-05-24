@@ -1,7 +1,7 @@
 import httpx
 from nonebot.log import logger
 from aiocache import cached
-from ..utils import path
+from utils import path
 
 
 data_path = path.memes_path

@@ -9,7 +9,7 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.adapters.onebot.v11.exception import ActionFailed
 from nonebot.permission import SUPERUSER
 
-from ..utils.admin_tools import banSb, At
+from utils.admin_tools import banSb, At
 
 su = nonebot.get_driver().config.superusers
 

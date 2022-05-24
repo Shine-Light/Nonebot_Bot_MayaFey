@@ -8,7 +8,7 @@ import random
 import time
 import os
 from .config import Config
-from ..utils import database_mysql
+from utils import database_mysql
 
 try:
     import ujson as json

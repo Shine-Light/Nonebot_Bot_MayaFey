@@ -6,9 +6,8 @@
 import json
 import os
 
-from .. import utils
-from ..utils import json_tools
-from ..utils.path import *
+from utils import json_tools
+from utils.path import *
 
 # 配置文件目录
 config_url = config_path

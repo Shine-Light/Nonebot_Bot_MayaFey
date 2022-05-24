@@ -11,7 +11,7 @@ import requests
 import platform
 
 
-from ..utils import path, other, htmlrender, json_tools
+from utils import path, other, htmlrender, json_tools
 from pathlib import Path
 
 

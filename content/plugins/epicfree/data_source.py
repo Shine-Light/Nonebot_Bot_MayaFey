@@ -5,7 +5,7 @@ from datetime import datetime
 
 from httpx import AsyncClient
 from nonebot.log import logger
-from ..utils.path import *
+from utils.path import *
 
 
 # 写入与读取订阅信息

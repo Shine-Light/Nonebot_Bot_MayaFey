@@ -8,8 +8,8 @@ import json
 from nonebot.params import CommandArg
 from nonebot import on_regex, on_message, on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
-from ..utils.path import *
-from ..utils import json_tools, users, database_mysql
+from utils.path import *
+from utils import json_tools, users, database_mysql
 from .. import permission
 
 cursor = database_mysql.cursor

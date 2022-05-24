@@ -7,13 +7,13 @@ from nonebot import on_command, logger, on_message, require, get_bot
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
 from nonebot.internal.adapter import Message
 from nonebot.exception import ActionFailed
-from ..utils.admin_tools import replace_tmr, participle_simple_handle
+from utils.admin_tools import replace_tmr, participle_simple_handle
 import os
 import time
-from ..utils.path import *
+from utils.path import *
 from . import tools
 from .. import permission, plugin_control
-from ..utils import users
+from utils import users
 
 
 words = limit_word_path

@@ -1,7 +1,7 @@
 from typing import Tuple
 from pydantic import BaseModel, Extra
 from pathlib import Path
-from ..utils import path
+from utils import path
 
 
 class Config(BaseModel, extra=Extra.ignore):
