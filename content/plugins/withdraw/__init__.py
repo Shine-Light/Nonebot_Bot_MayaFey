@@ -33,13 +33,9 @@ async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], re
         return
 
     message_: MessageSegment = data["message"]
-    try :
+    try:
         message = message_[0]
     except:
-        return
-
-    # 只处理文本
-    if not isinstance(message, str) and not message.type == "text":
         return
 
     # 识别是否为需要撤回的信息: 该消息将于 {time} s后撤回
