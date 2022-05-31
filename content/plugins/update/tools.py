@@ -36,7 +36,7 @@ async def get_version_last() -> float:
 
 
 def get_version() -> float:
-    return float(open("__version__", "r", encoding="utf-8").read())
+    return float(open(path.version_path, "r", encoding="utf-8").read())
 
 
 async def update(gid: str) -> float:
