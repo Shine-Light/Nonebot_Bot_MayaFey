@@ -23,7 +23,7 @@ async def get_update_log():
 
 
 async def check_update() -> bool:
-    version = await get_version()
+    version = get_version()
     version_last = await get_version_last()
     if version_last > version:
         return True
@@ -35,8 +35,8 @@ async def get_version_last() -> float:
     return float(requests.get("http://cdn.shinelight.xyz/nonebot/version.html").text)
 
 
-async def get_version() -> float:
-    return float(os.listdir(path.update_path / "version")[0])
+def get_version() -> float:
+    return float(open("__version__", "r", encoding="utf-8").read())
 
 
 async def update(gid: str) -> float:
@@ -44,7 +44,7 @@ async def update(gid: str) -> float:
     js['updating'] = True
     js['gid'] = gid
     json_tools.json_write(path.updating_path, js)
-    version_old = await get_version()
+    version_old = get_version()
     version = str(await get_version_last())
     update_url = f"http://cdn.shinelight.xyz/nonebot/version/{version}/update.py"
     update_py_path = path.update_path / "version" / version

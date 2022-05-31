@@ -157,7 +157,7 @@ message_about: str = '''关于这个项目:
 main = on_command(cmd="菜单", aliases={"help", "帮助"}, priority=9)
 @main.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    version = loop.run_until_complete(update.tools.get_version())
+    version = update.tools.get_version()
     await bot.send(event=event,
                    message=message_main % version + add_target(60))
 
@@ -165,8 +165,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
 main_click = on_notice(rule=checker_click(), priority=9)
 @main_click.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
+    version = update.tools.get_version()
     await bot.send(event=event,
-                   message=message_main)
+                   message=message_main % version + add_target(60))
 
 # 总菜单 @
 main_at = on_message(rule=to_me(), priority=9)
@@ -174,8 +175,9 @@ main_at = on_message(rule=to_me(), priority=9)
 async def _(bot: Bot, event: GroupMessageEvent):
     message_meta: str = str(event.get_message())
     if message_meta == '':
+        version = update.tools.get_version()
         await bot.send(event=event,
-                       message=message_main)
+                       message=message_main % version + add_target(60))
 
 
 # 娱乐菜单

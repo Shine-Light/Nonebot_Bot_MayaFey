@@ -7,8 +7,12 @@ from utils.path import *
 from utils import json_tools
 
 
-# 权限等级检测
 def permission_(role: str, role_: str) -> bool:
+    """
+    权限等级检测,大于或等于
+    role 待检测的权限
+    role_ 目标权限
+    """
     lev = get_lev(role)
     lev_ = get_lev(role_)
     return lev >= lev_
