@@ -7,11 +7,12 @@ import json
 import os
 import time
 
+import requests
 from nonebot.permission import SUPERUSER
 from . import database_mysql
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, GROUP_ADMIN, GROUP_OWNER
 from nonebot import on_command, get_driver
-from .. import credit, plugin_control, ban_word, word_cloud, welcome, sign
+from content.plugins import credit, plugin_control, ban_word, word_cloud, welcome, sign
 from .path import *
 from .other import mk
 from . import hook
@@ -126,6 +127,8 @@ async def init(bot: Bot, event: GroupMessageEvent):
         await mk("file", updating_path, 'w', content=json.dumps({"updating": False}))
     if not os.path.exists(unset_path):
         await mk("file", unset_path, 'w', url="http://cdn.shinelight.xyz/nonebot/unset.txt", dec="不可设置插件列表")
+    if not os.path.exists(version_path):
+        await mk("file", version_path, 'w', content=float(requests.get("http://cdn.shinelight.xyz/nonebot/version.html").text))
 
 bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN |SUPERUSER)
 @bot_init.handle()

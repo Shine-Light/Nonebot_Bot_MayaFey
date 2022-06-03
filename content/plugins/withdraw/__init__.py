@@ -39,7 +39,10 @@ async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], re
         return
 
     # 识别是否为需要撤回的信息: 该消息将于 {time} s后撤回
-    if "s后撤回" not in message.data["text"]:
+    try:
+        if "s后撤回" not in message.data["text"]:
+            return
+    except KeyError:
         return
 
     # 时间处理
