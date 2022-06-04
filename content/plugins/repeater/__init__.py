@@ -16,7 +16,11 @@ repeater = on_message(priority=12)
 async def _(event: GroupMessageEvent):
     if isinstance(event, GroupMessageEvent):
         try:
-            msg = event.get_message()
+            # 只重复文字信息
+            msg = event.get_plaintext()
+            if not msg:
+                return
+
             gid = event.group_id
             if gid in msg_last and msg == msg_last[gid]:
                 await repeater.finish(Message(msg))
