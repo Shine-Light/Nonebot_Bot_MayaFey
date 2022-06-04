@@ -27,7 +27,8 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
             except (ValueError, KeyError):
                 await saymoney.finish("参数错误,参数可能不是数字")
 
-        if not 0.01 >= args >= 999999999999.99:
+        if 0.01 > float(args) or float(args) > 999999999999.99:
+            print(args)
             await saymoney.finish("金额超出范围")
 
         url = api_alipay_url + f"{args}.mp3"

@@ -11,10 +11,10 @@ import shutil
 from nonebot.message import run_preprocessor
 from nonebot.internal.matcher import Matcher
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, Message, MessageSegment
-from ..utils import json_tools, path
+from utils import json_tools, path
 from nonebot.exception import IgnoredException
 from nonebot import get_driver
-from ..update import tools
+from content.plugins.update import tools
 
 driver = get_driver()
 
@@ -35,21 +35,19 @@ async def updating(bot: Bot):
     state: bool = js["updating"]
     if state:
         gid = int(js['gid'])
-        # await utils.init(bot, event)
-        for dir in os.listdir(path.update_path / "version"):
-            version_old = str(dir)
-            version_last = str(await tools.get_version_last())
-            if version_old != version_last:
-                if platform.system() == "Windows":
-                    shutil.rmtree(str(path.update_path / "version" / version_old).replace("/", "\\"))
-                else:
-                    shutil.rmtree(str(path.update_path / "version" / version_old))
-        try:
-            json_tools.json_write(path.updating_path, {"updating": False, "error": "", "gid": ""})
-            await bot.send_group_msg(message="更新成功,请自行执行一次初始化命令", group_id=gid)
-            await bot.send_group_msg(message=Message([MessageSegment.image(await tools.get_update_log()),
-                                                      MessageSegment.text(
-                                                          "完整日志地址:http://cdn.shinelight.xyz/nonebot/log.md")]),
-                                     group_id=gid)
-        except Exception as e:
-            await bot.send_group_msg(message=f"更新出错:{str(e)}", group_id=gid)
+        error = js["error"]
+        if error:
+            await bot.send_group_msg(message=f"更新中出错:{error}", group_id=gid)
+        else:
+            try:
+                with open("__version__", "w+", encoding="utf-8") as f:
+                    f.write(str(await tools.get_version_last()))
+
+                json_tools.json_write(path.updating_path, {"updating": False, "error": "", "gid": ""})
+                await bot.send_group_msg(message="更新成功,请自行执行一次初始化命令", group_id=gid)
+                await bot.send_group_msg(message=Message([MessageSegment.image(await tools.get_update_log()),
+                                                          MessageSegment.text(
+                                                              "完整日志地址:http://cdn.shinelight.xyz/nonebot/log.md")]),
+                                         group_id=gid)
+            except Exception as e:
+                await bot.send_group_msg(message=f"发送失败:账号可能风控", group_id=gid)

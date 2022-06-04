@@ -23,6 +23,8 @@ video_path = res_path / "video"
 img_path = res_path / "img"
 # 数据库总目录
 database_path = res_path / "database"
+# 版本文件
+version_path = Path() / "__version__"
 
 # 翻译文件
 translate_path = config_path / "translate.json"

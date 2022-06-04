@@ -42,7 +42,7 @@ async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], re
     try:
         if "s后撤回" not in message.data["text"]:
             return
-    except KeyError:
+    except (KeyError, AttributeError):
         return
 
     # 时间处理

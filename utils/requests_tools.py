@@ -10,8 +10,8 @@ from nonebot import get_driver
 proxy = get_driver().config.proxy
 
 
-# 捕获302后的网址
 def match_302(url: str) -> str:
+    """捕获302/301后的网址"""
     r = requests.head(url, stream=True)
     url = r.headers['Location']
     return url

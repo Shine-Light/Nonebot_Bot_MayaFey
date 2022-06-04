@@ -8,9 +8,9 @@ import time
 
 from nonebot.internal.matcher import Matcher
 from nonebot.message import run_preprocessor
-from ..utils.path import *
+from utils.path import *
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
-from ..utils import json_tools, other
+from utils import json_tools, other
 
 fts = "%Y-%m"
 

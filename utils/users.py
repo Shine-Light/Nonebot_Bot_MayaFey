@@ -5,9 +5,10 @@
 """
 import datetime
 
-from ..utils import database_mysql
+from utils import database_mysql
 from nonebot import logger
 from threading import Timer
+from content.plugins.permission.tools import permission_
 
 ftr: str = "%Y-%m-%d"
 cursor = database_mysql.cursor
@@ -20,6 +21,11 @@ def get_role(gid: str, uid: str) -> str:
     if re:
         return re[0]
 
+def get_role_nogid(uid: str) -> str:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND alive=TRUE")
+    re = cursor.fetchone()
+    if re:
+        return re[0]
 
 def update_role(gid: str, uid: str, role: str) -> bool:
     try:
@@ -73,7 +79,10 @@ def get_ban_count(uid: str, gid: str) -> int:
 
 
 def member_leave(uid, gid):
-    cursor.execute(f"UPDATE users SET alive=FALSE WHERE uid='{uid}' and gid='{gid}'")
+    sql = f"UPDATE users SET alive=FALSE WHERE uid='{uid}' and gid='{gid}'"
+    if permission_(get_role(gid, uid), "superuser"):
+        sql = f"UPDATE users SET role='member',alive=FALSE WHERE uid='{uid}' and gid='{gid}'"
+    cursor.execute(sql)
 
 
 def get_alive(uid: str, gid: str) -> bool:
