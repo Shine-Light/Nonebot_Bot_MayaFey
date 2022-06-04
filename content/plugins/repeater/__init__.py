@@ -16,12 +16,12 @@ repeater = on_message(priority=12)
 async def _(event: GroupMessageEvent):
     if isinstance(event, GroupMessageEvent):
         try:
-            text = event.get_plaintext()
+            msg = event.get_message()
             gid = event.group_id
-            if gid in msg_last and text == msg_last[gid]:
-                await repeater.finish(Message(text))
+            if gid in msg_last and msg == msg_last[gid]:
+                await repeater.finish(Message(msg))
             else:
-                msg_last[gid] = text
+                msg_last[gid] = msg
         except FinishedException:
             pass
         except Exception as e:
