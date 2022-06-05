@@ -23,6 +23,7 @@ async def _(event: GroupMessageEvent):
 
             gid = event.group_id
             if gid in msg_last and msg == msg_last[gid]:
+                msg_last.pop(gid)
                 await repeater.finish(Message(msg))
             else:
                 msg_last[gid] = msg

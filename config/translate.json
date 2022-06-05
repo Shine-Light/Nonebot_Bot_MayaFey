@@ -20,7 +20,7 @@
     "heweather": "天气",
     "flash": "反闪照",
     "welcome": "入群欢迎",
-    "notices": "通知事件",
+    "passive": "被动事件",
     "question": "自定义问答",
     "logo": "logo制作",
     "memes": "表情包制作",
@@ -28,5 +28,7 @@
     "update": "更新系统",
     "blackjack": "21点",
     "epicfree": "Epic限免资讯",
-    "answersbook": "答案之书"
+    "answersbook": "答案之书",
+    "repeater": "复读",
+    "saymoney": "到账语音"
 }
