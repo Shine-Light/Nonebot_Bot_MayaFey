@@ -18,11 +18,13 @@ from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.ims.v20201229 import ims_client, models
 from typing import Union
-from nonebot import logger
+from nonebot import logger,get_driver
 
 su = nonebot.get_driver().config.superusers
 TencentID = nonebot.get_driver().config.tenid
 TencentKeys = nonebot.get_driver().config.tenkeys
+config = get_driver().config
+
 
 async def replace_tmr(msg: str) -> str:
     """
@@ -71,7 +73,7 @@ async def participle_simple_handle() -> set:
     return sum_
 
 
-async def banSb(gid: int, ban_list: list, **time: int):
+async def banSb(gid: int, ban_list: list, time: int):
     """
     构造禁言
     :param gid: 群号
@@ -85,18 +87,19 @@ async def banSb(gid: int, ban_list: list, **time: int):
             enable=True
         )
     else:
-        if not time:
-            time = random.randint(1, 2591999)
-        else:
-            time = time['time']
+        print(time)
+        if time is None:
+            time = random.randint(int(config.ban_rand_time_min), int(config.ban_rand_time_max))
+
         for qq in ban_list:
             if int(qq) in su or str(qq) in su:
                 logger.info(f"SUPERUSER无法被禁言")
             else:
+                print(time)
                 yield nonebot.get_bot().set_group_ban(
                     group_id=gid,
                     user_id=qq,
-                    duration=time,
+                    duration=int(time),
                 )
 
 

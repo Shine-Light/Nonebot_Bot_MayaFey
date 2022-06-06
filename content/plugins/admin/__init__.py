@@ -4,7 +4,7 @@
 @Date: 2022/3/26 18:34
 """
 import nonebot
-from nonebot import on_command, logger
+from nonebot import on_command, logger, get_driver
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.adapters.onebot.v11.exception import ActionFailed
 from nonebot.permission import SUPERUSER
@@ -12,6 +12,7 @@ from nonebot.permission import SUPERUSER
 from utils.admin_tools import banSb, At
 
 su = nonebot.get_driver().config.superusers
+config = get_driver().config
 
 
 ban = on_command('禁', priority=4, block=True)
@@ -24,7 +25,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     sb = At(event.json())
     gid = event.group_id
     if sb:
-        if len(msg.split()) > len(sb):
+        if len(msg.split()) - 2 >= len(sb):
             time = int(msg.split()[-1:][0])
             baning = banSb(gid, ban_list=sb, time=time)
             async for baned in baning:
