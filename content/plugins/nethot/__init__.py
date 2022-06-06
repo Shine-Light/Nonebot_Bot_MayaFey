@@ -4,7 +4,7 @@ import time
 
 from nonebot import on_command, get_driver
 from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
-from ..withdraw import add_target
+from nonebot.log import logger
 from utils import requests_tools
 
 
@@ -107,8 +107,11 @@ def getHot(event: GroupMessageEvent) -> str:
     version = get_driver().config.nethot_version
     if version == "tian":
         return hot_tian()
-    else:
+    elif version == "han":
         return hot_han(event)
+    else:
+        logger.error("热搜配置错误,未选择版本")
+        return "配置错误,未选择接口版本"
 
 
 netHot = on_command(cmd="热搜", priority=8)
