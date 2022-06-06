@@ -157,10 +157,10 @@ async def run():
         os.mkdir(words_contents_path / date)
 
     localTime = time.strftime(ft, time.localtime())
-    txt = open(word_path)
+    file = open(word_path)
     bot = get_bot()
 
-    for gid in txt:
+    for gid in file:
         gid = gid.strip("\n")
         if not gid:
             continue
@@ -194,4 +194,5 @@ async def run():
                     pass
                 except Exception as err:
                     await bot.send_group_msg(group_id=gid, message=f"出现错误{type(err)}:{err}")
-    txt.close()
+    
+    file.close()
