@@ -21,18 +21,20 @@ def get_role(gid: str, uid: str) -> str:
     if re:
         return re[0]
 
+
 def get_role_nogid(uid: str) -> str:
     cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND alive=TRUE")
     re = cursor.fetchone()
     if re:
         return re[0]
 
+
 def update_role(gid: str, uid: str, role: str) -> bool:
     try:
         cursor.execute(f"UPDATE users SET role='{role}' WHERE uid='{uid}' AND gid='{gid}';")
     except:
         return False
-    logger.info(f"更新用户权限 {role}")
+    logger.info(f"更新用户 {uid} 权限 {role}")
     return True
 
 
@@ -90,5 +92,50 @@ def get_alive(uid: str, gid: str) -> bool:
     re = cursor.fetchone()
     if re:
         return re[0]
+    else:
+        return False
+
+
+def is_member(uid: str) -> bool:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND role='member';")
+    re = cursor.fetchone()
+    if re:
+        return True
+    else:
+        return False
+
+
+def is_superuser(uid: str) -> bool:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND role='superuser';")
+    re = cursor.fetchone()
+    if re:
+        return True
+    else:
+        return False
+
+
+def is_admin(uid: str) -> bool:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND role='admin';")
+    re = cursor.fetchone()
+    if re:
+        return True
+    else:
+        return False
+
+
+def is_owner(uid: str) -> bool:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND role='owner';")
+    re = cursor.fetchone()
+    if re:
+        return True
+    else:
+        return False
+
+
+def is_Van(uid: str) -> bool:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND role='Van';")
+    re = cursor.fetchone()
+    if re:
+        return True
     else:
         return False
