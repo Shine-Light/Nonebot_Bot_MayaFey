@@ -21,6 +21,11 @@ async def _(event: GroupMessageEvent):
             if not msg:
                 return
 
+            # 防止重复 CQ码+空格 信息
+            if msg == " ":
+                if not str(event.get_message()) == " ":
+                    return
+
             gid = event.group_id
             if gid in msg_last and msg == msg_last[gid]:
                 msg_last.pop(gid)
