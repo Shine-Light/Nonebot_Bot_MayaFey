@@ -34,7 +34,7 @@ class MorningManager:
         self.config_file = config_file
 
         if not data_file.exists():
-            with open(data_file, "w", encoding="utf-8") as f:
+            with open(data_file, "w+", encoding="utf-8") as f:
                 f.write(json.dumps(dict()))
                 f.close()
 
@@ -44,7 +44,7 @@ class MorningManager:
 
         if not config_file.exists():
             logger.info("Downloading preset morning config resource...")
-            with open(config_file, "w", encoding="utf-8") as f:
+            with open(config_file, "w+", encoding="utf-8") as f:
                 f.write(json.dumps(dict()))
                 f.close()
             
