@@ -4,7 +4,6 @@
 @Date: 2022/4/21 12:57
 """
 import os
-import sys
 
 
 import requests
@@ -59,10 +58,3 @@ async def update(gid: str) -> float:
     else:
         os.system(f"python3 {dir_path}")
     return version_old
-
-
-async def reboot():
-    if platform.system() == "Windows":
-        os.execv(sys.executable, ['python'] + sys.argv)
-    else:
-        os.execv(sys.executable, ['python3'] + sys.argv)

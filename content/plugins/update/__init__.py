@@ -30,7 +30,7 @@ check_update = on_command("检查更新", aliases={"check_update"}, priority=8)
 @check_update.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     if await tools.check_update():
-        await check_update.finish("检测到有新版本,请及时更新")
+        await check_update.finish("检测到有新版本,请及时更新,更新前记得备份")
     else:
         await check_update.finish("已经是最新版本")
 
@@ -48,4 +48,4 @@ scheduler = require("nonebot_plugin_apscheduler").scheduler
 @scheduler.scheduled_job("cron", hour="8", minute="00", timezone=timezone)
 async def run():
     if await tools.check_update():
-        await check_update.finish("检测到有新版本,请及时更新")
+        await check_update.finish("检测到有新版本,请及时更新,更新前记得备份")
