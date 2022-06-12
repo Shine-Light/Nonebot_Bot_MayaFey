@@ -23,6 +23,8 @@ video_path = res_path / "video"
 img_path = res_path / "img"
 # 数据库总目录
 database_path = res_path / "database"
+# 运势资源目录
+fortune_resource_path = res_path / "fortune"
 # 版本文件
 version_path = Path() / "__version__"
 
@@ -77,6 +79,16 @@ sql_base = database_path / "bot.sql"
 unset_path = control_path / "unset.txt"
 # Epic限免资讯目录
 epicFree_path = config_path / "epic"
+# 早安配置目录
+morning_path = config_path / "morning"
+# 早晚安配置文件
+morning_config_path = config_path / "morning" / "config.json"
+# 早晚安数据文件
+morning_data_path = config_path / "morning" / "data.json"
+# 每日运势配置目录
+fortune_path = config_path / "fortune"
+# 每日运势配置文件
+fortune_config_path = fortune_path / "fortune_config.json"
 
 # 俄罗斯轮盘游戏配置
 russian_path = config_path / "russian"

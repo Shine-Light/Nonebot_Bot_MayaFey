@@ -15,11 +15,69 @@ from nonebot import on_command, get_driver
 from content.plugins import credit, plugin_control, ban_word, word_cloud, welcome, sign
 from .path import *
 from .other import mk
-from . import hook
+from . import hook, url
 
 db = database_mysql.connect
 cursor = database_mysql.cursor
 fts = "%Y-%m"
+driver = get_driver()
+
+
+async def Dir_init():
+    month = time.strftime(fts, time.localtime())
+
+    # 目录初始化开始
+    if not os.path.exists(config_path):
+        await mk("dir", config_path, mode=None)
+    if not os.path.exists(res_path):
+        await mk("dir", res_path, mode=None)
+    if not os.path.exists(font_path):
+        await mk("dir", font_path, mode=None)
+    if not os.path.exists(txt_path):
+        await mk("dir", txt_path, mode=None)
+    if not os.path.exists(audio_path):
+        await mk("dir", audio_path, mode=None)
+    if not os.path.exists(video_path):
+        await mk("dir", video_path, mode=None)
+    if not os.path.exists(img_path):
+        await mk("dir", img_path, mode=None)
+
+    if not os.path.exists(admin_path):
+        await mk("dir", admin_path, mode=None)
+    if not os.path.exists(words_contents_path):
+        await mk("dir", words_contents_path, mode=None)
+    if not os.path.exists(re_img_path):
+        await mk("dir", re_img_path, mode=None)
+    if not os.path.exists(welcome_path_base):
+        await mk("dir", welcome_path_base, mode=None)
+    if not os.path.exists(back_path_base):
+        await mk("dir", back_path_base, mode=None)
+    if not os.path.exists(total_base):
+        await mk("dir", total_base, mode=None)
+    if not os.path.exists(total_base / month):
+        await mk("dir", total_base / month, mode=None)
+    if not os.path.exists(question_base):
+        await mk("dir", question_base, mode=None)
+    if not os.path.exists(permission_base):
+        await mk("dir", permission_base, mode=None)
+    if not os.path.exists(permission_common_base):
+        await mk("dir", permission_common_base, mode=None)
+    if not os.path.exists(permission_special_base):
+        await mk("dir", permission_special_base, mode=None)
+    if not os.path.exists(update_cfg_path):
+        await mk("dir", update_cfg_path, mode=None)
+    if not os.path.exists(epicFree_path):
+        await mk("dir", epicFree_path, mode=None)
+    if not os.path.exists(morning_path):
+        await mk("dir", morning_path, mode=None)
+    if not os.path.exists(config_path / "fortune"):
+        await mk("dir", config_path / "fortune", mode=None)
+    # 目录初始化结束
+
+
+@driver.on_startup
+async def _():
+    await Dir_init()
 
 
 async def init(bot: Bot, event: GroupMessageEvent):
@@ -66,69 +124,34 @@ async def init(bot: Bot, event: GroupMessageEvent):
         cursor.execute(f"UPDATE users SET role='Van' WHERE uid='{superuser}'")
 
     # 用户表初始化结束
-    # 目录初始化开始
-    if not os.path.exists(config_path):
-        await mk("dir", config_path, mode=None)
-    if not os.path.exists(res_path):
-        await mk("dir", res_path, mode=None)
-    if not os.path.exists(font_path):
-        await mk("dir", font_path, mode=None)
-    if not os.path.exists(txt_path):
-        await mk("dir", txt_path, mode=None)
-    if not os.path.exists(audio_path):
-        await mk("dir", audio_path, mode=None)
-    if not os.path.exists(video_path):
-        await mk("dir", video_path, mode=None)
-    if not os.path.exists(img_path):
-        await mk("dir", img_path, mode=None)
-
-    if not os.path.exists(admin_path):
-        await mk("dir", admin_path, mode=None)
-    if not os.path.exists(words_contents_path):
-        await mk("dir", words_contents_path, mode=None)
-    if not os.path.exists(re_img_path):
-        await mk("dir", re_img_path, mode=None)
-    if not os.path.exists(welcome_path_base):
-        await mk("dir", welcome_path_base, mode=None)
-    if not os.path.exists(back_path_base):
-        await mk("dir", back_path_base, mode=None)
-    if not os.path.exists(total_base):
-        await mk("dir", total_base, mode=None)
-    if not os.path.exists(total_base / month):
-        await mk("dir", total_base / month, mode=None)
-    if not os.path.exists(question_base):
-        await mk("dir", question_base, mode=None)
-    if not os.path.exists(permission_base):
-        await mk("dir", permission_base, mode=None)
-    if not os.path.exists(permission_common_base):
-        await mk("dir", permission_common_base, mode=None)
-    if not os.path.exists(permission_special_base):
-        await mk("dir", permission_special_base, mode=None)
-    if not os.path.exists(update_cfg_path):
-        await mk("dir", update_cfg_path, mode=None)
-    if not os.path.exists(epicFree_path):
-        await mk("dir", epicFree_path, mode=None)
-    # 目录初始化结束
+    # 目录初始化
+    await Dir_init()
     # 文件初始化
     gid = str(event.group_id)
     if not os.path.exists(translate_path):
-        await mk("file", translate_path, 'w', url="http://cdn.shinelight.xyz/nonebot/translate.json", dec="翻译文件")
+        await mk("file", translate_path, 'w', url=url.translate_json, dec="翻译文件")
     if not os.path.exists(total_base / month / f"{gid}.json"):
         await mk("file", total_base / month / f"{gid}.json", 'w', content=json.dumps({}))
     if not os.path.exists(total_unable):
-        await mk("file", total_unable, 'w', url="http://cdn.shinelight.xyz/nonebot/unable.txt", dec="不计入统计插件")
+        await mk("file", total_unable, 'w', url=url.unable_txt, dec="不统计插件列表")
     if not os.path.exists(question_base / f"{gid}.json"):
         await mk("file", question_base / f"{gid}.json", 'w', content=json.dumps({}))
     if not os.path.exists(permission_special_base / f"{gid}.json"):
-        await mk("file", permission_special_base / f"{gid}.json", 'w', url="http://cdn.shinelight.xyz/nonebot/permission_special.json", dec="特殊权限插件列表")
+        await mk("file", permission_special_base / f"{gid}.json", 'w', url=url.permission_special_json, dec="特殊权限插件列表")
     if not os.path.exists(permission_common_base / f"{gid}.json"):
-        await mk("file", permission_common_base / f"{gid}.json", 'w', url="http://cdn.shinelight.xyz/nonebot/permission_common.json", dec="常规权限插件列表")
+        await mk("file", permission_common_base / f"{gid}.json", 'w', url=url.permission_common_json, dec="常规权限插件列表")
     if not os.path.exists(updating_path):
         await mk("file", updating_path, 'w', content=json.dumps({"updating": False}))
     if not os.path.exists(unset_path):
-        await mk("file", unset_path, 'w', url="http://cdn.shinelight.xyz/nonebot/unset.txt", dec="不可设置插件列表")
+        await mk("file", unset_path, 'w', url=url.unset_txt, dec="不可设置插件列表")
     if not os.path.exists(version_path):
-        await mk("file", version_path, 'w', content=float(requests.get("http://cdn.shinelight.xyz/nonebot/version.html").text))
+        await mk("file", version_path, 'w', content=float(requests.get(url.version_html).text))
+    if not os.path.exists(morning_config_path):
+        await mk("file", morning_config_path, 'w', url=url.morning_config, dec="早安插件配置文件")
+    if not os.path.exists(morning_data_path):
+        await mk("file", morning_data_path, 'w', content=json.dumps({}))
+    if not os.path.exists(fortune_config_path):
+        await mk("file", fortune_config_path, 'w', content=json.dumps({}))
 
 bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN |SUPERUSER)
 @bot_init.handle()

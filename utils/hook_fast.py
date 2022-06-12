@@ -63,7 +63,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
             elif time_delta > 10:
                 d.pop(uid)
             else:
-                d.update({uid: {"time": time_past, "count": count + 1}})
+                d.update({uid: {"time": time_now, "count": count + 1}})
 
         except KeyError:
             logger.error("恶意触发出错")

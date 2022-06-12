@@ -4,6 +4,9 @@
 @Date: 2022/3/27 18:32
 """
 import os
+import platform
+import sys
+
 import httpx
 
 from nonebot import logger
@@ -45,3 +48,10 @@ async def mk(type_, path_, *mode, **kwargs):
                 raise Exception("mode 不能为空")
     else:
         raise Exception("type_参数错误")
+
+
+async def reboot():
+    if platform.system() == "Windows":
+        os.execv(sys.executable, ['python'] + sys.argv)
+    else:
+        os.execv(sys.executable, ['python3'] + sys.argv)
