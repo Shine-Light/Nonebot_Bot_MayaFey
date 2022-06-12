@@ -25,7 +25,7 @@ class FortuneManager:
         self.data_file = data_file
         self.setting_file = setting_file
         if not data_file.exists():
-            with open(data_file, "w", encoding="utf-8") as f:
+            with open(data_file, "w+", encoding="utf-8") as f:
                 f.write(json.dumps(dict()))
                 f.close()
 
@@ -34,7 +34,7 @@ class FortuneManager:
                 self.user_data = json.load(f)
         
         if not setting_file.exists():
-            with open(setting_file, "w", encoding="utf-8") as f:
+            with open(setting_file, "w+", encoding="utf-8") as f:
                 f.write(json.dumps(dict()))
                 f.close()
         
