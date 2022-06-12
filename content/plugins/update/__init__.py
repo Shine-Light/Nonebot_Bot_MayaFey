@@ -7,6 +7,7 @@ from nonebot import on_command, require
 from nonebot.exception import FinishedException
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
 from . import tools
+from utils.other import reboot
 
 
 update = on_command("更新", aliases={"update"}, priority=2, block=True)
@@ -17,7 +18,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             await update.send("检测到新版本,正在自动更新,更新期间机器人无法使用,请勿关闭程序")
             await tools.update(str(event.group_id))
             await update.send("正在重启...")
-            await tools.reboot()
+            await reboot()
         else:
             await update.finish("已经是最新版本,无需更新")
     except FinishedException:

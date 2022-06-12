@@ -16,9 +16,9 @@ dir_path.pop(-1)
 dir = ""
 for a in dir_path:
     dir += a + "/"
-version = float(requests.get("http://cdn.shinelight.xyz/nonebot/version.html").text)
+version = requests.get("http://cdn.shinelight.xyz/nonebot/version.html").content.decode("utf-8")
 dir_source = dir
-dir_last = dir_source + str(version) + "/"
+dir_last = dir_source + version + "/"
 dir_base = dir.replace(f"content/plugins/update/version/", "")
 dir_plugin = dir_base + "content/plugins/"
 dir_plugin_private = dir_base + "content/plugin_private/"
@@ -32,7 +32,7 @@ try:
         if args:
             last = args[0]
         with open(dir_plugin + path + last, 'w+', encoding="utf-8") as file:
-            file.write(requests.get(url_base + path + last).text)
+            file.write(requests.get(url_base + path + last).content.decode("utf-8").replace("\r", ""))
 
 
     def download_to_plugin_private(path, *args):
@@ -40,7 +40,7 @@ try:
         if args:
             last = args[0]
         with open(dir_plugin_private + path + last, 'w+', encoding="utf-8") as file:
-            file.write(requests.get(url_base + path + last).text)
+            file.write(requests.get(url_base + path + last).content.decode("utf-8").replace("\r", ""))
 
 
     def download_to_utils(path, *args):
@@ -48,65 +48,87 @@ try:
         if args:
             last = args[0]
         with open(dir_utils + path + last, 'w+', encoding="utf-8") as file:
-            file.write(requests.get(url_base + "utils/" + path + last).text)
+            file.write(requests.get(url_base + "utils/" + path + last).content.decode("utf-8").replace("\r", ""))
 
 
     # 翻译文件更新
     with open(dir_base + "config/" + "translate.json", "w+", encoding="utf-8") as file:
-        file.write(requests.get("http://cdn.shinelight.xyz/nonebot/translate.json").text)
+        file.write(requests.get("http://cdn.shinelight.xyz/nonebot/translate.json").content.decode("utf-8").replace("\r", ""))
         file.close()
 
     # 权限文件更新
     for f in os.listdir(dir_base + "config/" + "permission/" + "common"):
         name = f.split(".")[0]
         with open(dir_base + "config/" + "permission/" + "common/" + f"{name}.json", "w+", encoding="utf-8") as file:
-            file.write(requests.get("http://cdn.shinelight.xyz/nonebot/permission_common.json").text)
+            file.write(requests.get("http://cdn.shinelight.xyz/nonebot/permission_common.json").content.decode("utf-8").replace("\r", ""))
             file.close()
 
     for f in os.listdir(dir_base + "config/" + "permission/" + "special"):
         name = f.split(".")[0]
         with open(dir_base + "config/" + "permission/" + "special/" + f"{name}.json", "w+", encoding="utf-8") as file:
-            file.write(requests.get("http://cdn.shinelight.xyz/nonebot/permission_special.json").text)
+            file.write(requests.get("http://cdn.shinelight.xyz/nonebot/permission_special.json").content.decode("utf-8").replace("\r", ""))
             file.close()
 
-    # 不统计列表更新
-    with open(dir_base + "config/" + "total/" + "unable.txt", "w+", encoding="utf-8") as file:
-        file.write(requests.get("http://cdn.shinelight.xyz/nonebot/unable.txt").text)
-        file.close()
-
-    # 不可关闭列表更新
-    with open(dir_base + "config/" + "control/" + "unset.txt", "w+", encoding="utf-8") as file:
-        file.write(requests.get("http://cdn.shinelight.xyz/nonebot/unset.txt").text)
-        file.close()
+    # # 不统计列表更新
+    # with open(dir_base + "config/" + "total/" + "unable.txt", "w+", encoding="utf-8") as file:
+    #     file.write(requests.get("http://cdn.shinelight.xyz/nonebot/unable.txt").content.decode("utf-8").replace("\r", ""))
+    #     file.close()
+    #
+    # # 不可关闭列表更新
+    # with open(dir_base + "config/" + "control/" + "unset.txt", "w+", encoding="utf-8") as file:
+    #     file.write(requests.get("http://cdn.shinelight.xyz/nonebot/unset.txt").content.decode("utf-8").replace("\r", ""))
+    #     file.close()
 
     # 更新部分
-    shutil.rmtree(dir_plugin + "notices")
-    os.mkdir(dir_plugin + "passive")
-    download_to_plugin("passive/" + "__init__")
-    download_to_plugin("passive/" + "rules")
+    download_to_plugin("admin/utils")
+    download_to_plugin("ban_word/tools")
+    download_to_plugin_private("execSql/__init__")
+    download_to_plugin("menu/__init__")
+    download_to_plugin("permission/__init__")
+    download_to_plugin("permission/tools")
+    download_to_plugin("repeater/__init__")
+    download_to_plugin("update/__init__")
+    download_to_plugin("update/tools")
+    download_to_plugin("withdraw/__init__")
+    download_to_plugin("word_cloud/__init__")
 
     download_to_utils("__init__")
+    download_to_utils("hook_fast")
+    download_to_utils("hook_permission")
     download_to_utils("hook_update")
+    download_to_utils("other")
+    download_to_utils("path")
+    download_to_utils("url")
 
-    download_to_plugin("withdraw/" + "__init__")
-    # 增加部分
-    os.mkdir(dir_plugin + "repeater")
-    download_to_plugin("repeater/" + "__init__")
+    # 新增部分
+    os.mkdir(dir_plugin + "fortune")
+    os.mkdir(dir_base + "config/fortune")
+    download_to_plugin("fortune/__init__")
+    download_to_plugin("fortune/config")
+    download_to_plugin("fortune/data_source")
+    download_to_plugin("fortune/utils")
 
-    os.mkdir(dir_plugin_private)
-    with open(dir_plugin_private + "__init__.py", "w+", encoding="utf-8") as file:
-        file.close()
-    os.mkdir(dir_plugin_private + "execSql")
-    download_to_plugin_private("execSql/" + "__init__")
+    os.mkdir(dir_plugin + "morning")
+    os.mkdir(dir_plugin + "morning/resource")
+    os.mkdir(dir_base + "config/morning")
+    download_to_plugin("morning/__init__")
+    download_to_plugin("morning/data_source")
+    download_to_plugin("morning/download")
+    download_to_plugin("morning/resource/config", ".json")
+    download_to_plugin("morning/resource/data", ".json")
 
-    os.mkdir(dir_plugin + "saymoney")
-    download_to_plugin("saymoney/" + "__init__")
-
+    os.mkdir(dir_plugin + "what2eat")
+    os.mkdir(dir_plugin + "what2eat/resource")
+    download_to_plugin("what2eat/__init__")
+    download_to_plugin("what2eat/config")
+    download_to_plugin("what2eat/download")
+    download_to_plugin("what2eat/utils")
+    download_to_plugin("what2eat/resource/data", ".json")
+    download_to_plugin("what2eat/resource/greating", ".json")
     # 结束
 
 # 异常处理
 except Exception as e:
-    js = {}
     with open(dir_base + "config/" + "update/" + "updating.json", "r+", encoding="utf-8") as f:
         js = json.loads(f.read())
         js["error"] = str(e)
