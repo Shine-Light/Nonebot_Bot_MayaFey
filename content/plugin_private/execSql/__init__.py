@@ -13,6 +13,7 @@ from nonebot import on_command
 from nonebot.adapters.onebot.v11 import PrivateMessageEvent, Message, Event, NoticeEvent
 from nonebot.params import CommandArg, Received
 from nonebot.exception import FinishedException
+from nonebot.log import logger
 
 config = nonebot.get_driver().config
 
@@ -54,5 +55,6 @@ async def _(event: Event = Received("sql")):
     except FinishedException:
         pass
     except Exception as e:
+        logger.error(f"Sql查询出错:{str(e)}")
         await execSql.finish(f"出现错误:f{e}")
 

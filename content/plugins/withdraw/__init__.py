@@ -79,6 +79,8 @@ async def _():
             msgs.pop(key)
     except ValueError:
         logger.warning("等待机器人连接")
+    except Exception as e:
+        logger.error(f"撤回出错:{str(e)}")
 
 # 测试用
 # test = on_command("测试", priority=8)

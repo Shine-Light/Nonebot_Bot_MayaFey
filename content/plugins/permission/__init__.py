@@ -68,6 +68,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     else:
         await per.send("权限不足,权限需在 管理员 及以上")
 
+
 my_per = on_command(cmd="我的权限", priority=8)
 @my_per.handle()
 async def _(bot: Bot, event: GroupMessageEvent):

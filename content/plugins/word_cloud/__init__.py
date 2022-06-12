@@ -194,5 +194,5 @@ async def run():
                     pass
                 except Exception as err:
                     await bot.send_group_msg(group_id=gid, message=f"出现错误{type(err)}:{err}")
-    
+
     file.close()

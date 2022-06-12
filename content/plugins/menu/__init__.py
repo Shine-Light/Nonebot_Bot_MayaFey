@@ -45,10 +45,11 @@ message_main: str = '''你好!我是真宵,让我来告诉如何使用机器人�
 关于本项目: /关于
 机器人版本:%s
 出现问题请找开发
-开发:Shine_Light(3120815902)'''
+开发:Shine_Light(3120815902)''' + add_target(60)
 
 message_fun: str = '''这是娱乐菜单
 每日一签: /签到 /打卡
+每日运势: /运势帮助
 一句一言: /一言
 随机图片: /图片[二次元图片(不填默认)|头像|Bing]
 全网热搜: /热搜(天行数据版本)
@@ -58,7 +59,8 @@ message_fun: str = '''这是娱乐菜单
 群词云: /群词云
 logo生成: /logo 帮助
 表情包生成: /表情包制作
-答案之书: 翻看答案{问题}''' + add_target(60)
+答案之书: 翻看答案{问题}
+小游戏: /游戏菜单''' + add_target(60)
 
 # message_fun: str = '''这是娱乐菜单
 # 每日一签: /签到 /打卡
@@ -80,7 +82,9 @@ message_life: str = '''这是生活菜单
 天气: {城市名}天气
 违禁词查询: /违禁词 列表
 Epic限免资讯: /Epic喜加一 
-        /喜加一订阅 (>=超级用户)''' + add_target(60)
+        /喜加一订阅 (>=超级用户)
+早晚安助手: /早晚安帮助
+今天吃什么: /吃什么帮助''' + add_target(60)
 
 message_admin: str = '''这是管理菜单
 管理命令中有空格的要加空格,@后自带空格所以可以不用再加
@@ -152,6 +156,44 @@ message_about: str = '''关于这个项目:
 开发者现在高中在读,学业限制,开发进度较缓
 项目地址(未开放):''' + add_target(60)
 
+message_morning: str = '''
+おはよう！
+早安: /早安|哦嗨哟|おはよう
+晚安: /晚安|哦呀斯密|おやすみ
+查看自己的作息: /我的作息
+查看群友的作息: /群友作息
+查看配置: /早晚安设置
+
+=== 设置(超级用户) ===
+开启某个配置: /早安开启 xx 
+关闭某个配置: /早安关闭 xx 
+设置数值: /早安设置 {配置} {数值}
+开启某个配置: /晚安开启 xx 
+关闭某个配置: /晚安关闭 xx 
+设置数值: /晚安设置 {配置} {数值} '''.strip() + add_target(60)
+
+
+message_fortune = '''
+今日运势菜单
+抽签: /今日运势|抽签|运势
+指定特殊角色签底: /指定{角色}签 (需要自己尝试哦~) 
+设置群抽签主题: /设置{主题}签 (超级用户)
+重置群抽签主题: /重置抽签 (超级用户)
+刷新抽签: /刷新抽签 (超级用户)
+查看可选的抽签主题: /主题列表 
+查看群抽签主题:/抽签设置 '''.strip() + add_target(60)
+
+message_what2eat = '''
+今天吃什么？
+吃什么:/{时间段}吃什么
+查看群特色菜单: /群特色菜单
+添加菜品至群特色菜单:/添加 {菜名} (超级用户)
+从菜单移除菜品:/移除 {菜名} (超级用户)
+添加菜品至基础菜单: /加菜 {菜名} (超级用户) 
+查看基础菜单: /基础菜菜单 (超级用户)
+开启/关闭按时饭点小助手: /开启|关闭小助手 (超级用户)
+添加问候: /添加问候 {问候语} (超级用户)
+删除问候: /删除问候 {问候语} (超级用户)'''.strip() + add_target(60)
 
 # 总菜单
 main = on_command(cmd="菜单", aliases={"help", "帮助"}, priority=9)
@@ -159,17 +201,17 @@ main = on_command(cmd="菜单", aliases={"help", "帮助"}, priority=9)
 async def _(bot: Bot, event: GroupMessageEvent):
     version = update.tools.get_version()
     await bot.send(event=event,
-                   message=message_main % version + add_target(60))
+                   message=message_main % version)
 
-# 总菜单戳一戳
+# 总菜单 戳一戳
 main_click = on_notice(rule=checker_click(), priority=9)
 @main_click.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     version = update.tools.get_version()
     await bot.send(event=event,
-                   message=message_main % version + add_target(60))
+                   message=message_main % version)
 
-# 总菜单 @
+# 总菜单 @机器人
 main_at = on_message(rule=to_me(), priority=9)
 @main_at.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
@@ -177,63 +219,71 @@ async def _(bot: Bot, event: GroupMessageEvent):
     if message_meta == '':
         version = update.tools.get_version()
         await bot.send(event=event,
-                       message=message_main % version + add_target(60))
+                       message=message_main % version)
 
 
 # 娱乐菜单
 fun = on_command(cmd="娱乐菜单", aliases={"fun"}, priority=9)
 @fun.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    await bot.send(event=event,
-                   message=message_fun)
+    await fun.send(message=message_fun)
 
 # 生活菜单
 life = on_command(cmd="生活菜单", aliases={"life"}, priority=9)
 @life.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    await bot.send(event=event,
-                   message=message_life)
+    await life.send(message=message_life)
 
 # 管理菜单
 admin = on_command(cmd="管理菜单", aliases={"admin"}, priority=9)
 @admin.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    await bot.send(event=event,
-                   message=message_admin)
+    await admin.send(message=message_admin)
 
 # 积分菜单
 credit = on_command(cmd="积分菜单", aliases={"credit_menu"}, priority=9)
 @credit.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    await bot.send(event=event,
-                   message=message_credit)
-
+    await credit.send(message=message_credit)
 
 # 权限菜单
 permission = on_command(cmd="权限菜单", aliases={"permission_menu"}, priority=9)
 @permission.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    await bot.send(event=event,
-                   message=message_permission)
-
+    await permission.send(message=message_permission)
 
 # 问答菜单
 question = on_command(cmd="问答菜单", aliases={"question_menu"}, priority=9)
 @question.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    await bot.send(event=event,
-                   message=message_question)
+    await question.send(message=message_question)
 
 # 游戏菜单
 games = on_command(cmd="游戏菜单", aliases={"games_menu"}, priority=9)
 @games.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    await bot.send(event=event,
-                   message=message_games)
+    await games.send(message=message_games)
 
 # 关于
-games = on_command(cmd="关于", aliases={"about"}, priority=9)
-@games.handle()
+about = on_command(cmd="关于", aliases={"about"}, priority=9)
+@about.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    await bot.send(event=event,
-                   message=message_about)
+    await about.send(message=message_about)
+
+# 早晚安
+morning = on_command(cmd="早晚安帮助", aliases={"morning_help"}, priority=9)
+@morning.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    await morning.send(message=message_morning)
+
+# 运势
+fortune = on_command(cmd="运势帮助", aliases={"抽签帮助", "fortune_help"}, priority=9)
+@fortune.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    await fortune.send(message=message_fortune)
+
+# 吃什么
+what2eat = on_command(cmd="吃什么帮助", aliases={"what2eat_help"}, priority=9)
+@what2eat.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    await what2eat.send(message=message_what2eat)

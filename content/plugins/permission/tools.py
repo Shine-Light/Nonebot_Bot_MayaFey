@@ -94,3 +94,9 @@ def special_per(role: str, name: str, gid: str) -> bool:
     special_path = permission_special_base / f"{gid}.json"
     specials: dict = json_tools.json_load(special_path)
     return permission_(role, specials[name])
+
+
+def get_special_per(gid: str, name: str) -> str:
+    special_path = permission_special_base / f"{gid}.json"
+    specials: dict = json_tools.json_load(special_path)
+    return specials[name]
