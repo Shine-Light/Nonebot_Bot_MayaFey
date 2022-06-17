@@ -1,4 +1,4 @@
-﻿import random
+import random
 from pathlib import Path
 
 from nonebot import on_endswith, on_startswith

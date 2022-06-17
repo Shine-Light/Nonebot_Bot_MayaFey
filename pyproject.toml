@@ -44,7 +44,7 @@ nb-cli = "^0.6.0"
 
 [tool.nonebot]
 plugins = ["nonebot_plugin_apscheduler"]
-plugin_dirs = ["content/plugins"]
+plugin_dirs = ["content/plugins", "content/plugin_private"]
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
