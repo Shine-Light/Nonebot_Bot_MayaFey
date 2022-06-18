@@ -32,24 +32,24 @@
 - [X] 随机二次元  
 - [X] 全网热搜榜  
 - [X] 随机笑话  
-- [X] 点歌台  
-- [X] 群词云  
-- [X] logo制作  
-- [X] 表情包制作  
-- [X] 答案之书  
+- [X] 点歌台 ([https://github.com/noneplugin/nonebot-plugin-simplemusic](https://github.com/noneplugin/nonebot-plugin-simplemusic))  
+- [X] 群词云  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
+- [X] logo制作  ([https://github.com/noneplugin/nonebot-plugin-logo](https://github.com/noneplugin/nonebot-plugin-logo))  
+- [X] 表情包制作  ([https://github.com/noneplugin/nonebot-plugin-memes](https://github.com/noneplugin/nonebot-plugin-memes))  
+- [X] 答案之书  ([https://github.com/A-kirami/nonebot-plugin-answersbook](https://github.com/A-kirami/nonebot-plugin-answersbook))
 - [X] 到账语音生成  
-- [X] 今日运势  
+- [X] 今日运势  ([https://github.com/MinatoAquaCrews/nonebot_plugin_fortune](https://github.com/MinatoAquaCrews/nonebot_plugin_fortune))修改而来  
 ### 生活功能
-- [X] 翻译  
-- [X] 疫情  
-- [X] 天气  
-- [X] Epic喜加一  
-- [X] 吃什么  
-- [X] 早晚安   
+- [X] 翻译  ([https://github.com/Lancercmd/nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator))  
+- [X] 疫情  ([https://github.com/Zeta-qixi/nonebot-plugin-covid19-news](https://github.com/Zeta-qixi/nonebot-plugin-covid19-news))修改而来  
+- [X] 天气  ([https://github.com/kexue-z/nonebot-plugin-heweather](https://github.com/kexue-z/nonebot-plugin-heweather))  
+- [X] Epic喜加一  ([https://github.com/monsterxcn/nonebot_plugin_epicfree修改而来](https://github.com/monsterxcn/nonebot_plugin_epicfree修改而来))  
+- [X] 吃什么  ([https://github.com/MinatoAquaCrews/nonebot_plugin_what2eat](https://github.com/MinatoAquaCrews/nonebot_plugin_what2eat))修改而来  
+- [X] 早晚安  ([https://github.com/MinatoAquaCrews/nonebot_plugin_morning](https://github.com/MinatoAquaCrews/nonebot_plugin_morning)修改而来)   
 ### 群聊管理功能
 - [X] 机器人更新  
-- [X] 群管  
-- [X] 违禁词  
+- [X] 群管  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin))修改而来
+- [X] 违禁词  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin))修改而来  
 - [X] 插件控制  
 - [X] 插件统计 
 - [X] 增删问答   
@@ -59,8 +59,8 @@
 - [X] 查看权限  
 - [X] 设置权限  
 ### 游戏功能
-- [X] 俄罗斯轮盘  
-- [X] 21点  
+- [X] 俄罗斯轮盘  ([https://github.com/HibiKier/nonebot_plugin_russian](https://github.com/HibiKier/nonebot_plugin_russian))修改而来  
+- [X] 21点  ([https://github.com/yaowan233/nonebot-plugin-blackjack](https://github.com/yaowan233/nonebot-plugin-blackjack)修改而来)  
 ### 被动功能
 - [X] 恶意触发命令检测  
 - [X] 违禁图片检测  
