@@ -82,6 +82,7 @@ try:
     # 更新部分
     download_to_plugin("admin/utils")
     download_to_plugin("ban_word/tools")
+    download_to_plugin("ban_pic/__init__")
     download_to_plugin_private("execSql/__init__")
     download_to_plugin("menu/__init__")
     download_to_plugin("permission/__init__")
