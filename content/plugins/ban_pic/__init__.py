@@ -6,11 +6,12 @@
 from nonebot import logger, on_message
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent
 from nonebot.adapters.onebot.v11.exception import ActionFailed
+from nonebot.exception import IgnoredException
+from nonebot.message import event_preprocessor
 from utils.admin_tools import banSb, image_moderation_async
 
 
-find_pic = on_message(priority=12, block=False)
-@find_pic.handle()
+@event_preprocessor
 async def check_pic(bot: Bot, event: GroupMessageEvent):
     uid = [event.get_user_id()]
     gid = event.group_id
@@ -52,11 +53,11 @@ async def check_pic(bot: Bot, event: GroupMessageEvent):
                             try:
                                 await baned
                             except ActionFailed:
-                                await find_pic.finish("检测到违规图片，但权限不足")
                                 logger.info('检测到违规图片，但权限不足，禁言失败')
                             else:
                                 await bot.send(event=event, message=f"发送了违规图片,类型{label},现对你进行处罚,有异议请联系管理员", at_sender=True)
                                 logger.info(f"检测到违规图片，禁言操作成功，用户: {uid[0]}")
+                                raise IgnoredException("违规图片")
                     logger.info('检测到违规内容')
                 elif result["status"] == 'error':
                     logger.info(f"图片检测失败{result['message']}")
