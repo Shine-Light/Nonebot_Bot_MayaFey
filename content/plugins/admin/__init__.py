@@ -6,7 +6,7 @@
 import nonebot
 from nonebot import on_command, logger, get_driver
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
-from nonebot.adapters.onebot.v11.exception import ActionFailed
+from nonebot.exception import ActionFailed
 from nonebot.permission import SUPERUSER
 
 from utils.admin_tools import banSb, At
