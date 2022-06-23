@@ -23,9 +23,10 @@ except Exception:
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 timezone = "Asia/Shanghai"
-@scheduler.scheduled_job("cron", hour=6, timezone=timezone)
+@scheduler.scheduled_job("cron", hour=4, timezone=timezone)
 async def _():
-    cursor.execute(f"USE {database}")
+    cursor.execute(f"USE {database};")
+    cursor.execute("SELECT alive FROM users;")
 
 
 def execute_sql(path):
