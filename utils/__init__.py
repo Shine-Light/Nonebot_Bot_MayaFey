@@ -152,6 +152,8 @@ async def init(bot: Bot, event: GroupMessageEvent):
         await mk("file", morning_data_path, 'w', content=json.dumps({}))
     if not os.path.exists(fortune_config_path):
         await mk("file", fortune_config_path, 'w', content=json.dumps({}))
+    if not os.path.exists(epicFree_path / "status.json"):
+        await mk("file", epicFree_path / "status.json", 'w', content=json.dumps({"群聊": [], "私聊": []}))
 
 bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN |SUPERUSER)
 @bot_init.handle()
