@@ -10,7 +10,6 @@ from nonebot.adapters.onebot.v11 import (Bot, Event, GroupMessageEvent,
 from .data_source import getEpicFree, subscribeHelper
 from ..permission.tools import permission_
 from utils import users
-from .. import plugin_control
 
 try:
   epicScheduler = get_driver().config.epic_scheduler
@@ -48,7 +47,6 @@ async def weeklyEpic():
   imfree = await getEpicFree()
   try:
     for group in whoSubscribe["群聊"]:
-      if await plugin_control.get_state("epicfree", str(group)):
         await bot.send_group_msg(group_id=group, message=Message(imfree))
     for private in whoSubscribe["私聊"]:
       await bot.send_private_msg(user_id=private, message=Message(imfree))
