@@ -9,13 +9,16 @@ from nonebot.exception import FinishedException
 from nonebot.log import logger
 
 
+repeater_last = ""
 msg_last = {}
+
 
 repeater = on_message(priority=12)
 @repeater.handle()
 async def _(event: GroupMessageEvent):
     if isinstance(event, GroupMessageEvent):
         try:
+            global repeater_last
             pres: set = get_driver().config.command_start
             # 只重复文字信息
             msg = event.get_plaintext()
@@ -27,6 +30,10 @@ async def _(event: GroupMessageEvent):
                 if not str(event.get_message()) == " ":
                     return
 
+            # 只重复一个 +1 事件
+            if repeater_last == msg:
+                return
+
             # 不重复命令
             for pre in pres:
                 if pre in msg:
@@ -35,6 +42,7 @@ async def _(event: GroupMessageEvent):
             gid = event.group_id
             if gid in msg_last and msg == msg_last[gid]:
                 msg_last.pop(gid)
+                repeater_last = msg
                 await repeater.finish(Message(msg))
             else:
                 msg_last[gid] = msg
