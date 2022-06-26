@@ -8,9 +8,8 @@ import time
 import nonebot
 
 from typing import Any, Dict
-from aiocqhttp import MessageSegment
 from nonebot import require, on_command, logger
-from nonebot.adapters.onebot.v11 import Bot
+from nonebot.adapters.onebot.v11 import Bot, MessageSegment, Message
 
 ft = "%Y%m%d%H%M%S"
 msgs: dict = {}
@@ -22,28 +21,42 @@ def add_target(time_s: int) -> str:
 
 
 # 保存需要撤回的信息
-async def save_msg_id(bot: Bot, e: Exception, api: str, data: Dict[str, Any], result: Any) -> None:
+async def save_msg_id(bot: Bot, e: Exception, api: str,  data: Dict[str, Any], result: Any) -> None:
     # 处理群聊消息
-    if api == "send_group_msg":
-        pass
-    elif api == "send_msg":
-        if data["message_type"] == "group":
+    if api == "send_msg" or api == "send_group_msg":
+        message_type = data["message_type"]
+        if message_type == "group":
             pass
+        else:
+            return
     else:
         return
 
-    message_: MessageSegment = data["message"]
-    try:
-        message = message_[0]
-    except:
+    message_ = data["message"]
+    message = message_
+    # 组合信息判断(图片+文字)
+    if isinstance(message, Message) and len(message) > 1:
+        for m in message:
+            # 识别是否为需要撤回的信息: 该消息将于 {time} s后撤回
+            try:
+                if "s后撤回" not in m.data["text"]:
+                    continue
+            except (KeyError, AttributeError):
+                continue
+            message = m
+            break
+    elif isinstance(message, MessageSegment) or len(message) == 1:
+        # 识别是否为需要撤回的信息: 该消息将于 {time} s后撤回
+        try:
+            if isinstance(message, Message):
+                message = message[0]
+            if "s后撤回" not in message.data["text"]:
+                return
+        except (KeyError, AttributeError):
+            return
+    else:
         return
 
-    # 识别是否为需要撤回的信息: 该消息将于 {time} s后撤回
-    try:
-        if "s后撤回" not in message.data["text"]:
-            return
-    except (KeyError, AttributeError):
-        return
 
     # 时间处理
     mid: int = result["message_id"]
@@ -86,4 +99,4 @@ async def _():
 # test = on_command("测试", priority=8)
 # @test.handle()
 # async def _(bot: Bot, event: Event):
-#     await bot.send(event=event, message="测试信息,该消息将于 10 s后撤回" + add_target(10))
+#     await bot.send(event=event, message=add_target(10))
