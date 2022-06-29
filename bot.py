@@ -3,15 +3,16 @@
 
 import nonebot
 from nonebot.adapters.onebot.v11 import Adapter as ONEBOT_V11Adapter
+from nonebot.log import logger, default_format
 
 # Custom your logger
 # 
 # from nonebot.log import logger, default_format
-# logger.add("error.log",
-#            rotation="00:00",
-#            diagnose=False,
-#            level="ERROR",
-#            format=default_format)
+logger.add("./logs/error.log",
+           rotation="1 week",
+           diagnose=False,
+           level="ERROR",
+           format=default_format)
 
 # You can pass some keyword args config to init function
 nonebot.init()
@@ -39,5 +40,4 @@ nonebot.load_from_toml("pyproject.toml")
 
 
 if __name__ == "__main__":
-    nonebot.logger.warning("Always use `nb run` to start the bot instead of manually running!")
     nonebot.run(app="__mp_main__:app")
