@@ -5,6 +5,7 @@
 """
 
 from nonebot import get_driver, require
+from nonebot.log import logger
 import pymysql
 
 
@@ -23,10 +24,11 @@ except Exception:
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 timezone = "Asia/Shanghai"
-@scheduler.scheduled_job("cron", hour=4, timezone=timezone)
+@scheduler.scheduled_job("interval", hours=4, timezone=timezone)
 async def _():
     cursor.execute(f"USE {database};")
     cursor.execute("SELECT alive FROM users;")
+    logger.info("执行防数据库断连")
 
 
 def execute_sql(path):
