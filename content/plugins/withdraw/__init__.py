@@ -23,20 +23,23 @@ def add_target(time_s: int) -> str:
 # 保存需要撤回的信息
 async def save_msg_id(bot: Bot, e: Exception, api: str,  data: Dict[str, Any], result: Any) -> None:
     # 处理群聊消息
-    if api == "send_msg" or api == "send_group_msg":
-        message_type = data["message_type"]
-        if message_type == "group":
-            pass
+    try:
+        if api == "send_msg" or api == "send_group_msg":
+            message_type = data["message_type"]
+            if message_type == "group":
+                pass
+            else:
+                return
         else:
             return
-    else:
+    except KeyError:
         return
 
     message_ = data["message"]
-    message = message_
+    message = ""
     # 组合信息判断(图片+文字)
-    if isinstance(message, Message) and len(message) > 1:
-        for m in message:
+    if type(message_) == Message and len(message_) > 1:
+        for m in message_:
             # 识别是否为需要撤回的信息: 该消息将于 {time} s后撤回
             try:
                 if "s后撤回" not in m.data["text"]:
@@ -45,18 +48,18 @@ async def save_msg_id(bot: Bot, e: Exception, api: str,  data: Dict[str, Any], r
                 continue
             message = m
             break
-    elif isinstance(message, MessageSegment) or len(message) == 1:
+    elif type(message_) == MessageSegment or len(message_) == 1:
         # 识别是否为需要撤回的信息: 该消息将于 {time} s后撤回
         try:
-            if isinstance(message, Message):
-                message = message[0]
+            if type(message_) == Message:
+                message = message_[0]
             if "s后撤回" not in message.data["text"]:
                 return
         except (KeyError, AttributeError):
             return
-    else:
-        return
 
+    if not message:
+        return
 
     # 时间处理
     mid: int = result["message_id"]
