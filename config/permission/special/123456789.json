@@ -10,6 +10,7 @@
     "word_start": "superuser",
     "word_stop": "superuser",
     "cloud": "member",
+    "update_mask": "superuser", 
     "city_news": "member",
     "per": "superuser",
     "my_per": "member",
@@ -33,5 +34,8 @@
     "show_basic": "superuser",
     "switch_greating": "superuser",
     "add_greating": "superuser",
-    "remove_greating": "superuser"
+    "remove_greating": "superuser", 
+    "demerit": "superuser", 
+    "admin_get_demerit": "superuser", 
+    "set_demerit_config": "superuser"
 }

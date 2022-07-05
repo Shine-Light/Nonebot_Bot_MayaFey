@@ -1,6 +1,8 @@
 {
     "admin": "superuser",
+    "answersbooks": "member", 
     "credit": "member",
+    "covid": "member", 
     "heweather": "member",
     "ian": "member",
     "menu": "member",
@@ -12,6 +14,7 @@
     "total": "member",
     "translate": "member",
     "website": "member",
+    "word_cloud": "member", 
     "xh": "member",
     "russian": "member",
     "logo": "member",
@@ -21,5 +24,8 @@
     "saymoney": "member",
     "morning": "member",
     "fortune": "member",
-    "what2eat": "member"
+    "what2eat": "member", 
+    "demerit": "member", 
+    "speakrank": "member", 
+    "flash": "baned"
 }
