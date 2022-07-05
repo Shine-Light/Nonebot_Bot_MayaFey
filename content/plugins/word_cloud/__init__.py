@@ -3,17 +3,22 @@
 @Version: 1.0
 @Date: 2022/3/27 19:55
 """
+import datetime
+import random
+
+import httpx
+from imageio import imread
 from nonebot import on_command, logger, on_message, require, get_bot
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
 from nonebot.internal.adapter import Message
 from nonebot.exception import ActionFailed
-from utils.admin_tools import replace_tmr, participle_simple_handle
+from utils.admin_tools import replace_tmr, participle_simple_handle, upload, load
 import os
 import time
 from utils.path import *
 from . import tools
 from .. import permission, plugin_control
-from utils import users
+from utils import users, requests_tools
 
 
 words = limit_word_path
@@ -39,7 +44,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 logger.info(f"{gid}已存在")
                 await word_start.finish(f"{gid}已存在")
     else:
-        await word_start.send("无权限")
+        await word_start.finish(f"无权限,权限需在 {permission.tools.get_special_per(str(event.group_id), 'word_start')} 及以上")
 
 
 word_stop = on_command("停止记录本群", block=True, priority=4)
@@ -54,12 +59,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 c.write(txt.replace(gid, ""))
                 c.close()
                 logger.info(f"停止记录{gid}")
-                await word_start.finish("成功，曾经的记录不会被删除")
+                await word_stop.finish("成功，曾经的记录不会被删除")
         else:
             logger.info(f"停用失败：{gid}不存在")
-            await word_start.finish(f"停用失败：{gid}不存在")
+            await word_stop.finish(f"停用失败：{gid}不存在")
     else:
-        await word_stop.send("无权限")
+        await update_mask.finish(f"无权限,权限需在 {permission.tools.get_special_per(str(event.group_id), 'word_stop')} 及以上")
 
 word = on_message(priority=12)
 @word.handle()
@@ -70,13 +75,54 @@ async def _(bot: Bot, event: GroupMessageEvent):
     :param event:
     :return:
     """
+    gid = str(event.group_id)
+    uid = str(event.user_id)
+    msg = str(event.get_message()).replace(" ", "")
+    path_temp = words_contents_path / f"{str(gid)}.txt"
+    message_path_group = group_message_data_path / f"{gid}"
+    # datetime获取今日日期
+    today = datetime.datetime.now().strftime("%Y-%m-%d")
+    this_time = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
     date: str = time.strftime(fts, time.localtime())
+    # 排名用记录
+    if not os.path.exists(message_path_group):
+        os.mkdir(message_path_group)
+    if not os.path.exists(message_path_group / "sum.json"):  # 总记录 {日期：{时间：[uid, 消息]}}
+        await upload(message_path_group / "sum.json", {today: {this_time: [uid, event.raw_message]}})
+    else:
+        dic_ = await load(message_path_group / "sum.json")
+        if today not in dic_:
+            dic_[today] = {this_time: [uid, event.raw_message]}
+        else:
+            dic_[today][this_time] = [uid, event.raw_message]
+        await upload(message_path_group / "sum.json", dic_)
+    if not os.path.exists(message_path_group / f"{today}.json"):  # 日消息条数记录 {uid：消息数}
+        await upload(message_path_group / f"{today}.json", {uid: 1})
+    else:
+        dic_ = await load(message_path_group / f"{today}.json")
+        if uid not in dic_:
+            dic_[uid] = 1
+        else:
+            dic_[uid] += 1
+        await upload(message_path_group / f"{today}.json", dic_)
+    if not os.path.exists(message_path_group / "history.json"):  # 历史发言条数记录 {uid：消息数}
+        await upload(message_path_group / "history.json", {uid: 1})
+    else:
+        dic_ = await load(message_path_group / "history.json")
+        if uid not in dic_:
+            dic_[uid] = 1
+        else:
+            dic_[uid] += 1
+        await upload(message_path_group / "history.json", dic_)
+
     if not os.path.exists(re_img_path / date):
         os.mkdir(re_img_path / date)
     if not os.path.exists(words_contents_path / date):
         os.mkdir(words_contents_path / date)
+    # QQ管家不记录
     if str(event.user_id) == "2854196310":
         await word.finish()
+    # 违禁词不记录
     for wd in open(words, "r", encoding="utf-8"):
         if wd in event.get_message():
             await word.finish()
@@ -100,7 +146,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
     if permission.tools.special_per(role, "cloud", gid):
-        from wordcloud import WordCloud
+        from wordcloud import WordCloud, ImageColorGenerator
         import jieba
         txt = open(word_path, "r", encoding="utf-8").read().split("\n")
         if gid not in txt:
@@ -112,6 +158,32 @@ async def _(bot: Bot, event: GroupMessageEvent):
             os.mkdir(words_contents_path / date)
         localTime = time.strftime(ft, time.localtime())
 
+        background_img = os.listdir(wordcloud_bg_path)
+        if background_img:
+            wordcloud_bg = random.choice(os.listdir(wordcloud_bg_path))
+            try:
+                async with httpx.AsyncClient() as client:
+                    num = int((await client.get(
+                        "https://fastly.jsdelivr.net/gh/yzyyz1387/blogimages/nonebot/wordcloud/num.txt")).read())
+                    if num > len(background_img):
+                        await cloud.send(f"开发者新提供了{num - len(background_img)}张图片，您可以发送【更新mask】下载新的图片")
+            except:
+                pass
+        else:
+            try:
+                async with httpx.AsyncClient() as client:
+                    range_ = int((await client.get("https://fastly.jsdelivr.net/gh/yzyyz1387/blogimages/nonebot/wordcloud/num.txt")).read())
+                    logger.info(f"获取到{range_}张mask图片")
+                    for i in range(range_):
+                        wordcloud_bg = await client.get(requests_tools.match_30X(f"https://fastly.jsdelivr.net/gh/yzyyz1387/blogimages/nonebot/wordcloud/bg{i}.png"))
+                        logger.info(f"正下载{i}张mask图片")
+                        with open(wordcloud_bg_path / f"{i}.png", "wb") as f:
+                            f.write(wordcloud_bg.content)
+            except Exception as e:
+                logger.error("下载词云mask图片出现错误")
+                return
+            wordcloud_bg = random.choice(os.listdir(wordcloud_bg_path))
+        background_image = imread(wordcloud_bg_path / wordcloud_bg)
         ttf_name_ = Path() / "resource" / "font" / "msyhblod.ttf"
         path_temp = words_contents_path / date / f"{str(gid)}.txt"
         dir_list = os.listdir(words_contents_path / date)
@@ -123,15 +195,17 @@ async def _(bot: Bot, event: GroupMessageEvent):
             try:
                 # 关键词不为空
                 if string != " ":
-                    wc = WordCloud(font_path=str(ttf_name_.resolve()), width=800, height=600, mode='RGBA',
-                                   background_color="#ffffff", stopwords=stop_).generate(string)
-                    img = Path(re_img_path / date / f"{gid}.png")
+                    wc = WordCloud(font_path=str(ttf_name_.resolve()),
+                                   width=1920, height=1080, mode='RGBA',
+                                   background_color="#ffffff",
+                                   mask=background_image,
+                                   stopwords=stop_).generate(string)
+                    img = Path(re_img_path / f"wordcloud_{gid}.png")
+                    img_colors = ImageColorGenerator(background_image, default_color=(255, 255, 255))
+                    wc.recolor(color_func=img_colors)
                     wc.to_file(img)
-                    dir_path = os.path.dirname(os.path.abspath(__file__))
-                    dir_path = dir_path.replace(f"content{os.sep}plugins{os.sep}word_cloud", "")
-                    img = f"file:///{dir_path}{tools.format_path(img)}"
-                    message = Message([MessageSegment.text(f"当前时间:{localTime},今日群词云:"), MessageSegment.image(img)])
-                    await bot.send(message=message, event=event)
+                    await cloud.send(Message([MessageSegment.text(f"当前时间:{localTime}")
+                                             , MessageSegment.image(img)]))
             except ActionFailed:
                 await cloud.send(message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
             except ValueError:
@@ -146,9 +220,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 timezone = "Asia/Shanghai"
 scheduler = require("nonebot_plugin_apscheduler").scheduler
-@scheduler.scheduled_job("cron", hour="19", minute="00", timezone=timezone)
+@scheduler.scheduled_job("cron", hour="13", minute="24",second="50", timezone=timezone)
 async def run():
-    from wordcloud import WordCloud
+    from wordcloud import WordCloud, ImageColorGenerator
     import jieba
     date: str = time.strftime(fts, time.localtime())
     if not os.path.exists(re_img_path / date):
@@ -156,7 +230,6 @@ async def run():
     if not os.path.exists(words_contents_path / date):
         os.mkdir(words_contents_path / date)
 
-    localTime = time.strftime(ft, time.localtime())
     file = open(word_path)
     bot = get_bot()
 
@@ -165,34 +238,93 @@ async def run():
         if not gid:
             continue
         if await plugin_control.get_state("word_cloud", gid):
-            path_temp = words_contents_path / date / f"{str(gid)}.txt"
-            dir_list = os.listdir(words_contents_path / date)
-            if gid + ".txt" in dir_list:
-                text = open(path_temp).read()
-                txt = jieba.lcut(text)
-                stop_ = await participle_simple_handle()
-                string = " ".join(txt)
+            localTime = time.strftime(ft, time.localtime())
+
+            background_img = os.listdir(wordcloud_bg_path)
+            if background_img:
+                wordcloud_bg = random.choice(os.listdir(wordcloud_bg_path))
                 try:
-                    # 关键词不为空
-                    if string != " ":
-                        wc = WordCloud(font_path=str(ttf_name.resolve()), width=800, height=600, mode='RGBA',
-                                       background_color="#ffffff", stopwords=stop_).generate(string)
-                        img = re_img_path / date / f"{gid}.png"
-                        wc.to_file(img)
-                        # await cloud.send(MessageSegment.image(img))
-                        dir_path = os.path.dirname(os.path.abspath(__file__))
-                        dir_path = dir_path.replace(f"content{os.sep}plugins{os.sep}word_cloud", "")
-                        dir_path = dir_path.replace("\\", "/")
-                        img = f"file:///{dir_path}{tools.format_path(img)}"
-                        await bot.send_group_msg(
-                            group_id=gid,
-                            message=Message([MessageSegment.text(f"当前时间:{localTime},今日群词云:"), MessageSegment.image(img)])
-                        )
-                except ActionFailed:
-                    await bot.send_group_msg(group_id=gid, message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
-                except ValueError:
+                    async with httpx.AsyncClient() as client:
+                        num = int((await client.get(
+                            "https://fastly.jsdelivr.net/gh/yzyyz1387/blogimages/nonebot/wordcloud/num.txt")).read())
+                        if num > len(background_img):
+                            await cloud.send(f"开发者新提供了{num - len(background_img)}张图片，您可以发送【更新mask】下载新的图片")
+                except:
                     pass
-                except Exception as err:
-                    await bot.send_group_msg(group_id=gid, message=f"出现错误{type(err)}:{err}")
+            else:
+                try:
+                    async with httpx.AsyncClient() as client:
+                        range_ = int((await client.get(
+                            "https://fastly.jsdelivr.net/gh/yzyyz1387/blogimages/nonebot/wordcloud/num.txt")).read())
+                        logger.info(f"获取到{range_}张mask图片")
+                        for i in range(range_):
+                            wordcloud_bg = await client.get(requests_tools.match_30X(
+                                f"https://fastly.jsdelivr.net/gh/yzyyz1387/blogimages/nonebot/wordcloud/bg{i}.png"))
+                            logger.info(f"正下载{i}张mask图片")
+                            with open(wordcloud_bg_path / f"{i}.png", "wb") as f:
+                                f.write(wordcloud_bg.content)
+                except Exception as e:
+                    logger.error("下载词云mask图片出现错误")
+                    return
+                wordcloud_bg = random.choice(os.listdir(wordcloud_bg_path))
+            background_image = imread(wordcloud_bg_path / wordcloud_bg)
+            ttf_name_ = Path() / "resource" / "font" / "msyhblod.ttf"
+            path_temp = words_contents_path / date / f"{str(gid)}.txt"
+            text = open(path_temp).read()
+            txt = jieba.lcut(text)
+            stop_ = await participle_simple_handle()
+            string = " ".join(txt)
+            try:
+                # 关键词不为空
+                if string != " ":
+                    wc = WordCloud(font_path=str(ttf_name_.resolve()),
+                                   width=1920, height=1080, mode='RGBA',
+                                   background_color="#ffffff",
+                                   mask=background_image,
+                                   stopwords=stop_).generate(string)
+                    img = Path(re_img_path / f"wordcloud_{gid}.png")
+                    img_colors = ImageColorGenerator(background_image, default_color=(255, 255, 255))
+                    wc.recolor(color_func=img_colors)
+                    wc.to_file(img)
+                    await bot.send_group_msg(group_id=gid, message=Message([MessageSegment.text(f"当前时间:{localTime}")
+                                             , MessageSegment.image(img)]))
+            except ActionFailed:
+                await bot.send_group_msg(group_id=gid, message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
+            except ValueError:
+                await bot.send_group_msg(group_id=gid, message="无聊天记录,无法生成词云")
+            except Exception as err:
+                await bot.send_group_msg(group_id=gid, message=f"出现错误{type(err)}:{err}")
 
     file.close()
+
+
+update_mask = on_command("更新mask", aliases={'下载mask'}, block=True, priority=7)
+@update_mask.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    """
+    更新mask
+    """
+    gid = str(event.group_id)
+    role = users.get_role(gid, str(event.user_id))
+    if permission.tools.special_per(role, "update_mask", gid):
+        already_have = len(os.listdir(wordcloud_bg_path))
+        try:
+            async with httpx.AsyncClient() as client:
+                num_in_cloud = int((await client.get(
+                    "https://fastly.jsdelivr.net/gh/yzyyz1387/blogimages/nonebot/wordcloud/num.txt")).read())
+                if num_in_cloud > already_have:
+                    await update_mask.send("正zhai更新中...")
+                    for i in range(already_have, num_in_cloud):
+                        img_content = (await client.get(
+                            f"https://fastly.jsdelivr.net/gh/yzyyz1387/blogimages/nonebot/wordcloud/bg{i}.png")).content
+                        with open(wordcloud_bg_path / f"{i}.png", "wb") as f:
+                            f.write(img_content)
+                    await update_mask.send("更新完成（好耶）")
+                elif num_in_cloud == already_have:
+                    await update_mask.send("蚌！已经是最新了耶")
+        except Exception as e:
+            logger.info(e)
+            await update_mask.send(f"QAQ,更新mask失败:\n{e}")
+            return
+    else:
+        await update_mask.finish(f"无权限,权限需在 {permission.tools.get_special_per(str(event.group_id), 'update_mask')} 及以上")

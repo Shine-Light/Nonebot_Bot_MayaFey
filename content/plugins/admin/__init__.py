@@ -9,10 +9,12 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.exception import ActionFailed
 from nonebot.permission import SUPERUSER
 
-from utils.admin_tools import banSb, At
+from utils.admin_tools import banSb, At, MsgText
+from .config import plugin_config
 
 su = nonebot.get_driver().config.superusers
 config = get_driver().config
+cb_notice = plugin_config.callback_notice
 
 
 ban = on_command('禁', priority=4, block=True)
@@ -21,32 +23,29 @@ async def _(bot: Bot, event: GroupMessageEvent):
     """
     /禁 @user 禁言
     """
-    msg = str(event.get_message())
+    try:
+        msg = MsgText(event.json()).replace(" ", "").replace("禁", "")
+        time = int("".join(map(str, list(map(lambda x: int(x), filter(lambda x: x.isdigit(), msg))))))
+        # 提取消息中所有数字作为禁言时间
+    except ValueError:
+        time = None
     sb = At(event.json())
     gid = event.group_id
     if sb:
-        if len(msg.split()) - 2 >= len(sb):
-            time = int(msg.split()[-1:][0])
-            baning = banSb(gid, ban_list=sb, time=time)
+        baning = banSb(gid, ban_list=sb, time=time)
+        try:
             async for baned in baning:
                 if baned:
-                    try:
-                        await baned
-                    except ActionFailed:
-                        await ban.finish("权限不足")
-                    else:
-                        logger.info("禁言操作成功")
+                    await baned
+        except ActionFailed:
+            await ban.finish("权限不足")
         else:
-            baning = banSb(gid, ban_list=sb)
-            async for baned in baning:
-                if baned:
-                    try:
-                        await baned
-                    except ActionFailed:
-                        await ban.finish("权限不足")
-                    else:
-                        logger.info("禁言操作成功")
-                await ban.send(f"该用户已被禁言随机时长")
+            logger.info("禁言操作成功")
+            if cb_notice:  # 迭代结束再通知
+                if time is not None:
+                    await ban.finish("禁言操作成功")
+                else:
+                    await ban.finish("该用户已被禁言随机时长")
     else:
         pass
 
@@ -54,31 +53,28 @@ async def _(bot: Bot, event: GroupMessageEvent):
 unban = on_command("解", priority=4, block=True)
 @unban.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    """
-    /解 @user 解禁
-    """
-    msg = str(event.get_message())
     sb = At(event.json())
     gid = event.group_id
     if sb:
-        # if len(msg.split()) == len(sb):
         baning = banSb(gid, ban_list=sb, time=0)
-        async for baned in baning:
-            if baned:
-                try:
+        try:
+            async for baned in baning:
+                if baned:
                     await baned
-                except ActionFailed:
-                    await ban.finish("权限不足")
-                else:
-                    logger.info("解禁操作成功")
+        except ActionFailed:
+            await unban.finish("权限不足")
+        else:
+            logger.info("解禁操作成功")
+            if cb_notice:  # 迭代结束再通知
+                await unban.finish("解禁操作成功")
 
 
 kick = on_command('踢', priority=3, block=True)
 @kick.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     """
-    /踢 @user 踢出某人
-    """
+        /踢 @user 踢出某人
+        """
     msg = str(event.get_message())
     sb = At(event.json())
     gid = event.group_id
@@ -95,6 +91,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 await kick.finish("权限不足")
             else:
                 logger.info(f"踢人操作成功")
+                if cb_notice:
+                    await kick.finish(f"踢人操作成功")
         else:
             await kick.finish("不能含有@全体成员")
 
@@ -121,6 +119,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 await kick_.finish("权限不足")
             else:
                 logger.info(f"踢人并拉黑操作成功")
+                if cb_notice:
+                    await kick_.finish(f"踢人并拉黑操作成功")
         else:
             await kick_.finish("不能含有@全体成员")
 
@@ -161,7 +161,7 @@ unset_g_admin = on_command("管理员-", priority=3, block=True, permission=SUPE
 @unset_g_admin.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     """
-    管理员+ @user 添加群管理员
+    管理员- @user 取消群管理员
     """
     msg = str(event.get_message())
     logger.info(msg)

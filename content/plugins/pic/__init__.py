@@ -25,7 +25,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             pass
 
     try:
-        await pic.send(message=MessageSegment.image(file=requests_tools.match_302(url + "type=" + type_pic)))
+        await pic.send(message=MessageSegment.image(file=requests_tools.match_30X(url + "type=" + type_pic)))
     except Exception as e:
         if str(e) == "<NetWorkError message=WebSocket API call timeout>":
             await pic.send("请求超时,请等待请求完成")

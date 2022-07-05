@@ -259,7 +259,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
     else:
         await baned.send("无权限")
 
-
+a = ""
 # 违禁词检测
 ban = on_message(priority=12)
 @ban.handle()

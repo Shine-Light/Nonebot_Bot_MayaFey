@@ -5,6 +5,7 @@
 """
 import os
 
+
 from utils.path import *
 from utils.other import mk
 
@@ -18,3 +19,6 @@ async def init():
 def format_path(path: Path) -> str:
     path = str(path).replace("\\", "/")
     return path
+
+
+

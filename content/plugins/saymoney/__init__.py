@@ -6,7 +6,7 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, Message, MessageSegment
 from nonebot.params import CommandArg
-from utils.requests_tools import match_302
+from utils.requests_tools import match_30X
 from nonebot.exception import FinishedException, ActionFailed
 from nonebot.log import logger
 

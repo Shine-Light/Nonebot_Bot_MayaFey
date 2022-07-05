@@ -58,6 +58,9 @@ message_fun: str = '''这是娱乐菜单
 logo生成: /logo 帮助
 表情包生成: /表情包制作
 答案之书: 翻看答案{问题}
+发言排行: /今日榜首|今日发言排行|
+        昨日发言排行|排行|
+        发言数|今日发言数
 小游戏: /游戏菜单''' + add_target(60)
 
 # message_fun: str = '''这是娱乐菜单
@@ -82,7 +85,8 @@ message_life: str = '''这是生活菜单
 Epic限免资讯: /Epic喜加一 
         /喜加一订阅 (>=超级用户)
 早晚安助手: /早晚安帮助
-今天吃什么: /吃什么帮助''' + add_target(60)
+今天吃什么: /吃什么帮助
+查看我的记过: /我的记过记录''' + add_target(60)
 
 message_admin: str = '''这是管理菜单
 管理命令中有空格的要加空格,@后自带空格所以可以不用再加
@@ -118,7 +122,13 @@ message_admin: str = '''这是管理菜单
     /插件统计
 插件控制
     /插件控制 {插件名}
-    /插件控制 状态''' + add_target(60)
+    /插件控制 状态
+记过
+    /记过 @xxx @xxx ...
+    /查找记过记录 @xxx
+    /我的记过记录
+    /记过配置
+    /修改记过配置''' + add_target(60)
 
 
 message_credit: str = '''这是积分系统菜单
@@ -199,16 +209,14 @@ main = on_command(cmd="菜单", aliases={"help", "帮助"}, priority=9)
 @main.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     version = update.tools.get_version()
-    await bot.send(event=event,
-                   message=message_main % version)
+    await main.send(message=message_main % version)
 
 # 总菜单 戳一戳
 main_click = on_notice(rule=checker_click(), priority=9)
 @main_click.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     version = update.tools.get_version()
-    await bot.send(event=event,
-                   message=message_main % version)
+    await main_click.send(message=message_main % version)
 
 # 总菜单 @机器人
 main_at = on_message(rule=to_me(), priority=9)
@@ -217,8 +225,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     message_meta: str = str(event.get_message())
     if message_meta == '':
         version = update.tools.get_version()
-        await bot.send(event=event,
-                       message=message_main % version)
+        await main_at.send(message=message_main % version)
 
 
 # 娱乐菜单

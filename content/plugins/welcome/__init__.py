@@ -9,7 +9,7 @@ import utils
 from nonebot import on_notice, on_command
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, Message
 from nonebot.rule import Rule
-from .. import credit, permission
+from content.plugins import credit, permission, plugin_control
 from . import tools
 from utils.path import *
 from utils import database_mysql, users
@@ -49,6 +49,7 @@ async def _(bot: Bot, event: Event):
     await utils.init(bot, event)
     await member_in.send(message=Message(message), at_sender=True)
     await credit.tools.init(bot, event)
+    await plugin_control.init(gid)
 
 
 welcome_msg_update = on_command(cmd="入群欢迎", priority=7)
@@ -64,7 +65,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
         else:
             await welcome_msg_update.send("指令有误")
     else:
-        await welcome_msg_update.send("无权限")
+        await welcome_msg_update.finish(
+        f"无权限,权限需在 {permission.tools.get_special_per(str(event.group_id), 'welcome_msg_update')} 及以上")
 
 
 back_msg_update = on_command(cmd="回归欢迎", aliases={"回群欢迎"}, priority=7)
@@ -75,6 +77,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     if permission.tools.special_per(role, "back_msg_update", gid):
         content = str(event.get_message()).split(" ", 1)[1]
         await tools.update(content, gid, "back")
-        await welcome_msg_update.send("修改成功")
+        await back_msg_update.send("修改成功")
     else:
-        await back_msg_update.send("无权限")
+        await back_msg_update.finish(
+            f"无权限,权限需在 {permission.tools.get_special_per(str(event.group_id), 'back_msg_update')} 及以上")

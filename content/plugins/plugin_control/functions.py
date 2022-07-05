@@ -53,9 +53,13 @@ async def get_state(plugin: str, gid: str) -> bool:
     return plugin_config[plugin]
 
 
-# 插件名称翻译
-# mode: e2c(英译中) c2e(中译英)
+
 def translate(mode: str, name: str) -> str:
+    """
+    插件名称翻译
+    mode: e2c(英译中) c2e(中译英)
+    name: 插件名
+    """
     # 翻译文件
     plugin_translate: dict = json_tools.json_load(config_url / "translate.json")
     # e2c 英译中

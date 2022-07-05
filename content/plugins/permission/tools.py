@@ -100,3 +100,11 @@ def get_special_per(gid: str, name: str) -> str:
     special_path = permission_special_base / f"{gid}.json"
     specials: dict = json_tools.json_load(special_path)
     return specials[name]
+
+
+def get_plugin_permission(gid: str, plugin: str):
+    plugin_per_config = json_tools.json_load(permission_common_base / f"{gid}.json")
+    try:
+        return plugin_per_config[plugin]
+    except KeyError:
+        return "多种"
