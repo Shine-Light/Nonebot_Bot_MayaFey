@@ -1,8 +1,9 @@
-import re
-
+from typing import Tuple
 from nonebot import get_driver, on_regex
-from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment
+from nonebot.params import RegexGroup
+from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.log import logger
+from nonebot.matcher import Matcher
 
 from .config import Config
 from .render_pic import render
@@ -23,22 +24,10 @@ if plugin_config.debug:
 else:
     DEBUG = False
 
-weather = on_regex(r".*?(.*)天气.*?", priority=7)
-
-
-def get_msg(msg) -> str:
-    msg1 = re.search(r".*?(.*)天气.*?", msg)
-    msg2 = re.search(r".*?天气(.*).*?", msg)
-    msg1 = msg1.group(1).replace(" ", "") if msg1 else None
-    msg2 = msg2.group(1).replace(" ", "") if msg2 else None
-    msg = msg1 if msg1 else msg2
-
-    return msg
-
-
+weather = on_regex(r".*?(.*)天气(.*).*?", priority=7)
 @weather.handle()
-async def _(bot: Bot, event: MessageEvent):
-    city = get_msg(event.get_plaintext())
+async def _(matcher: Matcher, args: Tuple[str, ...] = RegexGroup()):
+    city = args[0].strip() or args[1].strip()
     if not city:
         await weather.finish("地点是...空气吗?? >_<")
 
@@ -46,6 +35,7 @@ async def _(bot: Bot, event: MessageEvent):
     try:
         await w_data.load_data()
     except CityNotFoundError:
+        matcher.block = False
         await weather.finish()
 
     img = await render(w_data)

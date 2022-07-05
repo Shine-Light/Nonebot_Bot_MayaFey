@@ -51,13 +51,13 @@ class Air(BaseModel, extra=Extra.allow):
 
 class AirApi(BaseModel, extra=Extra.allow):
     code: str
-    now: Air
+    now: Optional[Air]
 
 
 class Warning(BaseModel, extra=Extra.allow):
     title: str
     type: str
-    startTime: str
+    pubTime: str
     text: str
 
 
