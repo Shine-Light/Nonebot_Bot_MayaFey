@@ -10,11 +10,18 @@ from nonebot import get_driver
 proxy = get_driver().config.proxy
 
 
-def match_302(url: str) -> str:
-    """捕获302/301后的网址"""
-    r = requests.head(url, stream=True)
-    url = r.headers['Location']
+def match_30X(url_source: str) -> str:
+    """捕获30X后的网址"""
+    r = requests.head(url_source, stream=True)
+    try:
+        url = r.headers['Location']
+    except:
+        try:
+            url = r.next.url
+        except:
+            return url_source
     return url
+
 
 
 def get_proxy():

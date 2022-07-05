@@ -76,8 +76,11 @@ def set_member_later(gid, uid, time: int):
 
 def get_ban_count(uid: str, gid: str) -> int:
     cursor.execute(f"SELECT ban_count FROM users WHERE gid='{gid}' and uid='{uid}';")
-    count = cursor.fetchone()[0]
-    return count
+    count = cursor.fetchone()
+    if count:
+        return count[0]
+    else:
+        return 0
 
 
 def member_leave(uid, gid):

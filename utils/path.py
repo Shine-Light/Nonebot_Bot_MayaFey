@@ -36,10 +36,15 @@ admin_path = config_path / "word_cloud"
 word_path = config_path / "word_cloud" / "word_config.txt"
 # 聊天记录目录
 words_contents_path = txt_path / "words"
+# 词云资源目录
+re_wordcloud_path = img_path / "word_cloud"
 # 词云图片目录
-re_img_path = img_path / "admin"
+re_img_path = re_wordcloud_path / "img"
+# 词云背景目录
+wordcloud_bg_path = re_wordcloud_path / "background"
 # 词云字体
 ttf_name = font_path / "msyhblod.ttf"
+group_message_data_path = config_path / "group_msg_data"
 # 内置违禁词
 limit_word_path = txt_path / "违禁词.txt"
 limit_word_path_easy = txt_path / "违禁词_简单.txt"
@@ -89,6 +94,8 @@ morning_data_path = config_path / "morning" / "data.json"
 fortune_path = config_path / "fortune"
 # 每日运势配置文件
 fortune_config_path = fortune_path / "fortune_config.json"
+# 记过配置命令
+demerit_path = config_path / "demerit"
 
 # 俄罗斯轮盘游戏配置
 russian_path = config_path / "russian"

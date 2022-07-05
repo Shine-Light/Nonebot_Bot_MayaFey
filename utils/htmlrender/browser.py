@@ -10,15 +10,15 @@
 """
 __author__ = "yanyongyu"
 
-from contextlib import asynccontextmanager
 from typing import Optional, AsyncIterator
+from contextlib import asynccontextmanager
+
 from nonebot.log import logger
-
-
-from playwright.async_api import Page, Browser, async_playwright, Error
+from playwright.async_api import Page, Error, Browser, Playwright, async_playwright
 
 _browser: Optional[Browser] = None
-_playwright = None
+_playwright: Optional[Playwright] = None
+
 
 async def init(**kwargs) -> Browser:
     global _browser
@@ -33,6 +33,7 @@ async def init(**kwargs) -> Browser:
 
 
 async def launch_browser(**kwargs) -> Browser:
+    assert _playwright is not None, "Playwright is not initialized"
     return await _playwright.chromium.launch(**kwargs)
 
 
@@ -51,15 +52,19 @@ async def get_new_page(**kwargs) -> AsyncIterator[Page]:
 
 
 async def shutdown_browser():
-    await _browser.close()
-    await _playwright.stop()
+    if _browser:
+        await _browser.close()
+    if _playwright:
+        await _playwright.stop()  # type: ignore
 
 
 async def install_browser():
     logger.info("正在安装 chromium")
     import sys
+
     from playwright.__main__ import main
-    sys.argv = ['', 'install', 'chromium']
+
+    sys.argv = ["", "install", "chromium"]
     try:
         main()
     except SystemExit:

@@ -8,6 +8,8 @@ import base64
 import json
 import random
 import re
+
+import aiofiles
 import nonebot
 
 from tencentcloud.common import credential
@@ -17,7 +19,7 @@ from tencentcloud.common.exception.tencent_cloud_sdk_exception import (
 from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.ims.v20201229 import ims_client, models
-from typing import Union
+from typing import Union, Optional
 from nonebot import logger,get_driver
 
 su = nonebot.get_driver().config.superusers
@@ -160,7 +162,7 @@ def At(data: str):
     try:
         qq_list = []
         data = json.loads(data)
-        for msg in data["message"]:
+        for msg in data["original_message"]:
             if msg["type"] == "at":
                 if 'all' not in str(msg):
                     qq_list.append(int(msg["data"]["qq"]))
@@ -169,3 +171,47 @@ def At(data: str):
         return qq_list
     except KeyError:
         return []
+
+
+def MsgText(data: str):
+    """
+    返回消息文本段内容(即去除 cq 码后的内容)
+    :param data: event.json()
+    :return: str
+    """
+    try:
+        data = json.loads(data)
+        # 过滤出类型为 text 的【并且过滤内容为空的】
+        msg_text_list = filter(lambda x: x["type"] == "text" and x["data"]["text"].replace(" ", "") != "",
+                               data["message"])
+        # 拼接成字符串并且去除两端空格
+        msg_text = " ".join(map(lambda x: x["data"]["text"].strip(), msg_text_list)).strip()
+        return msg_text
+    except:
+        return ""
+
+
+async def upload(path, dict_content) -> None:
+    """
+    更新json文件
+    :param path: 路径
+    :param dict_content: python对象，字典
+    """
+    async with aiofiles.open(path, mode='w', encoding="utf-8") as c:
+        await c.write(str(json.dumps(dict_content, ensure_ascii=False)))
+        await c.close()
+
+
+async def load(path) -> Optional[dict]:
+    """
+    加载json文件
+    :return: Optional[dict]
+    """
+    try:
+        async with aiofiles.open(path, mode='r', encoding="utf-8") as f:
+            contents_ = await f.read()
+            contents = json.loads(contents_)
+            await f.close()
+            return contents
+    except FileNotFoundError:
+        return None

@@ -46,8 +46,14 @@ async def Dir_init():
         await mk("dir", admin_path, mode=None)
     if not os.path.exists(words_contents_path):
         await mk("dir", words_contents_path, mode=None)
+    if not os.path.exists(re_wordcloud_path):
+        await mk("dir", re_wordcloud_path, mode=None)
     if not os.path.exists(re_img_path):
         await mk("dir", re_img_path, mode=None)
+    if not os.path.exists(wordcloud_bg_path):
+        await mk("dir", wordcloud_bg_path, mode=None)
+    if not os.path.exists(group_message_data_path):
+        await mk("dir", group_message_data_path, mode=None)
     if not os.path.exists(welcome_path_base):
         await mk("dir", welcome_path_base, mode=None)
     if not os.path.exists(back_path_base):
@@ -72,6 +78,8 @@ async def Dir_init():
         await mk("dir", morning_path, mode=None)
     if not os.path.exists(config_path / "fortune"):
         await mk("dir", config_path / "fortune", mode=None)
+    if not os.path.exists(demerit_path):
+        await mk("dir", demerit_path, mode=None)
     # 目录初始化结束
 
 
@@ -154,6 +162,12 @@ async def init(bot: Bot, event: GroupMessageEvent):
         await mk("file", fortune_config_path, 'w', content=json.dumps({}))
     if not os.path.exists(epicFree_path / "status.json"):
         await mk("file", epicFree_path / "status.json", 'w', content=json.dumps({"群聊": [], "私聊": []}))
+    if not os.path.exists(demerit_path / gid):
+        await mk("dir", demerit_path / gid, mode=None)
+    if not os.path.exists(demerit_path / gid / f"data.json"):
+        await mk("file", demerit_path / gid / f"data.json", 'w', content=json.dumps({}))
+    if not os.path.exists(demerit_path / gid / f"config.json"):
+        await mk("file", demerit_path / gid / f"config.json", 'w', content=json.dumps({"limit": 5}))
 
 bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN |SUPERUSER)
 @bot_init.handle()
