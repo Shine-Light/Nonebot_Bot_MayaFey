@@ -75,45 +75,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     :param event:
     :return:
     """
-    gid = str(event.group_id)
-    uid = str(event.user_id)
-    msg = str(event.get_message()).replace(" ", "")
-    path_temp = words_contents_path / f"{str(gid)}.txt"
-    message_path_group = group_message_data_path / f"{gid}"
-    # datetime获取今日日期
-    today = datetime.datetime.now().strftime("%Y-%m-%d")
-    this_time = datetime.datetime.now().strftime("%Y-%m-%d-%H:%M:%S")
     date: str = time.strftime(fts, time.localtime())
-    # 排名用记录
-    if not os.path.exists(message_path_group):
-        os.mkdir(message_path_group)
-    if not os.path.exists(message_path_group / "sum.json"):  # 总记录 {日期：{时间：[uid, 消息]}}
-        await upload(message_path_group / "sum.json", {today: {this_time: [uid, event.raw_message]}})
-    else:
-        dic_ = await load(message_path_group / "sum.json")
-        if today not in dic_:
-            dic_[today] = {this_time: [uid, event.raw_message]}
-        else:
-            dic_[today][this_time] = [uid, event.raw_message]
-        await upload(message_path_group / "sum.json", dic_)
-    if not os.path.exists(message_path_group / f"{today}.json"):  # 日消息条数记录 {uid：消息数}
-        await upload(message_path_group / f"{today}.json", {uid: 1})
-    else:
-        dic_ = await load(message_path_group / f"{today}.json")
-        if uid not in dic_:
-            dic_[uid] = 1
-        else:
-            dic_[uid] += 1
-        await upload(message_path_group / f"{today}.json", dic_)
-    if not os.path.exists(message_path_group / "history.json"):  # 历史发言条数记录 {uid：消息数}
-        await upload(message_path_group / "history.json", {uid: 1})
-    else:
-        dic_ = await load(message_path_group / "history.json")
-        if uid not in dic_:
-            dic_[uid] = 1
-        else:
-            dic_[uid] += 1
-        await upload(message_path_group / "history.json", dic_)
 
     if not os.path.exists(re_img_path / date):
         os.mkdir(re_img_path / date)
