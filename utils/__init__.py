@@ -153,7 +153,7 @@ async def init(bot: Bot, event: GroupMessageEvent):
     if not os.path.exists(unset_path):
         await mk("file", unset_path, 'w', url=url.unset_txt, dec="不可设置插件列表")
     if not os.path.exists(version_path):
-        await mk("file", version_path, 'w', content=float(requests.get(url.version_html).text))
+        await mk("file", version_path, 'w', content=requests.get(url.version_html).text)
     if not os.path.exists(morning_config_path):
         await mk("file", morning_config_path, 'w', url=url.morning_config, dec="早安插件配置文件")
     if not os.path.exists(morning_data_path):
