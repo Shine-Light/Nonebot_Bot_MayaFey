@@ -53,6 +53,17 @@ async def get_state(plugin: str, gid: str) -> bool:
     return plugin_config[plugin]
 
 
+async def is_unset(plugin: str) -> bool:
+    """
+    插件是否为不可设置插件
+    plugin: 插件名
+    """
+    unset: list = open(unset_path, 'r', encoding="utf-8").read().split(",")
+    if plugin in unset:
+        return True
+    else:
+        return False
+
 
 def translate(mode: str, name: str) -> str:
     """

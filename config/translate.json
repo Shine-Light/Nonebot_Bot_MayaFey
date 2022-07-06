@@ -36,5 +36,6 @@
     "what2eat": "吃什么", 
     "demerit": "记过", 
     "speakrank": "发言排名", 
-    "permission": "权限系统"
+    "permission": "权限系统", 
+    "total": "插件调用统计"
 }

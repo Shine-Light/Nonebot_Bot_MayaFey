@@ -38,7 +38,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
                 if plugin == "test":
                     pass
                 # 不可关闭插件
-                elif plugin in not_set:
+                elif is_unset(plugin):
                     pass
                 else:
                     if line % 3 == 0:
