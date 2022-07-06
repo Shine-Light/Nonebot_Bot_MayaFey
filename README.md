@@ -21,6 +21,9 @@
 6. 机器人的插件可以自己扒下来用,但请保留开发者信息
 7. 若该项目有任何地方有侵犯到你的权益请立即联系我 `shine_light@qq.com`
 
+## 更新日志
+[更新日志](https://mayafey.shinelight.xyz/updatelog)
+
 ## 功能
 <details>
 <summary>已实现的功能</summary>
@@ -39,6 +42,7 @@
 - [X] 答案之书  ([https://github.com/A-kirami/nonebot-plugin-answersbook](https://github.com/A-kirami/nonebot-plugin-answersbook))
 - [X] 到账语音生成  
 - [X] 今日运势  ([https://github.com/MinatoAquaCrews/nonebot_plugin_fortune](https://github.com/MinatoAquaCrews/nonebot_plugin_fortune)修改而来)  
+- [X] 发言排行榜  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)
 ### 生活功能
 - [X] 翻译  ([https://github.com/Lancercmd/nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator))  
 - [X] 疫情  ([https://github.com/Zeta-qixi/nonebot-plugin-covid19-news](https://github.com/Zeta-qixi/nonebot-plugin-covid19-news)修改而来)  
@@ -53,6 +57,7 @@
 - [X] 插件控制  
 - [X] 插件统计 
 - [X] 增删问答   
+- [X] 记过
 ### 私聊管理功能
 - [X] SQL查询  
 ### 权限系统
@@ -74,7 +79,7 @@
 ## 未来可能增加的功能
 - [ ] Docker容器部署
 - [ ] 更多的功能
-- [ ] Web可视化界面
+- [ ] 可视化界面(Web,EXE)
 
 ## 感谢
 [Onebot](https://github.com/botuniverse/onebot-11)  
