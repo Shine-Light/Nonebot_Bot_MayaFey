@@ -104,6 +104,7 @@ try:
 
     download_to_plugin("pic/__init__")
 
+    download_to_plugin("plugin_control/__init__")
     download_to_plugin("plugin_control/functions")
 
     download_to_plugin("saymoney/__init__")
