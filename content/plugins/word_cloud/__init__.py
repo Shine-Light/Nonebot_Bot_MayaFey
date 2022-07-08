@@ -182,7 +182,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 timezone = "Asia/Shanghai"
 scheduler = require("nonebot_plugin_apscheduler").scheduler
-@scheduler.scheduled_job("cron", hour="13", minute="24",second="50", timezone=timezone)
+@scheduler.scheduled_job("cron", hour="19", minute="0",second="0", timezone=timezone)
 async def run():
     from wordcloud import WordCloud, ImageColorGenerator
     import jieba
