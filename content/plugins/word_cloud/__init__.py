@@ -201,7 +201,9 @@ async def run():
             continue
         if await plugin_control.get_state("word_cloud", gid):
             localTime = time.strftime(ft, time.localtime())
-
+            path_temp = words_contents_path / date / f"{str(gid)}.txt"
+            if not os.path.exists(path_temp):
+                continue
             background_img = os.listdir(wordcloud_bg_path)
             if background_img:
                 wordcloud_bg = random.choice(os.listdir(wordcloud_bg_path))
@@ -231,7 +233,7 @@ async def run():
                 wordcloud_bg = random.choice(os.listdir(wordcloud_bg_path))
             background_image = imread(wordcloud_bg_path / wordcloud_bg)
             ttf_name_ = Path() / "resource" / "font" / "msyhblod.ttf"
-            path_temp = words_contents_path / date / f"{str(gid)}.txt"
+
             text = open(path_temp).read()
             txt = jieba.lcut(text)
             stop_ = await participle_simple_handle()
