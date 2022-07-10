@@ -15,10 +15,14 @@ update = on_command("更新", aliases={"update"}, priority=2, block=True)
 async def _(bot: Bot, event: GroupMessageEvent):
     try:
         if await tools.check_update():
-            await update.send("检测到新版本,正在自动更新,更新期间机器人无法使用,请勿关闭程序")
-            await tools.update(str(event.group_id))
-            await update.send("正在重启...")
-            await reboot()
+            state = await tools.get_state(await tools.get_version_last())
+            if state["auto"]:
+                await update.send("正在自动更新,更新期间机器人无法使用,请勿关闭程序")
+                await tools.update(str(event.group_id))
+                await update.send("正在重启...")
+                await reboot()
+            else:
+                await update.send(f"本次更新无法自动更新,请手动升级\n备注:{state['note']}")
         else:
             await update.finish("已经是最新版本,无需更新")
     except FinishedException:
@@ -31,7 +35,11 @@ check_update = on_command("检查更新", aliases={"check_update"}, priority=8)
 @check_update.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     if await tools.check_update():
-        await check_update.finish("检测到有新版本,请及时更新,更新前记得备份")
+        state = await tools.get_state(await tools.get_version_last())
+        if state["auto"]:
+            await check_update.finish("检测到有新版本,请及时更新,更新前记得备份")
+        else:
+            await update.send(f"本次更新无法自动更新,请手动升级\n备注:{state['note']}")
     else:
         await check_update.finish("已经是最新版本")
 

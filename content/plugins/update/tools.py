@@ -38,6 +38,12 @@ def get_version() -> str:
     return open(path.version_path, "r", encoding="utf-8").read()
 
 
+async def get_state(version: str) -> dict:
+    state_url = f"http://cdn.shinelight.xyz/nonebot/version/{version}/state.json"
+    state: dict = requests.get(state_url).json()
+    return state
+
+
 async def update(gid: str) -> str:
     js = json_tools.json_load(path.updating_path)
     js['updating'] = True
