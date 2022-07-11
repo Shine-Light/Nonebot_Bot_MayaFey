@@ -21,7 +21,7 @@ USE `mayafey`;
 CREATE TABLE IF NOT EXISTS `credit` (
   `gid` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT '群号',
   `uid` varchar(50) COLLATE utf8mb4_bin DEFAULT NULL COMMENT 'QQ号',
-  `credit` int(11) DEFAULT NULL
+  `credit` int(11) DEFAULT NULL COMMENT '积分'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_bin COMMENT='积分表';
 
 -- 数据导出被取消选择。

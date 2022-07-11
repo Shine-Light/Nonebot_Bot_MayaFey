@@ -83,15 +83,16 @@ async def Dir_init():
     # 目录初始化结束
 
 
+
+
+
 @driver.on_startup
 async def _():
     await Dir_init()
+    database_mysql.Database_init()
 
 
 async def init(bot: Bot, event: GroupMessageEvent):
-    # 数据库初始化
-    database_mysql.execute_sql(sql_base)
-    cursor.execute(f"USE {database_mysql.database};")
     # 用户表初始化开始
     members = await bot.call_api(api="get_group_member_list", group_id=event.group_id)
     cursor.execute(f"SELECT * FROM users WHERE gid='{event.group_id}';")

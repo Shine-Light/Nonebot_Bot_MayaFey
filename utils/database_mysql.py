@@ -6,6 +6,7 @@
 
 from nonebot import get_driver, require
 from nonebot.log import logger
+from utils.path import sql_base
 import pymysql
 
 
@@ -17,18 +18,6 @@ database = get_driver().config.mysql_db
 
 connect = pymysql.connect(host=host, user=user, passwd=password, autocommit=True)
 cursor = connect.cursor()
-try:
-    cursor.execute(f"USE {database};")
-except Exception:
-    pass
-
-scheduler = require("nonebot_plugin_apscheduler").scheduler
-timezone = "Asia/Shanghai"
-@scheduler.scheduled_job("interval", hours=4, timezone=timezone)
-async def _():
-    cursor.execute(f"USE {database};")
-    cursor.execute("SELECT alive FROM users;")
-    logger.info("执行防数据库断连")
 
 
 def execute_sql(path):
@@ -50,3 +39,24 @@ def execute_sql(path):
 
     for x in result:
         cursor.execute(x)
+
+
+def Database_init():
+    # 数据库初始化
+    execute_sql(sql_base)
+    cursor.execute(f"USE {database};")
+
+
+try:
+    cursor.execute(f"USE {database};")
+except:
+    Database_init()
+
+
+scheduler = require("nonebot_plugin_apscheduler").scheduler
+timezone = "Asia/Shanghai"
+@scheduler.scheduled_job("interval", hours=4, timezone=timezone)
+async def _():
+    cursor.execute(f"USE {database};")
+    cursor.execute("SELECT alive FROM users;")
+    logger.info("执行防数据库断连")
