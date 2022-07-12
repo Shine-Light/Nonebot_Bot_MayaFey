@@ -1,1 +1,1 @@
-plugin_control,utils,withdraw,notices,total,permission,flash,update,passive
+plugin_control,utils,withdraw,notices,total,permission,flash,update,passive,enable

@@ -24,6 +24,9 @@
 ## 更新日志
 [更新日志](https://mayafey.shinelight.xyz/updatelog)
 
+# 吹水群
+[622945924](https://jq.qq.com/?_wv=1027&k=ElDdjklL)
+
 ## 功能
 <details>
 <summary>已实现的功能</summary>
@@ -52,6 +55,7 @@
 - [X] 早晚安  ([https://github.com/MinatoAquaCrews/nonebot_plugin_morning](https://github.com/MinatoAquaCrews/nonebot_plugin_morning)修改而来)   
 ### 群聊管理功能
 - [X] 机器人更新  
+- [X] 启停用机器人  
 - [X] 群管  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
 - [X] 违禁词  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
 - [X] 插件控制  
@@ -74,6 +78,7 @@
 - [X] 拉群自接受  
 - [X] 拉群自接受  
 - [X] 复读  
+- [X] 定时撤回  
 </details>
 
 ## 未来可能增加的功能

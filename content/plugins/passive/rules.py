@@ -71,7 +71,7 @@ def checker_invite():
     async def _checker(bot: Bot, event: Event) -> bool:
         description = event.get_event_description()
         values = json.loads(description.replace("'", '"'))
-        if values["post_type"] == "request" and values['request_type'] == 'group' and values['sub_type'] == 'invite':
+        if values["post_type"] == "request" and values['request_type'] == 'group' and values['sub_type'] == 'add':
             uid = str(event.get_user_id())
             gid = str(json.loads(event.get_event_description().replace("'", '"'))['group_id'])
             role = users.get_role(gid, uid)
@@ -85,11 +85,22 @@ def checker_invite():
 def checker_friend():
     async def _checker(bot: Bot, event: Event) -> bool:
         description = event.get_event_description()
-        values = json.loads(description)
+        values = json.loads(description.replace("'", '"'))
         if values["post_type"] == "request" and values["request_type"] == "friend":
             uid = str(values["user_id"])
             role = users.get_role_nogid(uid)
             if permission_(role, "admin"):
                 return True
+
+    return Rule(_checker)
+
+
+# 邀请入群事件
+def checker_invite_group():
+    async def _checker(bot: Bot, event: Event) -> bool:
+        description = event.get_event_description()
+        values = json.loads(description.replace("'", '"'))
+        if values["post_type"] == "request" and values['request_type'] == 'group' and values['sub_type'] == 'invite':
+            return True
 
     return Rule(_checker)

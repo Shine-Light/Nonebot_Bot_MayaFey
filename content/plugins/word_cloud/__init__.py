@@ -3,7 +3,6 @@
 @Version: 1.0
 @Date: 2022/3/27 19:55
 """
-import datetime
 import random
 
 import httpx
@@ -240,7 +239,7 @@ async def run():
             string = " ".join(txt)
             try:
                 # 关键词不为空
-                if string != " ":
+                if string:
                     wc = WordCloud(font_path=str(ttf_name_.resolve()),
                                    width=1920, height=1080, mode='RGBA',
                                    background_color="#ffffff",
@@ -255,9 +254,9 @@ async def run():
             except ActionFailed:
                 await bot.send_group_msg(group_id=gid, message=f"API调用错误,可能是信息错误或账号风控,具体参考go-cqhttp输出")
             except ValueError:
-                await bot.send_group_msg(group_id=gid, message="无聊天记录,无法生成词云")
+                logger.error("词云生成失败,可能聊天记录中无文本")
             except Exception as err:
-                await bot.send_group_msg(group_id=gid, message=f"出现错误{type(err)}:{err}")
+                logger.error(f"{str(err)}")
 
     file.close()
 

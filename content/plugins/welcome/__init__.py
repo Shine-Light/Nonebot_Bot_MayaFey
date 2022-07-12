@@ -33,6 +33,8 @@ def checker():
 member_in = on_notice(rule=checker(), priority=5)
 @member_in.handle()
 async def _(bot: Bot, event: Event):
+    if event.get_user_id() == bot.self_id:
+        return
     des = event.get_event_description()
     data = json.loads(des.replace("'", '"'))
     gid = str(data['group_id'])

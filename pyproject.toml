@@ -1,10 +1,10 @@
 [tool.poetry]
 name = "maya fey"
-version = "0.1.0"
+version = "0.5"
 description = ""
 authors = ["Shine-Light <3120815902@qq.com>"]
 
-[tool.poetry.source]
+[[tool.poetry.source]]
 name = "tsinghua"
 url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
 default = true

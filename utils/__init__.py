@@ -6,8 +6,9 @@
 import json
 import os
 import time
-
+import hook
 import requests
+
 from nonebot.permission import SUPERUSER
 from . import database_mysql
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, GROUP_ADMIN, GROUP_OWNER
@@ -15,7 +16,8 @@ from nonebot import on_command, get_driver
 from content.plugins import credit, plugin_control, ban_word, word_cloud, welcome, sign
 from .path import *
 from .other import mk
-from . import hook, url
+from . import url
+
 
 db = database_mysql.connect
 cursor = database_mysql.cursor
@@ -80,10 +82,30 @@ async def Dir_init():
         await mk("dir", config_path / "fortune", mode=None)
     if not os.path.exists(demerit_path):
         await mk("dir", demerit_path, mode=None)
+    if not os.path.exists(enable_path):
+        await mk("dir", enable_path, mode=None)
     # 目录初始化结束
-
-
-
+    # 文件初始化开始
+    if not os.path.exists(translate_path):
+        await mk("file", translate_path, 'w', url=url.translate_json, dec="翻译文件")
+    if not os.path.exists(total_unable):
+        await mk("file", total_unable, 'w', url=url.unable_txt, dec="不统计插件列表")
+    if not os.path.exists(epicFree_path / "status.json"):
+        await mk("file", epicFree_path / "status.json", 'w', content=json.dumps({"群聊": [], "私聊": []}))
+    if not os.path.exists(updating_path):
+        await mk("file", updating_path, 'w', content=json.dumps({"updating": False}))
+    if not os.path.exists(unset_path):
+        await mk("file", unset_path, 'w', url=url.unset_txt, dec="不可设置插件列表")
+    if not os.path.exists(version_path):
+        await mk("file", version_path, 'w', content=requests.get(url.version_html).text)
+    if not os.path.exists(morning_config_path):
+        await mk("file", morning_config_path, 'w', url=url.morning_config, dec="早安插件配置文件")
+    if not os.path.exists(morning_data_path):
+        await mk("file", morning_data_path, 'w', content=json.dumps({}))
+    if not os.path.exists(fortune_config_path):
+        await mk("file", fortune_config_path, 'w', content=json.dumps({}))
+    if not os.path.exists(enable_config_path):
+        await mk("file", enable_config_path, 'w', content=json.dumps({}))
 
 
 @driver.on_startup
@@ -137,32 +159,14 @@ async def init(bot: Bot, event: GroupMessageEvent):
     await Dir_init()
     # 文件初始化
     gid = str(event.group_id)
-    if not os.path.exists(translate_path):
-        await mk("file", translate_path, 'w', url=url.translate_json, dec="翻译文件")
     if not os.path.exists(total_base / month / f"{gid}.json"):
         await mk("file", total_base / month / f"{gid}.json", 'w', content=json.dumps({}))
-    if not os.path.exists(total_unable):
-        await mk("file", total_unable, 'w', url=url.unable_txt, dec="不统计插件列表")
     if not os.path.exists(question_base / f"{gid}.json"):
         await mk("file", question_base / f"{gid}.json", 'w', content=json.dumps({}))
     if not os.path.exists(permission_special_base / f"{gid}.json"):
         await mk("file", permission_special_base / f"{gid}.json", 'w', url=url.permission_special_json, dec="特殊权限插件列表")
     if not os.path.exists(permission_common_base / f"{gid}.json"):
         await mk("file", permission_common_base / f"{gid}.json", 'w', url=url.permission_common_json, dec="常规权限插件列表")
-    if not os.path.exists(updating_path):
-        await mk("file", updating_path, 'w', content=json.dumps({"updating": False}))
-    if not os.path.exists(unset_path):
-        await mk("file", unset_path, 'w', url=url.unset_txt, dec="不可设置插件列表")
-    if not os.path.exists(version_path):
-        await mk("file", version_path, 'w', content=requests.get(url.version_html).text)
-    if not os.path.exists(morning_config_path):
-        await mk("file", morning_config_path, 'w', url=url.morning_config, dec="早安插件配置文件")
-    if not os.path.exists(morning_data_path):
-        await mk("file", morning_data_path, 'w', content=json.dumps({}))
-    if not os.path.exists(fortune_config_path):
-        await mk("file", fortune_config_path, 'w', content=json.dumps({}))
-    if not os.path.exists(epicFree_path / "status.json"):
-        await mk("file", epicFree_path / "status.json", 'w', content=json.dumps({"群聊": [], "私聊": []}))
     if not os.path.exists(demerit_path / gid):
         await mk("dir", demerit_path / gid, mode=None)
     if not os.path.exists(demerit_path / gid / f"data.json"):
