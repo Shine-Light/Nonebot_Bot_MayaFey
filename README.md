@@ -85,7 +85,7 @@
 ## 未来可能增加的功能
 - [ ] Docker容器部署
 - [ ] 更多的功能
-- [ ] 可视化界面(Web,EXE)
+- [ ] 可视化界面[Web,UI](在做了,在做了)
 
 ## 感谢
 [Onebot](https://github.com/botuniverse/onebot-11)  
