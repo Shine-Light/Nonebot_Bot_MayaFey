@@ -20,6 +20,7 @@
 5. 遇到bug请及时提Issue,有时间了我就会修复,欢迎pr
 6. 机器人的插件可以自己扒下来用,但请保留开发者信息
 7. 若该项目有任何地方有侵犯到你的权益请立即联系我 `shine_light@qq.com`
+8. 你的支持是我最大的动力,喜欢的话给个star吧(求求了
 
 ## 更新日志
 [更新日志](https://mayafey.shinelight.xyz/updatelog)
