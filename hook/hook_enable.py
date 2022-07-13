@@ -13,6 +13,8 @@ from utils.path import enable_config_path
 # 机器人启动检测
 @event_preprocessor
 async def enable_check(bot: Bot, event: GroupMessageEvent):
+    if "初始化" in event.get_plaintext():
+        return
     if event.get_user_id == bot.self_id:
         return
     gid = str(event.group_id)
