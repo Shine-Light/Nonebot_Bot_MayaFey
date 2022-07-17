@@ -7,7 +7,7 @@ import json
 import utils
 
 from nonebot import on_notice, on_command
-from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, Message
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
 from nonebot.rule import Rule
 from content.plugins import credit, permission, plugin_control
 from . import tools
@@ -21,7 +21,7 @@ db = database_mysql.connect
 
 # 入群检测
 def checker():
-    async def _checker(bot: Bot, event: Event) -> bool:
+    async def _checker(bot: Bot, event: GroupMessageEvent) -> bool:
         description = event.get_event_description()
         values = json.loads(description.replace("'", '"'))
         if values['notice_type'] == 'group_increase':
@@ -32,7 +32,7 @@ def checker():
 
 member_in = on_notice(rule=checker(), priority=5)
 @member_in.handle()
-async def _(bot: Bot, event: Event):
+async def _(bot: Bot, event: GroupMessageEvent):
     if event.get_user_id() == bot.self_id:
         return
     des = event.get_event_description()

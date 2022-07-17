@@ -123,9 +123,10 @@ try:
     download_to_plugin("word_cloud/__init__")
 
     download_to_utils("__init__")
+    download_to_utils("database_mysql")
     download_to_utils("path")
 
-    download_to_root("README", "https://cdn.shinelight.xyz/nonebot/README.md", "md")
+    download_to_root("README", "http://cdn.shinelight.xyz/nonebot/README.md", "md")
     # 删除部分
     os.remove(dir_utils + "hook.py")
     os.remove(dir_utils + "hook_fast.py")

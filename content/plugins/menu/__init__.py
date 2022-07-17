@@ -61,6 +61,7 @@ logo生成: /logo 帮助
 发言排行: /今日榜首|今日发言排行|
         昨日发言排行|排行|
         发言数|今日发言数
+聊天: @我 {聊天内容}(私聊不用@我)
 小游戏: /游戏菜单''' + add_target(60)
 
 # message_fun: str = '''这是娱乐菜单
@@ -222,7 +223,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await main_click.send(message=message_main % version)
 
 # 总菜单 @机器人
-main_at = on_message(rule=to_me(), priority=9)
+main_at = on_message(rule=to_me(), priority=12)
 @main_at.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     message_meta: str = str(event.get_message())
