@@ -1,7 +1,7 @@
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from typing import Optional, Union, Dict, Tuple
 from pathlib import Path
-from utils.path import fortune_path
+from utils.path import fortune_path, fortune_out_path
 import random
 try:
     import ujson as json
@@ -79,7 +79,7 @@ class FortuneManager:
             self._end_data_handle(event)
             return image_file, True
         else:
-            image_file = Path(FORTUNE_PATH) / "fortune" / "out" / f"{user_id}_{group_id}.png"
+            image_file = fortune_out_path / f"{user_id}_{group_id}.png"
             return image_file, False
 
     def reset_fortune(self) -> None:
