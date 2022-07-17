@@ -5,6 +5,8 @@
 """
 from nonebot import on_command, on_message, require, get_driver
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
+from nonebot.message import event_preprocessor
+from nonebot.exception import IgnoredException
 
 from .tools import *
 from ..withdraw import add_target
@@ -261,15 +263,14 @@ async def _(event: GroupMessageEvent, bot: Bot):
 
 a = ""
 # 违禁词检测
-ban = on_message(priority=12)
-@ban.handle()
+@event_preprocessor
 async def _(event: GroupMessageEvent, bot: Bot):
-    # 确认是否为增删指令
+    # 是否为增删指令
     msg_meta: str = str(event.get_message())
     msgs = msg_meta.split(" ", 2)
     if len(msgs) >= 2:
         if (msgs[1] == "++" or msgs[1] == "+" or msgs[1] == "-") and event.sender.role != "member":
-            await ban.finish()
+            return
     # 初始化设置
     group_id = str(event.group_id)
     uid = event.get_user_id()
@@ -280,13 +281,12 @@ async def _(event: GroupMessageEvent, bot: Bot):
     preBanWords: list = open(preBanWord, "r", encoding="utf-8").read().split("\n")
     preBanWords_easy: list = open(preBanWord_easy, "r", encoding="utf-8").read().split("\n")
     level = json.loads(open(level_path, 'r', encoding='utf-8').read())[group_id]
-    # 检测是否触发关键词
+    # 检测是否触发关键词(自定义违禁词)
     for word in ban_words:
         if word and word in msg_meta:
             if role == "member":
                 await ban_count(uid, str(group_id))
                 count = users.get_ban_count(uid, group_id)
-                time = ""
                 if count == 1:
                     times = "30min"
                 elif count == 2:
@@ -298,31 +298,35 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     try:
                         await kick_user(uid, group_id, bot)
                     except:
-                        await ban.finish(event=event, message="无管理员权限,无法进行处罚")
-                    await baned.finish(message=f"检测到违禁词,次数已达{ban_count_allow}次,踢出并拉黑本群")
+                        await bot.send(event=event, message="检测到违禁词,无管理员权限,无法进行处罚")
+                        IgnoredException("触发违禁词")
+                    await bot.send(event=event, message=f"检测到违禁词,次数已达{ban_count_allow}次,踢出并拉黑")
+                    IgnoredException("触发违禁词")
                 else:
                     try:
                         await ban_user(uid, group_id, bot)
                     except:
-                        await ban.finish(message="无管理员权限,无法进行处罚")
-                    await baned.finish(message=f"检测到违禁词,第{count}次违规,禁言{times},请注意自己的言行", at_sender=True)
+                        await bot.send(event=event, message="无管理员权限,无法进行处罚")
+                        raise IgnoredException("触发违禁词")
+                    await bot.send(event=event, message=f"检测到违禁词,第{count}次违规,禁言{times},请注意自己的言行", at_sender=True)
+                    raise IgnoredException("触发违禁词")
             # 管理员不做限制
             else:
-                await ban.finish(message="检测到违禁词,请注意自己的言行" + add_target(30), at_sender=True)
-
+                pass
+    # 违禁词检测(内置违禁词)
     if level == "strict":
         for word in preBanWords:
             if word and word in msg_meta:
                 if role == "member":
                     await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
-                    await baned.finish(message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
+                    await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
 
     elif level == "easy":
         for word in preBanWords_easy:
             if word and word in msg_meta:
                 if role == "member":
                     await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
-                    await baned.finish(message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
+                    await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
 
 
 ban_easy = on_command("简单违禁词", priority=5)
