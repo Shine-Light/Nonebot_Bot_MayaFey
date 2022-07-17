@@ -6,7 +6,7 @@
 from nonebot import on_message
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, \
     Message, MessageSegment, PrivateMessageEvent
-from nonebot.rule import to_me
+from nonebot.rule import to_me, command
 from .tools import *
 
 
@@ -14,6 +14,9 @@ from .tools import *
 AI_talk = on_message(rule=to_me(), priority=12)
 @AI_talk.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
+    # 命令不处理
+    if command(event.get_plaintext()):
+        return
     msg = event.get_plaintext().strip()
     uid = str(event.get_user_id())
     gid = str(event.group_id)
@@ -63,6 +66,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
 AI_talk_private = on_message(priority=12)
 @AI_talk_private.handle()
 async def _(bot: Bot, event: PrivateMessageEvent):
+    # 命令不处理
+    if command(event.get_plaintext()):
+        return
     msg = event.get_plaintext().strip()
     uid = str(event.get_user_id())
     if msg == "" or api_type == "":
