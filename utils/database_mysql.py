@@ -24,7 +24,7 @@ def execute_sql(path):
     results, result = "", []
     with open(path, "r", encoding="utf-8") as sqls:
         for sql in sqls.readlines():
-            sql = sql.replace("\n", "").replace("\r", "")
+            sql = sql.replace("\n", "").replace("\r", "").replace("{database}", database)
             if not sql.startswith("--") and not sql.endswith("--") and sql != "":
                 if not sql.startswith("--"):
                     results = results + sql
@@ -49,6 +49,7 @@ def Database_init():
 
 try:
     cursor.execute(f"USE {database};")
+    cursor.execute(f"SELECT * FROM users;")
 except:
     Database_init()
 

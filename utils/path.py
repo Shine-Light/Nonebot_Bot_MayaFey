@@ -94,6 +94,8 @@ morning_data_path = config_path / "morning" / "data.json"
 fortune_path = config_path / "fortune"
 # 每日运势配置文件
 fortune_config_path = fortune_path / "fortune_config.json"
+# 每日运势输出命令
+fortune_out_path = fortune_path / "out"
 # 记过配置目录
 demerit_path = config_path / "demerit"
 # 机器人开启配置命令

@@ -14,8 +14,8 @@
 
 
 -- 导出 mayafey 的数据库结构
-CREATE DATABASE IF NOT EXISTS `mayafey` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */;
-USE `mayafey`;
+CREATE DATABASE IF NOT EXISTS `{database}` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_bin */;
+USE `{database}`;
 
 -- 导出  表 mayafey.credit 结构
 CREATE TABLE IF NOT EXISTS `credit` (
