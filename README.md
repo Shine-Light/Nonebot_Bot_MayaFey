@@ -47,6 +47,7 @@
 - [X] 到账语音生成  
 - [X] 今日运势  ([https://github.com/MinatoAquaCrews/nonebot_plugin_fortune](https://github.com/MinatoAquaCrews/nonebot_plugin_fortune)修改而来)  
 - [X] 发言排行榜  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)
+- [X] AI聊天  
 ### 生活功能
 - [X] 翻译  ([https://github.com/Lancercmd/nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator))  
 - [X] 疫情  ([https://github.com/Zeta-qixi/nonebot-plugin-covid19-news](https://github.com/Zeta-qixi/nonebot-plugin-covid19-news)修改而来)  
@@ -56,7 +57,7 @@
 - [X] 早晚安  ([https://github.com/MinatoAquaCrews/nonebot_plugin_morning](https://github.com/MinatoAquaCrews/nonebot_plugin_morning)修改而来)   
 ### 群聊管理功能
 - [X] 机器人更新  
-- [X] 启停用机器人  
+- [X] 机器人开关  
 - [X] 群管  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
 - [X] 违禁词  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
 - [X] 插件控制  
