@@ -31,7 +31,8 @@
 ## 功能
 <details>
 <summary>已实现的功能</summary>
-### 帮助功能
+
+### 帮助功能  
 - [X] 菜单 ([https://github.com/XZhouQD/nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help)修改而来)
 - [X] 插件帮助
 ### 娱乐功能
