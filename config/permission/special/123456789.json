@@ -29,7 +29,7 @@
     "show": "member",
     "theme_setting": "superuser",
     "fortune_reset": "superuser",
-    "refresh": "superuser",
+    "fortune_refresh": "superuser",
     "add_group_food": "superuser",
     "add_basic": "superuser",
     "remove_food": "superuser",

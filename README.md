@@ -25,11 +25,8 @@
 ## 更新日志
 [更新日志](https://mayafey.shinelight.xyz/updatelog)
 
-## 吹水群
+# 吹水群
 [622945924](https://jq.qq.com/?_wv=1027&k=ElDdjklL)
-
-## Windows可视化界面(测试)
-[UI](https://github.com/Shine-Light/Nonebot_Bot_MayaFey_UI)
 
 ## 功能
 <details>
