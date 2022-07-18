@@ -278,6 +278,8 @@ async def _(event: GroupMessageEvent, bot: Bot):
 # 违禁词检测
 @event_preprocessor
 async def _(event: GroupMessageEvent, bot: Bot):
+    if "初始化" in event.get_plaintext():
+        return
     # 是否为增删指令
     msg_meta: str = str(event.get_message())
     msgs = msg_meta.split(" ", 2)
