@@ -84,8 +84,8 @@ async def Dir_init():
         await mk("dir", demerit_path, mode=None)
     if not os.path.exists(enable_path):
         await mk("dir", enable_path, mode=None)
-    if not os.path.exists(fortune_out_path):
-        await mk("dir", fortune_out_path, mode=None)
+    if not fortune_out_path.exists():
+        fortune_out_path.mkdir(exist_ok=True, parents=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):

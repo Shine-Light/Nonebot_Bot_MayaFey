@@ -61,12 +61,16 @@ try:
             file.write(requests.get(url + last).content.decode("utf-8").replace("\r", ""))
 
 
-    # def download_to_api(path, *args):
-    #     last = ".py"
-    #     if args:
-    #         last = args[0]
-    #     with open(dir_api + path + last, 'w+', encoding="utf-8") as file:
-    #         file.write(requests.get(url_base + "api/" + path + last).content.decode("utf-8").replace("\r", ""))
+    def download_readme():
+        download_to_root("README", url_base + "README", ".md")
+
+
+    def download_to_api(path, *args):
+        last = ".py"
+        if args:
+            last = args[0]
+        with open(dir_api + path + last, 'w+', encoding="utf-8") as file:
+            file.write(requests.get(url_base + "api/" + path + last).content.decode("utf-8").replace("\r", ""))
 
 
     def download_to_hook(path, *args):
@@ -103,9 +107,9 @@ try:
             file.close()
 
     # 不统计列表更新
-    with open(dir_base + "config/" + "total/" + "unable.txt", "w+", encoding="utf-8") as file:
-        file.write(requests.get("http://cdn.shinelight.xyz/nonebot/unable.txt").content.decode("utf-8").replace("\r", ""))
-        file.close()
+    # with open(dir_base + "config/" + "total/" + "unable.txt", "w+", encoding="utf-8") as file:
+    #     file.write(requests.get("http://cdn.shinelight.xyz/nonebot/unable.txt").content.decode("utf-8").replace("\r", ""))
+    #     file.close()
 
     # # 不可关闭列表更新
     with open(dir_base + "config/" + "control/" + "unset.txt", "w+", encoding="utf-8") as file:
@@ -113,46 +117,69 @@ try:
         file.close()
 
     # 更新部分
-    download_to_plugin("menu/__init__")
+    download_readme()
 
-    download_to_plugin("passive/__init__")
-    download_to_plugin("passive/rules")
-
-    download_to_plugin("welcome/__init__")
-
-    download_to_plugin("word_cloud/__init__")
-
-    download_to_utils("__init__")
-    download_to_utils("database_mysql")
-    download_to_utils("path")
-
-    download_to_root("README", "http://cdn.shinelight.xyz/nonebot/README.md", "md")
-    # 删除部分
-    os.remove(dir_utils + "hook.py")
-    os.remove(dir_utils + "hook_fast.py")
-    os.remove(dir_utils + "hook_lock.py")
-    os.remove(dir_utils + "hook_permission.py")
-    os.remove(dir_utils + "hook_total.py")
-    os.remove(dir_utils + "hook_update.py")
-
-    # 新增部分
-    mkd("Api")
-    mkd("Api/api")
-    open(dir_base + "Api/__init__.py", "w+", encoding="utf-8").close()
-    download_to_api("__init__")
-    download_to_api("utils")
-
-    mkd("content/plugins/enable")
+    download_to_plugin("admin/__init__")
+    download_to_plugin("answersbook/__init__")
+    download_to_plugin("ban_pic/__init__")
+    download_to_plugin("ban_word/__init__")
+    download_to_plugin("blackjack/__init__")
+    download_to_plugin("covid19/__init__")
+    download_to_plugin("credit/__init__")
+    download_to_plugin("demerit/__init__")
     download_to_plugin("enable/__init__")
+    download_to_plugin("epicfree/__init__")
+    shutil.rmtree(dir_base + "content/plugins/execSql", True)
+    download_to_plugin("fortune/__init__")
+    download_to_plugin("fortune/config")
+    download_to_plugin("fortune/data_source")
+    download_to_plugin("fortune/utils")
+    download_to_plugin("fortune/download")
+    download_to_plugin("heweather/__init__")
+    download_to_plugin("ian/__init__")
+    download_to_plugin("logo/__init__")
+    download_to_plugin("menu/__init__")
+    download_to_plugin("memes/__init__")
+    download_to_plugin("morning/__init__")
+    download_to_plugin("morning/data_source")
+    download_to_plugin("nethot/__init__")
+    download_to_plugin("passive/__init__")
+    download_to_plugin("permission/__init__")
+    download_to_plugin("pic/__init__")
+    download_to_plugin("plugin_control/__init__")
+    download_to_plugin("plugin_control/functions")
+    download_to_plugin("question/__init__")
+    download_to_plugin("repeater/__init__")
+    download_to_plugin("russian/__init__")
+    download_to_plugin("saymoney/__init__")
+    download_to_plugin("sign/__init__")
+    download_to_plugin("simplemusic/__init__")
+    download_to_plugin("simplemusic/data_source")
+    download_to_plugin("speakrank/__init__")
+    download_to_plugin("total/__init__")
+    download_to_plugin("translate/translator")
+    download_to_plugin("update/__init__")
+    download_to_plugin("what2eat/__init__")
+    download_to_plugin("withdraw/__init__")
+    download_to_plugin("word_cloud/__init__")
+    download_to_plugin("xh/__init__")
 
-    mkd("hook")
-    download_to_hook("__init__")
-    download_to_hook("hook_enable")
     download_to_hook("hook_fast")
     download_to_hook("hook_lock")
-    download_to_hook("hook_permission")
-    download_to_hook("hook_total")
-    download_to_hook("hook_update")
+
+    download_to_utils("other")
+    download_to_utils("path")
+    download_to_utils("database_mysql")
+
+    download_to_api("utils")
+    # 新增部分
+    mkd("content/plugins/AI_talk")
+    download_to_plugin("AI_talk/__init__")
+    download_to_plugin("AI_talk/tools")
+
+    mkd("content/plugins/help")
+    download_to_plugin("help/__init__")
+    download_to_plugin("help/handler")
     # 结束
 
 # 异常处理
