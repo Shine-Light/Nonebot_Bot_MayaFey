@@ -5,12 +5,27 @@
 """
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.plugin import PluginMetadata
 from utils import database_mysql
 from . import tools
-from ..withdraw import add_target
+
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "credit"),
+    description="积分查询和排行",
+    usage="/积分排行\n"
+          "/我的积分" + add_target(60)
+)
+
 
 cursor = database_mysql.cursor
 db = database_mysql.connect
+
+
+
 
 
 # 积分排行榜

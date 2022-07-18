@@ -4,20 +4,35 @@
 @Date: 2022/3/27 19:55
 """
 import random
-
+import os
+import time
 import httpx
+
 from imageio import imread
 from nonebot import on_command, logger, on_message, require, get_bot
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
 from nonebot.internal.adapter import Message
 from nonebot.exception import ActionFailed
-from utils.admin_tools import replace_tmr, participle_simple_handle, upload, load
-import os
-import time
+from nonebot.plugin import PluginMetadata
+from utils.admin_tools import replace_tmr, participle_simple_handle
 from utils.path import *
 from . import tools
-from .. import permission, plugin_control
 from utils import users, requests_tools
+
+from utils.other import add_target, translate
+from content.plugins.plugin_control.functions import get_state
+from content.plugins.permission.tools import special_per, get_special_per
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "word_cloud"),
+    description="群词云",
+    usage="/群词云\n"
+          "/记录本群 (超级用户)\n"
+          "/停止记录本群 (超级用户)\n"
+          "/更新mask (超级用户)" + add_target(60)
+)
 
 
 words = limit_word_path
@@ -31,7 +46,7 @@ word_start = on_command("记录本群", block=True, priority=4)
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "word_start", gid):
+    if special_per(role, "word_start", gid):
         with open(word_path, 'r+', encoding='utf-8') as c:
             txt = c.read().split("\n")
             if gid not in txt:
@@ -43,7 +58,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 logger.info(f"{gid}已存在")
                 await word_start.finish(f"{gid}已存在")
     else:
-        await word_start.finish(f"无权限,权限需在 {permission.tools.get_special_per(str(event.group_id), 'word_start')} 及以上")
+        await word_start.finish(f"无权限,权限需在 {get_special_per(str(event.group_id), 'word_start')} 及以上")
 
 
 word_stop = on_command("停止记录本群", block=True, priority=4)
@@ -51,7 +66,7 @@ word_stop = on_command("停止记录本群", block=True, priority=4)
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "word_stop", gid):
+    if special_per(role, "word_stop", gid):
         txt = open(word_path, 'r', encoding='utf-8').read()
         if gid in txt:
             with open(word_path, 'w', encoding='utf-8') as c:
@@ -63,7 +78,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             logger.info(f"停用失败：{gid}不存在")
             await word_stop.finish(f"停用失败：{gid}不存在")
     else:
-        await update_mask.finish(f"无权限,权限需在 {permission.tools.get_special_per(str(event.group_id), 'word_stop')} 及以上")
+        await update_mask.finish(f"无权限,权限需在 {get_special_per(str(event.group_id), 'word_stop')} 及以上")
 
 word = on_message(priority=12)
 @word.handle()
@@ -106,7 +121,7 @@ cloud = on_command("群词云", priority=5)
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "cloud", gid):
+    if special_per(role, "cloud", gid):
         from wordcloud import WordCloud, ImageColorGenerator
         import jieba
         txt = open(word_path, "r", encoding="utf-8").read().split("\n")
@@ -198,7 +213,7 @@ async def run():
         gid = gid.strip("\n")
         if not gid:
             continue
-        if await plugin_control.get_state("word_cloud", gid):
+        if await get_state("word_cloud", gid):
             localTime = time.strftime(ft, time.localtime())
             path_temp = words_contents_path / date / f"{str(gid)}.txt"
             if not os.path.exists(path_temp):
@@ -269,7 +284,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     """
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "update_mask", gid):
+    if special_per(role, "update_mask", gid):
         already_have = len(os.listdir(wordcloud_bg_path))
         try:
             async with httpx.AsyncClient() as client:
@@ -290,4 +305,4 @@ async def _(bot: Bot, event: GroupMessageEvent):
             await update_mask.send(f"QAQ,更新mask失败:\n{e}")
             return
     else:
-        await update_mask.finish(f"无权限,权限需在 {permission.tools.get_special_per(str(event.group_id), 'update_mask')} 及以上")
+        await update_mask.finish(f"无权限,权限需在 {get_special_per(str(event.group_id), 'update_mask')} 及以上")

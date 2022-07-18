@@ -16,17 +16,26 @@ from time import time
 
 from aiohttp import request
 from loguru import logger
-from nonebot import get_driver
+from nonebot import get_driver, on_command
 from nonebot.adapters import Event, Message, MessageTemplate
 from nonebot.adapters.onebot.v11 import MessageEvent as OneBot_V11_MessageEvent
 from nonebot.exception import ActionFailed
 from nonebot.params import CommandArg
 from nonebot.permission import Permission
-from nonebot.plugin import on_command
+from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from ujson import loads as loadJsonS
-
 from ._permission import onFocus
+
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "translate"),
+    description="翻译",
+    usage="/翻译" + add_target(60)
+)
 
 config = get_driver().config
 

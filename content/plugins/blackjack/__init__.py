@@ -1,10 +1,31 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
 from nonebot.params import Message, CommandArg
+from nonebot.plugin import PluginMetadata
 from .game import get_point, add_game, start_game, call_card, stop_card, get_game_ls, duel #, get_rank
 from typing import Dict, List
 from utils import database_mysql
-from .. import withdraw
+from utils.other import add_target, translate
+
+
+msg_help = '''黑杰克帮助:
+发起游戏: /21点 {积分}
+查看游戏列表: /21点列表
+加入游戏: /21点加入 {游戏ID}
+叫牌: /叫牌 {游戏ID}
+停牌: /停牌 {游戏ID}
+对战(自动进行): /21点对战 {积分} @某人
+接收对战: /21点接受对战 {游戏ID}
+查看对战列表: /21点对战列表
+可以有多场游戏,也可以同时进行多场游戏''' + add_target(60)
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "blackjack"),
+    description="21点又名黑杰克,一种扑克牌玩法",
+    usage=msg_help
+)
 
 
 cursor = database_mysql.cursor
@@ -22,18 +43,6 @@ accept_battle = on_command("21点接受对战", aliases={"黑杰克接受对战"
 battle_list = on_command("21点对战列表", aliases={"黑杰克对战列表"}, priority=7, block=True)
 # rank = on_command("rank", aliases={'排名'})
 battle_dic: Dict[int, List[List[int]]] = {}
-
-
-msg_help = '''黑杰克帮助:
-发起游戏: /21点 {积分}
-查看游戏列表: /21点列表
-加入游戏: /21点加入 {游戏ID}
-叫牌: /叫牌 {游戏ID}
-停牌: /停牌 {游戏ID}
-对战(自动进行): /21点对战 {积分} @某人
-接收对战: /21点接受对战 {游戏ID}
-查看对战列表: /21点对战列表
-可以有多场游戏,也可以同时进行多场游戏''' + withdraw.add_target(60)
 
 
 @blackjack.handle()

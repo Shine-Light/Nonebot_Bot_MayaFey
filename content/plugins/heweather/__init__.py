@@ -4,10 +4,21 @@ from nonebot.params import RegexGroup
 from nonebot.adapters.onebot.v11 import MessageSegment
 from nonebot.log import logger
 from nonebot.matcher import Matcher
-
+from nonebot.plugin import PluginMetadata
 from .config import Config
 from .render_pic import render
 from .weather_data import Weather, CityNotFoundError, ConfigError
+
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "heweather"),
+    description="查看近几天的天气",
+    usage="{城市名}天气" + add_target(60)
+)
+
 
 plugin_config = Config.parse_obj(get_driver().config.dict())
 

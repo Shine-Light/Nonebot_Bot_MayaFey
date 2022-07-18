@@ -9,6 +9,18 @@ from nonebot import on_command
 from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
 from utils import requests_tools
 
+from utils.other import add_target, translate
+from nonebot.plugin import PluginMetadata
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "ian"),
+    description="一句鸡汤或者毒鸡汤",
+    usage="/一言" + add_target(60)
+)
+
+
 url_api = 'https://tenapi.cn/yiyan/?format=text'
 
 ian = on_command(cmd='一言', aliases={'一句一言', 'ian'}, priority=8)

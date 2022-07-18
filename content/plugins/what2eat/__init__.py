@@ -7,6 +7,28 @@ from nonebot import require, get_bot
 from ..permission.tools import special_per, get_special_per
 from utils import users
 
+from utils.other import add_target, translate
+from nonebot.plugin import PluginMetadata
+
+
+message_what2eat = '''
+吃什么:/{时间段}吃什么
+查看群特色菜单: /群特色菜单
+添加菜品至群特色菜单:/添加 {菜名} (超级用户)
+从菜单移除菜品:/移除 {菜名} (超级用户)
+添加菜品至基础菜单: /加菜 {菜名} (超级用户) 
+查看基础菜单: /基础菜菜单 (超级用户)
+开启/关闭按时饭点小助手: /开启|关闭小助手 (超级用户)
+添加问候: /添加问候 {问候语} (超级用户)
+删除问候: /删除问候 {问候语} (超级用户)'''.strip() + add_target(60)
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "what2eat"),
+    description="今天吃什么",
+    usage=message_what2eat
+)
 
 greating_helper = require("nonebot_plugin_apscheduler").scheduler
 eating_helper = require("nonebot_plugin_apscheduler").scheduler

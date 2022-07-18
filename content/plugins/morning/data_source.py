@@ -105,7 +105,7 @@ class MorningManager:
             msg = msg + '\n是否允许深度睡眠(即清醒时长很短)：是 '
         else:
             msg = msg + '\n是否允许深度睡眠(即清醒时长很短)：否\n - 允许的最短清醒时长：' + str(self.config['night']['deep_sleep']['interval']) + '小时'
-        return msg + add_target(60)
+        return msg
 
 # ------------------------------ config ------------------------------ #
 

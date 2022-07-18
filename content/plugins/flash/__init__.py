@@ -6,6 +6,18 @@
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Event, MessageSegment, Message
 from nonebot.rule import Rule
 from nonebot import on_message, get_driver
+from nonebot.plugin import PluginMetadata
+
+
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "flash"),
+    description="反闪照",
+    usage="被动,无命令" + add_target(60)
+)
 
 
 def checker():

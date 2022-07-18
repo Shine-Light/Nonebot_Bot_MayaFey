@@ -1,12 +1,38 @@
 from nonebot import require
 from nonebot import logger
 from nonebot import on_command
-from nonebot.permission import SUPERUSER
-from nonebot.adapters.onebot.v11 import Bot, GROUP, GROUP_OWNER, GROUP_ADMIN, Message, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, GROUP, Message, GroupMessageEvent
 from nonebot.params import CommandArg
+from nonebot.plugin import PluginMetadata
 from .data_source import morning_manager
-from ..permission.tools import special_per, get_special_per
+from content.plugins.permission.tools import special_per, get_special_per
 from utils import users
+
+from utils.other import add_target, translate
+
+
+message_morning: str = '''
+早安: /早安|哦嗨哟|おはよう
+晚安: /晚安|哦呀斯密|おやすみ
+查看自己的作息: /我的作息
+查看群友的作息: /群友作息
+查看配置: /早晚安设置
+
+=== 设置(超级用户) ===
+开启某个配置: /早安开启 xx 
+关闭某个配置: /早安关闭 xx 
+设置数值: /早安设置 {配置} {数值}
+开启某个配置: /晚安开启 xx 
+关闭某个配置: /晚安关闭 xx 
+设置数值: /晚安设置 {配置} {数值} '''.strip() + add_target(60)
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "morning"),
+    description="积分查询和排行",
+    usage=message_morning
+)
 
 
 morning = on_command("早安", aliases={"哦嗨哟", "おはよう"}, permission=GROUP, priority=8, block=True)

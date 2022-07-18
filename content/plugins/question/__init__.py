@@ -7,17 +7,31 @@ import json
 
 from nonebot.params import CommandArg
 from nonebot import on_regex, on_message, on_command
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
+from nonebot.plugin import PluginMetadata
 from utils.path import *
 from utils import json_tools, users, database_mysql
 from .. import permission
 
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "question"),
+    description="问答",
+    usage="精准问{问题}答{回答} (超级用户)\n"
+          "模糊问{问题}答{回答} (超级用户)\n"
+          "/问答 列表"
+          "/问答 删除 {问题} (超级用户)" + add_target(60)
+)
+
+
 cursor = database_mysql.cursor
+
 
 # 添加问答(模糊)
 question_vague = on_regex("^模糊问.*?(答)", priority=5)
-
-
 @question_vague.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
@@ -44,38 +58,34 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 
 # 添加问答(精准)
-question_vague = on_regex("^精准问.*?(答)", priority=5)
-
-
-@question_vague.handle()
+question_absolute = on_regex("^精准问.*?(答)", priority=5)
+@question_absolute.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "question", gid):
+    if permission.tools.special_per(role, "question_vague", gid):
         msg_meta = str(event.get_message())
         Question = msg_meta.split("问", 1)[1].split("答", 1)[0]
         Answer = msg_meta.split("答", 1)[1]
         question_path = question_base / f"{gid}.json"
         QAs: dict = json_tools.json_load(question_path)
         if not Answer:
-            await question_vague.finish("添加失败,无回答内容")
+            await question_absolute.finish("添加失败,无回答内容")
         try:
             QAs.update({"absolute": {Question: Answer}})
             with open(question_path, 'w', encoding="utf-8") as file:
                 file.write(json.dumps(QAs, ensure_ascii=False))
-            await question_vague.send('添加成功')
+            await question_absolute.send('添加成功')
 
         except Exception as e:
-            await question_vague.send('添加失败:' + str(e))
+            await question_absolute.send('添加失败:' + str(e))
 
     else:
-        await question_vague.send("无权限")
+        await question_absolute.send("无权限")
 
 
 # 问答检测
 ques_in = on_message(priority=12)
-
-
 @ques_in.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
@@ -104,10 +114,6 @@ async def _(bot: Bot, event: GroupMessageEvent):
         for qa in vague:
             if str(qa) in meta_msg:
                 A = vague[qa]
-
-
-
-
     if A:
         messages = A
         await ques_in.send(Message(messages))
@@ -149,10 +155,10 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
             msg = msg[:-1]
 
     elif mode == "删除" or mode == "-":
-        # 成员无权限添加/删除
         find = False
         gid = str(event.group_id)
         role = users.get_role(gid, uid)
+        # 成员无权限添加/删除
         if permission.tools.permission_(role, "superuser"):
             content = args.split(" ", 1)[1]
 

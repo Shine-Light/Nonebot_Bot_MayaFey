@@ -6,8 +6,20 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 from utils.json_tools import json_load, json_write
 from utils.path import enable_config_path
+
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "enable"),
+    description="机器人开关",
+    usage="/启用机器人 (根用户)\n"
+          "/停用机器人 (根用户)" + add_target(60)
+)
 
 
 enable = on_command(cmd="启用机器人", priority=1, permission=SUPERUSER)

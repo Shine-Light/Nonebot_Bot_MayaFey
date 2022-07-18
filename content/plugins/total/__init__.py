@@ -8,10 +8,19 @@ import time
 
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot import on_command
+from nonebot.plugin import PluginMetadata
 from utils import json_tools, other
 from utils.path import *
-from ..plugin_control import translate
 
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "total"),
+    description="插件调用统计",
+    usage="/插件统计 (超级用户)" + add_target(60)
+)
 fts = "%Y-%m"
 
 total = on_command(cmd="插件统计", aliases={"统计", "total"}, priority=6)

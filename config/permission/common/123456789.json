@@ -28,5 +28,6 @@
     "demerit": "member", 
     "speakrank": "member", 
     "flash": "baned",
-    "AI_talk": "member"
+    "AI_talk": "member",
+    "help": "member"
 }

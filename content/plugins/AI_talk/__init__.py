@@ -7,7 +7,19 @@ from nonebot import on_message
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, \
     Message, MessageSegment, PrivateMessageEvent
 from nonebot.rule import to_me, command
+from nonebot.plugin import PluginMetadata
+
+from utils.other import add_target, translate
 from .tools import *
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "AI_talk"),
+    description="和真宵聊天",
+    usage="群聊: @我 {聊天内容}\n"
+          "私聊: {聊天内容}" + add_target(60)
+)
 
 
 # 群聊版本

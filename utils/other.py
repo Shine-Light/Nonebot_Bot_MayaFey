@@ -10,6 +10,8 @@ import sys
 import httpx
 
 from nonebot import logger
+from .json_tools import json_load
+from .path import config_path
 
 
 async def mk(type_, path_, *mode, **kwargs):
@@ -55,3 +57,35 @@ async def reboot():
         os.execv(sys.executable, ['python'] + sys.argv)
     else:
         os.execv(sys.executable, ['python3'] + sys.argv)
+
+
+def translate(mode: str, name: str) -> str:
+    """
+    插件名称翻译
+    mode: e2c(英译中) c2e(中译英)
+    name: 插件名
+    """
+    # 翻译文件
+    plugin_translate: dict = json_load(config_path / "translate.json")
+    # e2c 英译中
+    if mode == 'e2c':
+        if name not in plugin_translate:
+            return name
+        for name_en in plugin_translate:
+            if name == name_en:
+                return plugin_translate[name_en]
+
+    # c2e 中译英
+    elif mode == 'c2e':
+        for name_en in plugin_translate:
+            if plugin_translate[name_en] == name:
+                return name_en
+        return name
+
+    else:
+        return name
+
+
+# 添加撤回标志
+def add_target(time_s: int) -> str:
+    return f"\n(该消息将于 {time_s} s后撤回)"

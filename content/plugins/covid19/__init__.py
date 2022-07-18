@@ -1,17 +1,33 @@
-from ast import alias
+import time
+
 from .data_load import DataLoader
 from nonebot import on_regex, on_command, get_bot, get_driver
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.message import Message
 from nonebot.adapters.onebot.v11.event import GroupMessageEvent
+from nonebot.plugin import PluginMetadata
 from nonebot.typing import T_State
 from nonebot.params import State, CommandArg
 from nonebot import require, logger
 from .tools import NewsData
 from utils import users
-from ..withdraw import add_target
-from .. import permission
-import time
+
+from content.plugins.permission.tools import special_per
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "covid19"),
+    description="查询国内城市新冠疫情信息与政策",
+    usage="{城市名}疫情\n"
+          "{城市名}疫情政策\n"
+          "/关注疫情 {城市名} (超级用户)\n"
+          "/取消关注疫情 {城市名} (超级用户)\n"
+          "/疫情关注列表 (超级用户)" + add_target(60)
+)
+
+
 
 DL = DataLoader('data.json')
 NewsBot = NewsData()
@@ -26,7 +42,7 @@ add_focus = on_command("关注疫情", priority=7, block=True)
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State = State(), city: Message = CommandArg()):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "add_focus", gid):
+    if special_per(role, "add_focus", gid):
         city = city.extract_plain_text()
         gid = str(event.group_id)
 
@@ -45,7 +61,7 @@ delete_focus = on_command("取消关注疫情", priority=7, block=True, aliases=
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State = State(), city: Message = CommandArg()):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "delete_focus", gid):
+    if special_per(role, "delete_focus", gid):
         city = city.extract_plain_text()
         gid = str(event.group_id)
 
@@ -64,7 +80,7 @@ city_news = on_regex(r'^(.{0,6})(疫情.{0,4})', block=True, priority=7)
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State = State()):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "city_news", gid):
+    if special_per(role, "city_news", gid):
         city_name, kw = state['_matched_groups']
 
         city = NewsBot.data.get(city_name)
@@ -86,7 +102,7 @@ city_poi_list = on_regex(r'^(.{0,6})(风险地区)', block=True, priority=7)
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State = State()):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "city_poi_list", gid):
+    if special_per(role, "city_poi_list", gid):
         city_name, _ = state['_matched_groups']
         city = NewsBot.data.get(city_name)
         if city:
@@ -100,7 +116,7 @@ added_list = on_command("疫情关注列表", priority=7)
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "added_list", gid):
+    if special_per(role, "added_list", gid):
         gid = str(event.group_id)
         addedList: list = FOCUS[gid]
         msg = "已关注的城市:\n"

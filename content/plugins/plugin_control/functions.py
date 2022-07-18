@@ -17,7 +17,8 @@ plugin_url = plugin_path
 dirs = os.listdir(plugin_url)
 # 插件列表
 plugins: list = []
-
+# 不可设置插件列表
+unset: list = open(unset_path, 'r', encoding="utf-8").read().split(",")
 
 async def init(gid: str):
     config_url_ = control_path / gid
@@ -58,35 +59,7 @@ async def is_unset(plugin: str) -> bool:
     插件是否为不可设置插件
     plugin: 插件名
     """
-    unset: list = open(unset_path, 'r', encoding="utf-8").read().split(",")
     if plugin in unset:
         return True
     else:
         return False
-
-
-def translate(mode: str, name: str) -> str:
-    """
-    插件名称翻译
-    mode: e2c(英译中) c2e(中译英)
-    name: 插件名
-    """
-    # 翻译文件
-    plugin_translate: dict = json_tools.json_load(config_url / "translate.json")
-    # e2c 英译中
-    if mode == 'e2c':
-        if name not in plugin_translate:
-            return name
-        for name_en in plugin_translate:
-            if name == name_en:
-                return plugin_translate[name_en]
-
-    # c2e 中译英
-    elif mode == 'c2e':
-        for name_en in plugin_translate:
-            if plugin_translate[name_en] == name:
-                return name_en
-        return name
-
-    else:
-        return name

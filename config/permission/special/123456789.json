@@ -4,6 +4,8 @@
     "add_focus": "superuser",
     "delete_focus": "superuser",
     "question": "superuser",
+    "question_vague": "superuser",
+    "question_absolute": "superuser",
     "welcome_msg_update": "superuser",
     "back_msg_update": "superuser",
     "baned": "member",

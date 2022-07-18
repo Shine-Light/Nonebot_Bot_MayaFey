@@ -3,15 +3,23 @@
 @Version: 1.0
 @Date: 2022/3/24 21:10
 """
-
-
 from nonebot import on_command
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment
 from .functions import *
-from ..withdraw import add_target
 from utils.path import *
-from utils import htmlrender
+from utils import htmlrender, other
+from nonebot.plugin import PluginMetadata
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=other.translate("e2c", "plugin_control"),
+    description="插件控制",
+    usage="/插件控制 状态 (超级用户)\n"
+          "/插件控制 {插件名} (超级用户)" + add_target(60)
+)
 
 
 control = on_command(cmd="插件控制", priority=4)
@@ -38,7 +46,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
                 if plugin == "test":
                     pass
                 # 不可关闭插件
-                elif is_unset(plugin):
+                elif await is_unset(plugin):
                     pass
                 else:
                     if line % 3 == 0:

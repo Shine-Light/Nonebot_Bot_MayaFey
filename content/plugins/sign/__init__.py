@@ -11,9 +11,19 @@ from nonebot.adapters.onebot.v11 import MessageSegment, Message
 from utils import database_mysql, time_tools, requests_tools, users
 from nonebot import on_command
 from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
-from .. import credit
+from nonebot.plugin import PluginMetadata
 from . import tools
+from content.plugins import credit
 
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "sign"),
+    description="签到",
+    usage="/签到" + add_target(60)
+)
 
 ftr: str = "%Y-%m-%d"
 # 数据库游标
@@ -63,6 +73,6 @@ async def _(bot: Bot, event: GroupMessageEvent):
         else:
             await sign.send("未知异常:" + re['message'])
     except ConnectionError:
-        await sign.send("网络出现异常,签到有效")
+        await sign.send("网络出现异常,无法获取图片,但不影响签到")
     except Exception as e:
         await sign.send("未知异常:" + str(e))

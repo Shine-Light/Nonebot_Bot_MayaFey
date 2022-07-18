@@ -6,9 +6,25 @@
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, Message
 from nonebot.params import CommandArg
 from nonebot import on_command
-from ..permission.tools import special_per, get_special_per
+from nonebot.plugin import PluginMetadata
+from content.plugins.permission.tools import special_per, get_special_per
 from utils import users, admin_tools
 from .tools import *
+from content.plugins.permission.tools import permission_
+
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "demerit"),
+    description="对群员违规行为进行记录",
+    usage="/我的记过记录\n"
+          "/记过 @xx @xx ... {原因} (超级用户)\n"
+          "/查找记过记录 @xx (超级用户)\n"
+          "/记过配置\n"
+          "/修改记过配置 {配置项} {值} (超级用户)" + add_target(60)
+)
 
 
 demerit = on_command(cmd="记过", priority=8, block=True)
@@ -32,14 +48,14 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
         limit = get_limit(gid)
 
         for uid in uids:
-            # if str(uid) == str(bot.self_id):
-            #     await demerit.send("真宵是做错什么了吗?!")
-            #     continue
+            if str(uid) == str(bot.self_id):
+                await demerit.send("真宵是做错什么了吗?!")
+                continue
             uid = str(uid)
             nickname = (await bot.get_group_member_info(group_id=int(gid), user_id=int(uid)))["nickname"]
-            # if permission_(users.get_role(gid, uid), "superuser"):
-            #     await demerit.send(f"{nickname} 权限为超级用户及以上,无法记过!")
-            #     continue
+            if permission_(users.get_role(gid, uid), "superuser"):
+                await demerit.send(f"{nickname} 权限为超级用户及以上,无法记过!")
+                continue
             add_demerit(gid, uid, note)
 
             msg += f"{nickname} 记过一次\n"

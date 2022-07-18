@@ -9,9 +9,24 @@ import os
 
 from nonebot import on_command, on_message
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
-from utils.path import group_message_data_path, words_contents_path
+from nonebot.plugin import PluginMetadata
+from utils.path import group_message_data_path
 from utils.admin_tools import At, load, upload
 
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "speakrank"),
+    description="发言排行榜",
+    usage="/今日榜首\n"
+          "/今日发言排行\n"
+          "/昨日发言排行\n"
+          "/排行\n"
+          "/发言数\n"
+          "/今日发言数" + add_target(60)
+)
 
 speakrank_record = on_message(priority=12)
 @speakrank_record.handle()

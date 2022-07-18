@@ -7,12 +7,20 @@
 import json
 import asyncio
 
-from nonebot import on_command, on_notice, on_message
+from nonebot import on_command, on_notice, on_message,get_driver
 from nonebot.adapters.cqhttp import Bot, Event, GroupMessageEvent
 from nonebot.rule import Rule, to_me
-from nonebot import get_driver
-from ..withdraw import add_target
+from nonebot.plugin import PluginMetadata
+from utils.other import add_target, translate
 from .. import update
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "menu"),
+    description="总菜单",
+    usage="/菜单" + add_target(60)
+)
 
 
 # 戳一戳检测规则
@@ -28,13 +36,13 @@ def checker_click():
 
 # 机器人id
 bot_id = get_driver().config.bot_id
-loop = asyncio.get_event_loop()
 
 message_main: str = '''你好!我是真宵,让我来告诉如何使用机器人吧
 命令提示:空格表示命令别名分隔,{}为自主输入的参数
 "|"表示或者,()中为补充内容,其余符号都是指令内容
 群成员所有命令在10s内只能触发5次,超过五次就禁言5min
-总菜单: 艾特我 戳一戳我 /帮助
+总菜单: 艾特我 戳一戳我 /菜单
+获取功能说明: /帮助 {功能名}
 娱乐菜单: /娱乐菜单
 游戏存档: /游戏菜单
 生活菜单: /生活菜单
@@ -111,6 +119,7 @@ message_admin: str = '''这是管理菜单
 群词云(19:00推送)
     /记录本群
     /停止记录本群
+    /更新mask
 违禁词
     /简单违禁词
     /严格违禁词
@@ -209,7 +218,7 @@ message_what2eat = '''
 删除问候: /删除问候 {问候语} (超级用户)'''.strip() + add_target(60)
 
 # 总菜单
-main = on_command(cmd="菜单", aliases={"help", "帮助"}, priority=9)
+main = on_command(cmd="菜单", priority=9)
 @main.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     version = update.tools.get_version()

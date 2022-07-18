@@ -6,13 +6,14 @@ from nonebot.typing import T_Handler
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Message, MessageSegment, unescape
 from nonebot.log import logger
-
+from nonebot.plugin import PluginMetadata
 from .models import NormalMeme
 from .download import DownloadError
 from .utils import help_image
 from .normal_meme import normal_memes
 from .gif_subtitle_meme import gif_subtitle_memes
-from ..withdraw import add_target
+
+from utils.other import add_target, translate
 
 
 __help__plugin_name__ = "memes"
@@ -23,8 +24,15 @@ __example__ = """
 鲁迅说 我没说过这句话
 王境泽 我就是饿死 死外边 不会吃你们一点东西 真香
 """.strip()
-__usage__ = f"{__des__}\n\nUsage:\n{__cmd__}\n\nExamples:\n{__example__}"
+__usage__ = f"{__des__}\n\nUsage:\n{__cmd__}\n\nExamples:\n{__example__}" + add_target(60)
 
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "memes"),
+    description="鲁迅说,王境泽等表情包制作",
+    usage=__usage__
+)
 
 help_cmd = on_command("表情包制作", block=True, priority=8)
 

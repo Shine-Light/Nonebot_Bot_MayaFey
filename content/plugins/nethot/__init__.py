@@ -5,15 +5,24 @@ import time
 from nonebot import on_command, get_driver
 from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
 from nonebot.log import logger
+from nonebot.plugin import PluginMetadata
 from utils import requests_tools
 
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "nethot"),
+    description="获取全网热搜",
+    usage="/热搜 百度|B站|贴吧|微博|IT|历史今天 (韩小韩版本)\n"
+          "/热搜 (天行数据版本)" + add_target(60)
+)
 
 def hot_han(event: GroupMessageEvent):
     # 韩小韩接口,大陆IP使用
     url = "https://api.vvhan.com/api/hotlist?type="
     mode = str(event.get_message()).split(" ", 1)[1]
-    last = ""
-    message = ""
     proxy = requests_tools.get_proxy()
     if mode == "知乎":
         last = "zhihuHot"

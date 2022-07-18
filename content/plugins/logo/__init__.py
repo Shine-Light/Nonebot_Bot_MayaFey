@@ -5,7 +5,11 @@ from nonebot.matcher import Matcher
 from nonebot.typing import T_Handler
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
+from nonebot.plugin import PluginMetadata
 from .data_source import create_logo, commands
+
+from utils.other import add_target, translate
+
 
 __help__plugin_name__ = 'logo'
 __des__ = 'logo生成'
@@ -23,7 +27,15 @@ __example__ = '''
 /5000兆 我去 初音未来
 /douyin douyin
 '''.strip()
-__usage__ = f'{__des__}\n使用:\n{__cmd__}\n示例:\n{__example__}'
+__usage__ = f'使用:\n{__cmd__}\n示例:\n{__example__}' + add_target(60)
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "logo"),
+    description="多种风格logo生成",
+    usage=__usage__
+)
 
 
 async def handle(matcher: Matcher, style: str, text: str):

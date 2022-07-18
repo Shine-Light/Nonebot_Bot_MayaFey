@@ -9,6 +9,19 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, 
 from . import tools
 from utils.other import reboot
 
+from utils.other import add_target, translate
+from nonebot.plugin import PluginMetadata
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "update"),
+    description="机器人更新",
+    usage="/检查更新 (超级用户)\n"
+          "/更新 (超级用户)\n"
+          "/更新日志 (超级用户)" + add_target(60)
+)
+
 
 update = on_command("更新", aliases={"update"}, priority=2, block=True)
 @update.handle()

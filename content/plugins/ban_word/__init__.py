@@ -7,22 +7,19 @@ from nonebot import on_command, on_message, require, get_driver
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot.message import event_preprocessor
 from nonebot.exception import IgnoredException
+from nonebot.plugin import PluginMetadata
+
 
 from .tools import *
-from ..withdraw import add_target
 from utils import json_tools
 from utils.path import *
 from utils import database_mysql
 from .. import permission
 from utils import users
+from utils.other import add_target, translate
 
 
-cursor = database_mysql.cursor
-time_now = ""
-config_url = config_path
-word_list_message = "以下是违禁词列表,侮辱性或其他敏感词汇已内置,无须再添加:\n"
-preBanWord = limit_word_path
-preBanWord_easy = limit_word_path_easy
+
 ban_count_allow = get_driver().config.ban_count_allow
 custom_ban_msg = f'''自定义系列违禁词插件,以下是各功能命令:
 说明: 违禁词有两套系统,一套自定义系统,一套内置系统
@@ -38,6 +35,22 @@ custom_ban_msg = f'''自定义系列违禁词插件,以下是各功能命令:
 删除违禁词:违禁词 - 内容
 强制添加违禁词: 违禁词 ++ 内容
 '''
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "ban_word"),
+    description="自动检测违禁词并撤回",
+    usage=custom_ban_msg + add_target(60)
+)
+
+
+cursor = database_mysql.cursor
+time_now = ""
+config_url = config_path
+word_list_message = "以下是违禁词列表,侮辱性或其他敏感词汇已内置,无须再添加:\n"
+preBanWord = limit_word_path
+preBanWord_easy = limit_word_path_easy
 
 
 '''
@@ -261,7 +274,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
     else:
         await baned.send("无权限")
 
-a = ""
+
 # 违禁词检测
 @event_preprocessor
 async def _(event: GroupMessageEvent, bot: Bot):

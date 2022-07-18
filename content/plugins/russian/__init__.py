@@ -8,17 +8,13 @@ from nonebot.adapters.onebot.v11 import (
 )
 from nonebot.typing import T_State
 from nonebot.params import Depends, CommandArg, State
+from nonebot.plugin import PluginMetadata
 from .utils import is_number, get_message_at
-from nonebot.log import logger
 from .data_source import russian_manager, max_bet_gold
 from utils import database_mysql
-from ..withdraw import add_target
 
-cursor = database_mysql.cursor
-database = database_mysql.connect
+from utils.other import add_target, translate
 
-
-__zx_plugin_name__ = "俄罗斯轮盘"
 
 __plugin_usage__ = """俄罗斯轮盘帮助：
     开启游戏：/装弹 {子弹数} [积分](默认10积分) [at](指定决斗对象，为空则所有群友都可接受决斗)
@@ -30,6 +26,22 @@ __plugin_usage__ = """俄罗斯轮盘帮助：
     排行榜：/俄罗斯轮盘排名 [积分排行榜|胜场排行|败场排行|欧洲人排行|慈善家排行]
     (注：同一时间群内只能有一场对决)
 """ + add_target(60)
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "russian"),
+    description="俄罗斯轮盘",
+    usage=__plugin_usage__
+)
+
+
+cursor = database_mysql.cursor
+database = database_mysql.connect
+
+
+__zx_plugin_name__ = "俄罗斯轮盘"
+
 
 russian_rank = on_command(
     "俄罗斯轮盘排名",

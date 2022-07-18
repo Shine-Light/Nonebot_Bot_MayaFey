@@ -20,7 +20,7 @@
 5. 遇到bug请及时提Issue,有时间了我就会修复,欢迎pr
 6. 机器人的插件可以自己扒下来用,但请保留开发者信息
 7. 若该项目有任何地方有侵犯到你的权益请立即联系我 `shine_light@qq.com`
-8. 你的支持是我最大的动力,喜欢的话给个star吧(求求了
+8. 你的支持是我最大的动力,喜欢的话给个star吧 求求了(
 
 ## 更新日志
 [更新日志](https://mayafey.shinelight.xyz/updatelog)
@@ -31,7 +31,9 @@
 ## 功能
 <details>
 <summary>已实现的功能</summary>
-
+### 帮助功能
+- [X] 菜单 ([https://github.com/XZhouQD/nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help)修改而来)
+- [X] 插件帮助
 ### 娱乐功能
 - [X] 签到  
 - [X] 积分  
@@ -39,19 +41,19 @@
 - [X] 随机二次元  
 - [X] 全网热搜榜  
 - [X] 随机笑话  
-- [X] 点歌台 ([https://github.com/noneplugin/nonebot-plugin-simplemusic](https://github.com/noneplugin/nonebot-plugin-simplemusic))  
+- [X] 点歌台 ([https://github.com/noneplugin/nonebot-plugin-simplemusic](https://github.com/noneplugin/nonebot-plugin-simplemusic)修改而来)  
 - [X] 群词云  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
-- [X] logo制作  ([https://github.com/noneplugin/nonebot-plugin-logo](https://github.com/noneplugin/nonebot-plugin-logo))  
-- [X] 表情包制作  ([https://github.com/noneplugin/nonebot-plugin-memes](https://github.com/noneplugin/nonebot-plugin-memes))  
-- [X] 答案之书  ([https://github.com/A-kirami/nonebot-plugin-answersbook](https://github.com/A-kirami/nonebot-plugin-answersbook))
+- [X] logo制作  ([https://github.com/noneplugin/nonebot-plugin-logo](https://github.com/noneplugin/nonebot-plugin-logo)修改而来)  
+- [X] 表情包制作  ([https://github.com/noneplugin/nonebot-plugin-memes](https://github.com/noneplugin/nonebot-plugin-memes)修改而来)  
+- [X] 答案之书  ([https://github.com/A-kirami/nonebot-plugin-answersbook](https://github.com/A-kirami/nonebot-plugin-answersbook)修改而来)
 - [X] 到账语音生成  
 - [X] 今日运势  ([https://github.com/MinatoAquaCrews/nonebot_plugin_fortune](https://github.com/MinatoAquaCrews/nonebot_plugin_fortune)修改而来)  
 - [X] 发言排行榜  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)
 - [X] AI聊天  
 ### 生活功能
-- [X] 翻译  ([https://github.com/Lancercmd/nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator))  
+- [X] 翻译  ([https://github.com/Lancercmd/nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator)修改而来)  
 - [X] 疫情  ([https://github.com/Zeta-qixi/nonebot-plugin-covid19-news](https://github.com/Zeta-qixi/nonebot-plugin-covid19-news)修改而来)  
-- [X] 天气  ([https://github.com/kexue-z/nonebot-plugin-heweather](https://github.com/kexue-z/nonebot-plugin-heweather))  
+- [X] 天气  ([https://github.com/kexue-z/nonebot-plugin-heweather](https://github.com/kexue-z/nonebot-plugin-heweather)修改而来)  
 - [X] Epic喜加一  ([https://github.com/monsterxcn/nonebot_plugin_epicfree](https://github.com/monsterxcn/nonebot_plugin_epicfree)修改而来)  
 - [X] 吃什么  ([https://github.com/MinatoAquaCrews/nonebot_plugin_what2eat](https://github.com/MinatoAquaCrews/nonebot_plugin_what2eat)修改而来)  
 - [X] 早晚安  ([https://github.com/MinatoAquaCrews/nonebot_plugin_morning](https://github.com/MinatoAquaCrews/nonebot_plugin_morning)修改而来)   
@@ -86,7 +88,7 @@
 ## 未来可能增加的功能
 - [ ] Docker容器部署
 - [ ] 更多的功能
-- [ ] 可视化界面(Web,UI)[在做了,在做了]
+- [ ] 可视化界面(在做了,在做了)
 
 ## 感谢
 [Onebot](https://github.com/botuniverse/onebot-11)  

@@ -39,5 +39,8 @@
     "permission": "权限系统", 
     "total": "插件调用统计", 
     "enable": "机器人开关", 
-    "AI_talk": "AI聊天"
+    "AI_talk": "AI聊天",
+    "help": "帮助",
+    "api": "Api",
+    "execSql": "SQL查询"
 }

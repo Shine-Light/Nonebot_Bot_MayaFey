@@ -6,15 +6,25 @@
 from . import tools
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
+from nonebot.plugin import PluginMetadata
 from utils import database_mysql
 from utils import users, admin_tools
+from utils.other import add_target, translate
 
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "permission"),
+    description="设置和查看权限",
+    usage="/我的权限\n"
+          "/权限设置 @xx {权限等级} (超级用户)" + add_target(60)
+)
 
 cursor = database_mysql.cursor
 db = database_mysql.connect
 
 
-per = on_command(cmd="权限设置", aliases={"perset"}, priority=2)
+per = on_command(cmd="权限设置", aliases={"perset", "设置权限"}, priority=2)
 @per.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)

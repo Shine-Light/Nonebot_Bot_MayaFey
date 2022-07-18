@@ -7,7 +7,17 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, Message
 from nonebot import on_message, get_driver
 from nonebot.exception import FinishedException
 from nonebot.log import logger
+from nonebot.plugin import PluginMetadata
 
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "repeater"),
+    description="自动+1",
+    usage="被动,无命令" + add_target(60)
+)
 
 repeater_last = ""
 msg_last = {}

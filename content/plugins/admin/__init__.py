@@ -8,9 +8,24 @@ from nonebot import on_command, logger, get_driver
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.exception import ActionFailed
 from nonebot.permission import SUPERUSER
+from nonebot.plugin import PluginMetadata
 
+from utils.other import add_target, translate
 from utils.admin_tools import banSb, At, MsgText
 from .config import plugin_config
+
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "admin"),
+    description="禁言,解禁,踢出,提出并拉黑...",
+    usage="/禁 @xx @xx ... {时间}\n"
+          "/解 @xx @xx ...\n"
+          "/踢 @xx @xx ...\n"
+          "/黑 @xx @xx ..." + add_target(60)
+)
+
 
 su = nonebot.get_driver().config.superusers
 config = get_driver().config

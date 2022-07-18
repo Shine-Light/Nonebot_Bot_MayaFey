@@ -10,14 +10,21 @@ import nonebot
 from typing import Any, Dict
 from nonebot import require, on_command, logger
 from nonebot.adapters.onebot.v11 import Bot, MessageSegment, Message
+from nonebot.plugin import PluginMetadata
+from utils.other import add_target, translate
 
 ft = "%Y%m%d%H%M%S"
 msgs: dict = {}
 
 
-# 添加撤回标志
-def add_target(time_s: int) -> str:
-    return f"\n(该消息将于 {time_s} s后撤回)"
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "withdraw"),
+    description="定时撤回",
+    usage="被动,无命令" + add_target(60)
+)
+
+
 
 
 # 保存需要撤回的信息

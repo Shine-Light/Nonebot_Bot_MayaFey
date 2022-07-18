@@ -5,7 +5,19 @@
 """
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
+from nonebot.plugin import PluginMetadata
 from utils import requests_tools
+
+from utils.other import add_target, translate
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "pic"),
+    description="随机一张图片",
+    usage="/随机图片 头像|Bing|二次元图片" + add_target(60)
+)
+
 
 url: str = "https://api.yimian.xyz/img?"
 

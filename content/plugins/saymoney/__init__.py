@@ -6,13 +6,23 @@
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, Message, MessageSegment
 from nonebot.params import CommandArg
-from utils.requests_tools import match_30X
 from nonebot.exception import FinishedException, ActionFailed
 from nonebot.log import logger
 
+from utils.other import add_target, translate
+from nonebot.plugin import PluginMetadata
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "saymoney"),
+    description="支付宝到账XX元",
+    usage="/到账 {金额}" + add_target(60)
+)
+
 
 api_alipay_url = "https://mm.cqu.cc/share/zhifubaodaozhang/?money="
-api_wx_url = "WIP"
+api_wx_url = "W.I.P"
 
 saymoney = on_command(cmd="到账", priority=8)
 @saymoney.handle()

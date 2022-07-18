@@ -7,7 +7,18 @@ from nonebot import logger, on_message
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent
 from nonebot.exception import IgnoredException, ActionFailed
 from nonebot.message import event_preprocessor
+from nonebot.plugin import PluginMetadata
 from utils.admin_tools import banSb, image_moderation_async
+from utils.other import add_target, translate
+
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "ban_pic"),
+    description="自动撤回违规图片",
+    usage="被动,无命令" + add_target(60)
+)
 
 
 @event_preprocessor
