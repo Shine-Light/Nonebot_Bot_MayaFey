@@ -62,7 +62,7 @@ update_log = on_command("更新日志", aliases={"update_log", "更新记录"})
 async def _(bot: Bot, event: GroupMessageEvent):
     img = await tools.get_update_log()
     await update_log.send(Message([MessageSegment.image(img),
-                                   MessageSegment.text("完整日志地址:http://cdn.shinelight.xyz/nonebot/log.md")]))
+                                   MessageSegment.text("完整日志地址:https://mayafey.shinelight.xyz/updatelog/")]))
 
 
 timezone = "Asia/Shanghai"
