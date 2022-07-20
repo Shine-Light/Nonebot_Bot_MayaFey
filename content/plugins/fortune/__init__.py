@@ -89,7 +89,7 @@ async def get_user_theme(matcher: Matcher, args: str = RegexMatched(), state: T_
 @divine_specific.handle()
 async def _(event: GroupMessageEvent, state: T_State = Depends(get_user_theme)):
     user_theme = state["user_theme"]
-    if "刷新" in user_theme:
+    if "刷新" in user_theme or "重置" in user_theme:
         return
     for theme in MainThemeList:
         if user_theme in MainThemeList[theme]:

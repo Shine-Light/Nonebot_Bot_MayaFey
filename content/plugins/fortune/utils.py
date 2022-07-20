@@ -79,10 +79,10 @@ def randomBasemap(_theme: str, _spec_path: Optional[str]) -> str:
                 if try_time == len(list(MainThemeEnable)):
                     break
 
-            _p: Path = __p / picked
+            _p: Path = Path() / picked
             # Each file is a image
             images: List[str] = [str(f) for f in _p.iterdir() if f.is_file()]
-            p: Path = _p / random.choice(images)
+            p: Path = Path() / random.choice(images)
         else:
             _p: Path = res_path / "img" / _theme
             images: List[str] = [str(f) for f in _p.iterdir() if f.is_file()]
