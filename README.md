@@ -33,15 +33,14 @@
 <summary>已实现的功能</summary>
 
 ### 帮助功能  
-- [X] 菜单 
-- [X] 插件帮助 ([https://github.com/XZhouQD/nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help)修改而来)  
+- [X] 菜单 ([https://github.com/XZhouQD/nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help)修改而来)
+- [X] 插件帮助
 ### 娱乐功能
 - [X] 签到  
 - [X] 积分  
 - [X] 一言  
 - [X] 随机二次元  
-- [X] 全网热搜榜  
-- [X] 随机笑话  
+- [X] 全网热搜榜    
 - [X] 点歌台 ([https://github.com/noneplugin/nonebot-plugin-simplemusic](https://github.com/noneplugin/nonebot-plugin-simplemusic)修改而来)  
 - [X] 群词云  ([https://github.com/yzyyz1387/nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
 - [X] logo制作  ([https://github.com/noneplugin/nonebot-plugin-logo](https://github.com/noneplugin/nonebot-plugin-logo)修改而来)  
