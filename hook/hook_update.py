@@ -43,7 +43,7 @@ async def updating(bot: Bot):
                 await bot.send_group_msg(message="更新成功,请自行执行一次初始化命令", group_id=gid)
                 await bot.send_group_msg(message=Message([MessageSegment.image(await tools.get_update_log()),
                                                           MessageSegment.text(
-                                                              "完整日志地址:http://cdn.shinelight.xyz/nonebot/log.md")]),
+                                                              "完整日志地址:https://mayafey.shinelight.xyz/updatelog/")]),
                                          group_id=gid)
             except Exception as e:
                 await bot.send_group_msg(message=f"[hook_update] 更新日志发送失败:账号可能风控", group_id=gid)

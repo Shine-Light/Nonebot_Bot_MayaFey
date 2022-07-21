@@ -5,7 +5,7 @@
 """
 import json
 
-from nonebot import on_notice, on_request
+from nonebot import on_notice, on_request, get_driver
 from nonebot.plugin import PluginMetadata
 
 from nonebot.adapters.onebot.v11 import Bot, NoticeEvent, GroupRequestEvent, RequestEvent
@@ -26,6 +26,7 @@ __plugin_meta__ = PluginMetadata(
 
 cursor = database_mysql.cursor
 db = database_mysql.connect
+config = get_driver().config
 
 
 # 离群事件
@@ -80,8 +81,7 @@ van_invite = on_request(rule=rules.checker_invite_group(), priority=4)
 async def _(bot: Bot, event: RequestEvent):
     uid = str(event.get_user_id())
     gid = str(json.loads(event.get_event_description().replace("'", '"'))['group_id'])
-    role = users.get_role(gid, uid)
-    if permission_(role, "Van"):
+    if uid in config.superusers:
         try:
             await bot.set_group_add_request(
                 flag=event.flag, sub_type="invite", approve=True

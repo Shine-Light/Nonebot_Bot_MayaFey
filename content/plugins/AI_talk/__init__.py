@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/7/16 12:35
 """
-from nonebot import on_message
+from nonebot import on_message, get_driver
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, \
     Message, MessageSegment, PrivateMessageEvent
 from nonebot.rule import to_me, command
@@ -22,13 +22,18 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
+config = get_driver().config
+
+
 # 群聊版本
 AI_talk = on_message(rule=to_me(), priority=12)
 @AI_talk.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     # 命令不处理
-    if command(event.get_plaintext()):
-        return
+    cmd_start = config.command_start
+    for start in cmd_start:
+        if start == event.get_plaintext()[0]:
+            return
     msg = event.get_plaintext().strip()
     uid = str(event.get_user_id())
     gid = str(event.group_id)
