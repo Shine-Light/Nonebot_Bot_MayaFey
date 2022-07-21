@@ -119,7 +119,7 @@ try:
     # 更新部分
     download_to_plugin("AI_talk/__init__")
     download_to_plugin("passive/__init__")
-    download_to_plugin("download/__init__")
+    download_to_plugin("update/__init__")
     download_to_hook("hook_update")
     download_to_utils("users")
     # 结束
