@@ -10,8 +10,6 @@ from nonebot.plugin import PluginMetadata
 
 from nonebot.adapters.onebot.v11 import Bot, NoticeEvent, GroupRequestEvent, RequestEvent
 from utils import database_mysql, users
-from content.plugins.permission.tools import permission_
-
 from utils.other import add_target, translate
 from . import rules
 
@@ -60,7 +58,7 @@ async def _(bot: Bot, event: NoticeEvent):
 # 超级用户邀请新用户事件
 superuser_invite = on_request(rule=rules.checker_invite(), priority=4)
 @superuser_invite.handle()
-async def _(bot: Bot, event: GroupRequestEvent):
+async def _(bot: Bot, event: NoticeEvent):
     await bot.set_group_add_request(
         flag=event.flag, sub_type="add", approve=True
     )

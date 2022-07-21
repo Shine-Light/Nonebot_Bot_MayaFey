@@ -7,8 +7,8 @@
 import json
 import asyncio
 
-from nonebot import on_command, on_notice, on_message,get_driver
-from nonebot.adapters.cqhttp import Bot, Event, GroupMessageEvent
+from nonebot import on_command, on_notice, on_message, get_driver
+from nonebot.adapters.cqhttp import Bot, Event, GroupMessageEvent, NoticeEvent
 from nonebot.rule import Rule, to_me
 from nonebot.plugin import PluginMetadata
 from utils.other import add_target, translate
@@ -225,9 +225,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await main.send(message=message_main % version)
 
 # 总菜单 戳一戳
-main_click = on_notice(rule=checker_click(), priority=9)
+main_click = on_notice(rule=checker_click(), priority=4)
 @main_click.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: NoticeEvent):
     version = update.tools.get_version()
     await main_click.send(message=message_main % version)
 
