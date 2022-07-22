@@ -29,5 +29,6 @@
     "speakrank": "member", 
     "flash": "baned",
     "AI_talk": "member",
-    "help": "member"
+    "help": "member", 
+    "torment": "superuser"
 }
