@@ -104,6 +104,14 @@ demerit_path = config_path / "demerit"
 enable_path = config_path / "enable"
 # 机器人开启配置文件
 enable_config_path = config_path / "enable" / "config.json"
+# 折磨群友配置目录
+torment_path = config_path / "torment"
+# 折磨群友配置文件
+torment_config_path = torment_path / "config.json"
+# 重启配置目录
+reboot_path = config_path / "reboot"
+# 重启配置文件
+reboot_config_path = reboot_path / "reboot.json"
 
 
 # 俄罗斯轮盘游戏配置

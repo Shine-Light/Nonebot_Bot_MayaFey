@@ -15,7 +15,7 @@ from utils import json_tools, other
 fts = "%Y-%m"
 
 
-# 插件开关检测
+# 插件调用统计
 @run_preprocessor
 async def total(matcher: Matcher, event: GroupMessageEvent):
     module_names = matcher.module_name.split('.')

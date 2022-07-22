@@ -89,8 +89,17 @@ timezone = "Asia/Shanghai"
 @scheduler.scheduled_job("cron", second="*/1", timezone=timezone)
 async def _():
     time_now = int(time.strftime(ft, time.localtime()))
+    count = 0
     try:
-        bot = nonebot.get_bot()
+        bot: Bot = nonebot.get_bot()
+    except:
+        # 避免刷屏
+        count += 1
+        if count % 10 == 0:
+            logger.warning("等待机器人连接")
+            return
+
+    try:
         deleted: list = []
         # 若当前时间等于撤回时间则进行撤回
         for msg in msgs:
@@ -100,8 +109,6 @@ async def _():
         # 已撤回信息从字典中删除
         for key in deleted:
             msgs.pop(key)
-    except ValueError:
-        logger.warning("等待机器人连接")
     except Exception as e:
         logger.error(f"撤回出错:{str(e)}")
 

@@ -6,7 +6,6 @@
 import json
 import os
 import time
-import hook
 import requests
 
 from nonebot.permission import SUPERUSER
@@ -86,6 +85,10 @@ async def Dir_init():
         await mk("dir", enable_path, mode=None)
     if not fortune_out_path.exists():
         fortune_out_path.mkdir(exist_ok=True, parents=True)
+    if not torment_path.exists():
+        torment_path.mkdir(exist_ok=True, parents=True)
+    if not reboot_path.exists():
+        reboot_path.mkdir(exist_ok=True, parents=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):
@@ -108,6 +111,10 @@ async def Dir_init():
         await mk("file", fortune_config_path, 'w', content=json.dumps({}))
     if not os.path.exists(enable_config_path):
         await mk("file", enable_config_path, 'w', content=json.dumps({}))
+    if not os.path.exists(torment_config_path):
+        await mk("file", torment_config_path, 'w', content=json.dumps({}))
+    if not os.path.exists(reboot_config_path):
+        await mk("file", reboot_config_path, 'w', content=json.dumps({"rebooting": False, "gid": ""}))
 
 
 @driver.on_startup
@@ -164,7 +171,7 @@ async def init(bot: Bot, event: GroupMessageEvent):
     if not os.path.exists(total_base / month / f"{gid}.json"):
         await mk("file", total_base / month / f"{gid}.json", 'w', content=json.dumps({}))
     if not os.path.exists(question_base / f"{gid}.json"):
-        await mk("file", question_base / f"{gid}.json", 'w', content=json.dumps({}))
+        await mk("file", question_base / f"{gid}.json", 'w', content=json.dumps({"vague": {}, "absolute": {}}))
     if not os.path.exists(permission_special_base / f"{gid}.json"):
         await mk("file", permission_special_base / f"{gid}.json", 'w', url=url.permission_special_json, dec="特殊权限插件列表")
     if not os.path.exists(permission_common_base / f"{gid}.json"):

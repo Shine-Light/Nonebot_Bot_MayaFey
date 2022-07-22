@@ -197,9 +197,9 @@ async def upload(path, dict_content) -> None:
     :param path: 路径
     :param dict_content: python对象，字典
     """
-    async with aiofiles.open(path, mode='w', encoding="utf-8") as c:
-        await c.write(str(json.dumps(dict_content, ensure_ascii=False)))
-        await c.close()
+    with open(path, mode='w', encoding="utf-8") as c:
+        c.write(str(json.dumps(dict_content, ensure_ascii=False)))
+        c.close()
 
 
 async def load(path) -> Optional[dict]:

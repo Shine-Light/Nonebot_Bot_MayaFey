@@ -45,7 +45,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if not Answer:
             await question_vague.finish("添加失败,无回答内容")
         try:
-            QAs.update({"vague": {Question: Answer}})
+            vague = QAs["vague"]
+            vague.update({Question: Answer})
+            QAs.update({"vague": vague})
             with open(question_path, 'w', encoding="utf-8") as file:
                 file.write(json.dumps(QAs, ensure_ascii=False))
             await question_vague.send('添加成功')
@@ -63,7 +65,7 @@ question_absolute = on_regex("^精准问.*?(答)", priority=5)
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "question_vague", gid):
+    if permission.tools.special_per(role, "question_absolute", gid):
         msg_meta = str(event.get_message())
         Question = msg_meta.split("问", 1)[1].split("答", 1)[0]
         Answer = msg_meta.split("答", 1)[1]
@@ -72,7 +74,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if not Answer:
             await question_absolute.finish("添加失败,无回答内容")
         try:
-            QAs.update({"absolute": {Question: Answer}})
+            absolute = QAs["absolute"]
+            absolute.update({Question: Answer})
+            QAs.update({"absolute": absolute})
             with open(question_path, 'w', encoding="utf-8") as file:
                 file.write(json.dumps(QAs, ensure_ascii=False))
             await question_absolute.send('添加成功')

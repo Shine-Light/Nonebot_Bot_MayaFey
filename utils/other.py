@@ -52,13 +52,6 @@ async def mk(type_, path_, *mode, **kwargs):
         raise Exception("type_参数错误")
 
 
-async def reboot():
-    if platform.system() == "Windows":
-        os.execv(sys.executable, ['python'] + sys.argv)
-    else:
-        os.execv(sys.executable, ['python3'] + sys.argv)
-
-
 def translate(mode: str, name: str) -> str:
     """
     插件名称翻译
@@ -89,3 +82,10 @@ def translate(mode: str, name: str) -> str:
 # 添加撤回标志
 def add_target(time_s: int) -> str:
     return f"\n(该消息将于 {time_s} s后撤回)"
+
+
+def reboot():
+    if platform.system() == "Windows":
+        os.execv(sys.executable, ['python'] + sys.argv)
+    else:
+        os.execv(sys.executable, ['python3'] + sys.argv)

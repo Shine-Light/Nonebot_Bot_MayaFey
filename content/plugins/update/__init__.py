@@ -7,9 +7,7 @@ from nonebot import on_command, require
 from nonebot.exception import FinishedException
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
 from . import tools
-from utils.other import reboot
-
-from utils.other import add_target, translate
+from utils.other import add_target, translate, reboot
 from nonebot.plugin import PluginMetadata
 
 
