@@ -28,7 +28,7 @@ MainThemeList: Dict[str, List[str]] = {
     "asoul": ["Asoul", "asoul", "a手", "A手", "as", "As"],
     "arknights": ["明日方舟", "方舟", "arknights", "鹰角", "Arknights", "舟游"],
     "granblue_fantasy": ["碧蓝幻想", "Granblue Fantasy", "granblue fantasy", "幻想", "fantasy", "Fantasy"],
-    "punishing": ["战双", "战双帕弥什"],
+    "punishing":["战双", "战双帕弥什"],
     "pretty_derby": ["赛马娘", "马", "马娘", "赛马"],
     "dc4": ["dc4", "DC4", "Dc4", "初音岛", "初音岛4"],
     "einstein": ["爱因斯坦携爱敬上", "爱因斯坦", "einstein", "Einstein"],
@@ -41,8 +41,19 @@ MainThemeList: Dict[str, List[str]] = {
 }
 
 
+class ResourceError(Exception):
+    def __init__(self, msg):
+        self.msg = msg
+
+    def __str__(self):
+        return self.msg
+
+
 class PluginConfig(BaseModel, extra=Extra.ignore):
-    fortune_path: Path = Path() / "resource" / "fortune"
+    fortune_path: Path = Path(__file__).parent / "resource"
+
+
+class ThemeFlagConfig(BaseModel, extra=Extra.ignore):
     '''
         各主题抽签开关，仅在random抽签中生效
         请确保不全是False
@@ -72,31 +83,31 @@ class PluginConfig(BaseModel, extra=Extra.ignore):
 
 driver = get_driver()
 fortune_config: PluginConfig = PluginConfig.parse_obj(driver.config.dict())
+theme_flag_config: ThemeFlagConfig = ThemeFlagConfig.parse_obj(driver.config.dict())
 
 
 @driver.on_startup
 async def fortune_check() -> None:
-    config_path: Path = fortune_config_path
+    flag_config_path: Path = fortune_config_path
 
-    if not config_path.exists():
-        config_path.mkdir(parents=True, exist_ok=True)
+    if not fortune_config.fortune_path.exists():
+        fortune_config.fortune_path.mkdir(parents=True, exist_ok=True)
 
-    if not config_path.exists():
-        logger.warning("配置文件不存在，已重新生成配置文件……")
-        config = PluginConfig()
-    else:
-        with config_path.open("r", encoding="utf-8") as f:
-            data = json.load(f)
-        try:
-            config = PluginConfig.parse_obj({**driver.config.dict(), **data})
-        except ValidationError:
-            config = PluginConfig()
-            logger.warning("配置文件格式错误，已重新生成配置文件……")
+    '''
+        Check whether all themes disable
+    '''
+    content = theme_flag_config.dict()
+    _flag: bool = False
+    for theme in content:
+        if content.get(theme, False):
+            _flag = True
+            break
 
-    with config_path.open("w", encoding="utf-8") as f:
-        content = config.dict()
-        # Posix path need to transfer to string then write in json
-        content.update({"fortune_path": str(content.get("fortune_path"))})
+    if not _flag:
+        logger.warning("Fortune themes ALL disabled! Please check!")
+        raise ResourceError("Fortune themes ALL disabled! Please check!")
+
+    with flag_config_path.open("w", encoding="utf-8") as f:
         json.dump(content, f, ensure_ascii=False, indent=4)
 
     '''

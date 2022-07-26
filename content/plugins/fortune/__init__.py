@@ -10,7 +10,7 @@ from utils.other import add_target, translate
 from utils import users
 from content.plugins.permission.tools import special_per, get_special_per
 
-__fortune_version__ = "v0.4.4"
+__fortune_version__ = "v0.4.5"
 __fortune_notes__ = f'''
 今日运势 {__fortune_version__}
 抽签: /今日运势

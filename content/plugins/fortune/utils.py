@@ -8,35 +8,7 @@ try:
 except ModuleNotFoundError:
     import json
 
-from .config import fortune_config
-from utils.path import res_path, fortune_out_path, fortune_copywriting_path
-
-'''
-    抽签主题开关，当随机抽签时判断某主题是否开启
-'''
-MainThemeEnable: Dict[str, bool] = {
-    "pcr": fortune_config.pcr_flag,
-    "genshin": fortune_config.genshin_flag,
-    "hololive": fortune_config.hololive_flag,
-    "touhou": fortune_config.touhou_flag,
-    "touhou_lostword": fortune_config.touhou_lostword_flag,
-    "touhou_old": fortune_config.touhou_olg_flag,
-    "onmyoji": fortune_config.onmyoji_flag,
-    "azure": fortune_config.azure_flag,
-    "asoul": fortune_config.asoul_flag,
-    "arknights": fortune_config.arknights_flag,
-    "granblue_fantasy": fortune_config.granblue_fantasy_flag,
-    "punishing": fortune_config.punishing_flag,
-    "pretty_derby": fortune_config.pretty_derby_flag,
-    "dc4": fortune_config.dc4_flag,
-    "einstein": fortune_config.einstein_flag,
-    "sweet_illusion": fortune_config.sweet_illusion_flag,
-    "liqingge": fortune_config.liqingge_flag,
-    "hoshizora": fortune_config.hoshizora_flag,
-    "sakura": fortune_config.sakura_flag,
-    "summer_pockets": fortune_config.summer_pockets_flag,
-    "amazing_grace": fortune_config.amazing_grace_flag
-}
+from utils.path import res_path, fortune_out_path, fortune_copywriting_path, fortune_config_path
 
 
 def get_copywriting() -> Tuple[str, str]:
@@ -60,33 +32,23 @@ def get_copywriting() -> Tuple[str, str]:
 def randomBasemap(_theme: str, _spec_path: Optional[str]) -> str:
     try_time = 0
     if isinstance(_spec_path, str):
-        _p: Path = res_path / "img"
-        p: Path = _p / _spec_path
+        p: Path = res_path / "img" / _spec_path
         return p
     else:
         if _theme == "random":
             __p: Path = res_path / "img"
-            # Each dir is a theme
-            themes: List[str] = [str(f) for f in __p.iterdir() if f.is_dir()]
-            while True:
-                picked = random.choice(themes)
-                picked_theme = picked + "_flag"
-                if MainThemeEnable.get(picked_theme) is True:
-                    break
-                else:
-                    try_time += 1
+            # Each dir is a theme, remember add _flag after the names of themes
+            themes: List[str] = [f.name for f in __p.iterdir() if f.is_dir() and theme_flag_check(f.name + "_flag")]
+            picked = random.choice(themes)
 
-                if try_time == len(list(MainThemeEnable)):
-                    break
-
-            _p: Path = Path() / picked
-            # Each file is a image
-            images: List[str] = [str(f) for f in _p.iterdir() if f.is_file()]
-            p: Path = Path() / random.choice(images)
+            _p: Path = __p / picked
+            # Each file is a posix path of images
+            images: List[Path] = [i for i in _p.iterdir() if i.is_file()]
+            p: Path = random.choice(images)
         else:
             _p: Path = res_path / "img" / _theme
-            images: List[str] = [str(f) for f in _p.iterdir() if f.is_file()]
-            p: Path = Path(random.choice(images))
+            images: List[Path] = [i for i in _p.iterdir() if i.is_file()]
+            p: Path = random.choice(images)
 
         return p
 
@@ -202,3 +164,19 @@ def vertical(_str: List[str]) -> str:
     for s in _str:
         _list.append(s)
     return "\n".join(_list)
+
+
+def theme_flag_check(_theme: str) -> bool:
+    '''
+        Read the config json, return the status of a theme
+    '''
+    flag_config_path: Path = fortune_config_path
+    with flag_config_path.open("r", encoding="utf-8") as f:
+        data: Dict[str, bool] = json.load(f)
+
+    return data.get(_theme, False)
+
+
+__all__ = [
+    drawing, theme_flag_check
+]
