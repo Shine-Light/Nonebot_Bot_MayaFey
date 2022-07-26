@@ -3,6 +3,8 @@
 @Version: 1.0
 @Date: 2022/7/16 12:41
 """
+import json
+
 import requests
 
 from nonebot import get_driver
@@ -49,6 +51,9 @@ turing_error_code = {
     7002: "上传信息失败",
     8008: "服务器错误"
 }
+moli_error_code = {
+    "C1001": "当日调用次数已用完"
+}
 
 
 def get_tianx_config() -> dict:
@@ -61,6 +66,12 @@ def get_tianx_config() -> dict:
 def get_turing_config() -> dict:
     key = config.ai_talk_turing_key
     return {"key": key}
+
+
+def get_moli_config() -> dict:
+    key = config.ai_talk_moli_key
+    secret = config.ai_talk_moli_secret
+    return {"key": key, "secret": secret}
 
 
 def get_api_url(msg: str, uid: str, nickname: str, gid: str = "12345678") -> dict:
@@ -84,6 +95,27 @@ def get_api_url(msg: str, uid: str, nickname: str, gid: str = "12345678") -> dic
                      "groupId": gid, "userIdName": nickname}
         args = {"reqType": restype, "perception": perception, "userInfo": user_info}
         return {"method": "POST", "url": "http://openapi.turingapi.com/openapi/api/v2", "args": args}
+    elif api_type == "moli":
+        moli_config = get_moli_config()
+        key = moli_config["key"]
+        secret = moli_config["secret"]
+        content = msg
+        if gid == "12346578":
+            chat_type = 2
+        else:
+            chat_type = 1
+        chat_from = uid
+        fromName = nickname
+        to = gid
+        args = {
+            "content": content,
+            "type": chat_type,
+            "from": chat_from,
+            "fromName": fromName,
+            "to": to
+        }
+        headers = {"Api-Key": key, "Api-Secret": secret, "Content-Type": "application/json;charset=UTF-8"}
+        return {"method": "POST", "url": "https://api.mlyai.com/reply", "args": args, "headers": headers}
     else:
         return None
 
@@ -91,11 +123,15 @@ def get_api_url(msg: str, uid: str, nickname: str, gid: str = "12345678") -> dic
 def request_url(api_url: dict) -> dict:
     method = api_url["method"]
     url = api_url["url"]
+    try:
+        headers = api_url["headers"]
+    except:
+        headers = None
     if method == "GET":
-        return requests.get(url, verify=False).json()
+        return requests.get(url, verify=False, headers=headers).json()
     else:
         args = api_url["args"]
-        return requests.post(url, args, verify=False).json()
+        return requests.post(url, json.dumps(args), verify=False, headers=headers).json()
 
 
 def error_parse(code: int) -> str:
@@ -114,14 +150,29 @@ def error_parse(code: int) -> str:
 def parse_res(data: dict) -> dict:
     if api_type == "qingyunke":
         if data["result"] == 0:
-            return {"type": "text", "values": data["content"]}
+            return {
+                "type": "other",
+                "values": [
+                    {"type": "text",
+                     "value": data["content"]
+                     }
+                ]
+            }
         else:
             logger.error(f"青云客API错误,状态码:{data['result']}")
     elif api_type == "tianx":
         if data["code"] == 200:
+            values = []
+            for value in data["newslist"]:
+                values.append(
+                    {
+                        "type": value.pop("datatype"),
+                        "value": value.pop("reply")
+                    }
+                )
             return {
-                "type": data["newslist"][0]["datatype"],
-                "values": data["newslist"][0]["reply"]
+                "type": "other",
+                "values": values
             }
         else:
             logger.warning(f"天行API错误,{error_parse(data['code'])}")
@@ -133,3 +184,36 @@ def parse_res(data: dict) -> dict:
             }
         else:
             logger.warning(f"图灵API错误,{error_parse(data['code'])}")
+    elif api_type == "moli":
+        moli_content_url = "https://files.molicloud.com/"
+        if data["code"] == "00000":
+            values = []
+            for value in data["data"]:
+                typed = value["typed"]
+                content = value["content"]
+                if typed == 1 or typed == 8:
+                    typed = "text"
+                elif typed == 2:
+                    typed = "image"
+                    content = moli_content_url + content
+                elif typed == 3:
+                    typed = "docs"
+                    content = moli_content_url + content
+                elif typed == 4:
+                    typed = "record"
+                    content = moli_content_url + content
+                elif typed == 9:
+                    typed = "other"
+                    content = moli_content_url + content
+                values.append(
+                    {
+                        "type": typed,
+                        "value": content
+                    }
+                )
+            return {
+                "type": "other",
+                "values": values
+            }
+        else:
+            logger.warning(f"茉莉云API错误, {data['message']}")
