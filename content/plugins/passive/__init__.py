@@ -42,8 +42,9 @@ admin_set = on_notice(rule=rules.checker_admin_set(), priority=4)
 @admin_set.handle()
 async def _(bot: Bot, event: NoticeEvent):
     uid = str(event.get_user_id())
-    gid = str(json.loads(event.get_event_description().replace("'", '"'))['group_id'])
-    users.update_role(gid, uid, "admin")
+    if uid not in config.superusers:
+        gid = str(json.loads(event.get_event_description().replace("'", '"'))['group_id'])
+        users.update_role(gid, uid, "admin")
 
 
 # 管理员减少事件
@@ -51,8 +52,9 @@ admin_unset = on_notice(rule=rules.checker_admin_unset(), priority=4)
 @admin_unset.handle()
 async def _(bot: Bot, event: NoticeEvent):
     uid = str(event.get_user_id())
-    gid = str(json.loads(event.get_event_description().replace("'", '"'))['group_id'])
-    users.update_role(gid, uid, "member")
+    if uid not in config.superusers:
+        gid = str(json.loads(event.get_event_description().replace("'", '"'))['group_id'])
+        users.update_role(gid, uid, "member")
 
 
 # 超级用户邀请新用户事件
