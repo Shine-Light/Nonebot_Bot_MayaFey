@@ -149,10 +149,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     管理员+ @user 添加群管理员
     """
     msg = str(event.get_message())
-    logger.info(msg)
-    logger.info(msg.split())
     sb = At(event.json())
-    logger.info(sb)
     gid = event.group_id
     if sb:
         if 'all' not in sb:
@@ -167,7 +164,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 await set_g_admin.finish("权限不足")
             else:
                 logger.info(f"设置管理员操作成功")
-                await set_g_admin.finish("设置管理员操作成功")
+                await set_g_admin.send("设置管理员操作成功")
         else:
             await set_g_admin.finish("指令不正确 或 不能含有@全体成员")
 
@@ -179,10 +176,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     管理员- @user 取消群管理员
     """
     msg = str(event.get_message())
-    logger.info(msg)
-    logger.info(msg.split())
     sb = At(event.json())
-    logger.info(sb)
     gid = event.group_id
     if sb:
         if 'all' not in sb:
@@ -197,6 +191,6 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 await unset_g_admin.finish("权限不足")
             else:
                 logger.info(f"取消管理员操作成功")
-                await unset_g_admin.finish("取消管理员操作成功")
+                await unset_g_admin.send("取消管理员操作成功")
         else:
             await unset_g_admin.finish("指令不正确 或 不能含有@全体成员")

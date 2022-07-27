@@ -23,7 +23,6 @@ def match_30X(url_source: str) -> str:
     return url
 
 
-
 def get_proxy():
     print(str.replace(proxy, "x", ""))
     if proxy and str.replace(proxy, "x", "") != "":
