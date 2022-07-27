@@ -6,7 +6,7 @@
 from nonebot import on_message
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, \
     Message, MessageSegment, PrivateMessageEvent, Event
-from nonebot.rule import to_me, command
+from nonebot.rule import to_me
 from nonebot.plugin import PluginMetadata
 
 from utils.other import add_target, translate
