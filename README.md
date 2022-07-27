@@ -20,7 +20,7 @@
 5. 遇到bug请及时提Issue,有时间了我就会修复,欢迎pr
 6. 机器人的插件可以自己扒下来用,但请保留开发者信息
 7. 若该项目有任何地方有侵犯到你的权益请立即联系我 `shine_light@qq.com`
-8. 你的支持是我最大的动力,喜欢的话给个star吧 求求了(
+8. 你的支持是我最大的动力,喜欢的话给个star吧 ~~求求了~~
 
 ## 更新日志
 [更新日志](https://mayafey.shinelight.xyz/updatelog)
@@ -52,7 +52,8 @@
 - [X] AI聊天  
 - [X] 折磨群友  
 ### 生活功能
-- [X] 翻译  ([https://github.com/Lancercmd/nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator)修改而来)  
+- [X] 腾讯翻译  ([https://github.com/Lancercmd/nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator)修改而来) 
+- [X] 百度翻译  ([https://github.com/NumberSir/nonebot_plugin_baidutranslate](https://github.com/NumberSir/nonebot_plugin_baidutranslate)修改而来)  
 - [X] 疫情  ([https://github.com/Zeta-qixi/nonebot-plugin-covid19-news](https://github.com/Zeta-qixi/nonebot-plugin-covid19-news)修改而来)  
 - [X] 天气  ([https://github.com/kexue-z/nonebot-plugin-heweather](https://github.com/kexue-z/nonebot-plugin-heweather)修改而来)  
 - [X] Epic喜加一  ([https://github.com/monsterxcn/nonebot_plugin_epicfree](https://github.com/monsterxcn/nonebot_plugin_epicfree)修改而来)  

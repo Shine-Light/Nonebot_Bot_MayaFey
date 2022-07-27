@@ -32,14 +32,14 @@ from utils.other import add_target, translate
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "translate"),
-    description="翻译",
-    usage="/翻译" + add_target(60)
+    name=translate("e2c", "translate_tencent"),
+    description="翻译(腾讯接口版本)",
+    usage="/腾讯翻译" + add_target(60)
 )
 
 config = get_driver().config
 
-translate = on_command("翻译", aliases={"机翻"}, priority=7)
+translate = on_command("腾讯翻译", aliases={"腾讯机翻"}, priority=7)
 
 
 @translate.permission_updater
