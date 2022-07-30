@@ -142,7 +142,7 @@ try:
 
     download_to_plugin("menu/__init__")
 
-    download_to_plugin("translate/translator")
+    download_to_plugin("translate_tencent/translator")
 
     download_to_hook("hook_enable")
 
