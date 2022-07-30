@@ -112,6 +112,10 @@ torment_config_path = torment_path / "config.json"
 reboot_path = config_path / "reboot"
 # 重启配置文件
 reboot_config_path = reboot_path / "reboot.json"
+# 自定义定时消息配置目录
+schedule_path = config_path / "schedule"
+# 自定义定时消息群列表
+schedule_groups_path = schedule_path / "groups.txt"
 
 
 # 俄罗斯轮盘游戏配置

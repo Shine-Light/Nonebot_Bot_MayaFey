@@ -31,5 +31,6 @@
     "flash": "baned",
     "AI_talk": "member",
     "help": "member",
-    "torment": "superuser"
+    "torment": "superuser",
+    "schedule": "superuser"
 }

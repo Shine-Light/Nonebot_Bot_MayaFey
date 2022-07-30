@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/6 17:15
 """
-from nonebot import on_command, on_message, require, get_driver
+from nonebot import on_command, require, get_driver
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot.message import event_preprocessor
 from nonebot.exception import IgnoredException
@@ -19,11 +19,10 @@ from utils import users
 from utils.other import add_target, translate
 
 
-
 ban_count_allow = get_driver().config.ban_count_allow
-custom_ban_msg = f'''自定义系列违禁词插件,以下是各功能命令:
+custom_ban_msg = f'''
 说明: 违禁词有两套系统,一套自定义系统,一套内置系统
-     管理员不会被违禁词系统处罚,但是会有提示
+     超级用户及以上不会被违禁词系统处罚
      两者违禁词不可重复,如需将关键词处罚力度提高至自定义系统等级请使用强制添加
      内置系统违禁词为侮辱性词汇及其他敏感词汇,处罚永久为禁言5min
      自定义系统处罚为:第1次禁言 30min,第2次禁言 0.5day,第N次禁言1day,第{ban_count_allow}次踢出并拉黑
@@ -31,10 +30,10 @@ custom_ban_msg = f'''自定义系列违禁词插件,以下是各功能命令:
 查看违禁词:违禁词 列表
 [超管及以上]
 增删违禁词,可以批量添加和删除,用"|"分隔,内容可带空格
-添加违禁词:违禁词 + 内容
-删除违禁词:违禁词 - 内容
-强制添加违禁词: 违禁词 ++ 内容
-'''
+添加违禁词:/违禁词 + {{内容}}
+删除违禁词:/违禁词 - {{内容}}
+强制添加违禁词:/违禁词 ++ {{内容}}
+'''.strip()
 
 
 # 插件元数据定义
@@ -52,20 +51,6 @@ word_list_message = "以下是违禁词列表,侮辱性或其他敏感词汇已�
 preBanWord = limit_word_path
 preBanWord_easy = limit_word_path_easy
 
-
-'''
-自定义_违禁词:
-    已内置政治敏感,侮辱性等违禁词汇,内置词汇不加入自定义,无法删除查看修改
-    词汇允许有空格和特殊字符(除"|"),可一次添加/删除多个词汇,使用"|"分隔
-    成员及以上：
-        违禁词 列表
-    超管及以上:
-        添加违禁词:违禁词 + 内容
-        删除违禁词:违禁词 - 内容
-        强制添加违禁词: 违禁词 ++ 内容
-        清空: 违禁词 清空
-    
-'''
 
 # 增删查
 baned = on_command(cmd="违禁词", priority=8)
@@ -291,7 +276,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
     uid = event.get_user_id()
     word_list_url = word_list_urls / group_id / "words.txt"
     msg_meta = str(event.get_message())
-    role: str = event.sender.role
+    role: str = users.get_role(group_id, uid)
     ban_words: list = open(word_list_url, "r", encoding="utf-8").read().split("\n")
     preBanWords: list = open(preBanWord, "r", encoding="utf-8").read().split("\n")
     preBanWords_easy: list = open(preBanWord_easy, "r", encoding="utf-8").read().split("\n")
@@ -299,7 +284,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
     # 检测是否触发关键词(自定义违禁词)
     for word in ban_words:
         if word and word in msg_meta:
-            if role == "member":
+            if not permission.tools.permission_(role, "superuser"):
                 await ban_count(uid, str(group_id))
                 count = users.get_ban_count(uid, group_id)
                 if count == 1:
@@ -308,7 +293,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     times = "0.5day"
                 else:
                     times = "1day"
-                # 第三次踢出并拉黑
+                # 第n次踢出并拉黑
                 if count >= ban_count_allow:
                     try:
                         await kick_user(uid, group_id, bot)
@@ -327,7 +312,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     raise IgnoredException("触发违禁词")
             # 管理员不做限制
             else:
-                pass
+                logger.info("超级用户及以上触发违禁词")
     # 违禁词检测(内置违禁词)
     if level == "strict":
         for word in preBanWords:
@@ -366,7 +351,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     if permission.tools.special_per(role, "ban_strict", gid):
         level: dict = json_tools.json_load(level_path)
         level.update({gid: "strict"})
-        json_tools.json_write(level_path / "level.json", level)
+        json_tools.json_write(level_path, level)
         await ban_strict.send("设置成功")
     else:
         await ban_strict.send("无权限")
