@@ -79,7 +79,7 @@ try:
         if args:
             last = args[0]
         with open(dir_hook + path + last, 'w+', encoding="utf-8") as file:
-            file.write(requests.get(url_base + "hook/hook/" + path + last).content.decode("utf-8").replace("\r", ""))
+            file.write(requests.get(url_base + "hook/" + path + last).content.decode("utf-8").replace("\r", ""))
 
 
     # def download_to_resource(path, isBin, *args):
@@ -101,10 +101,10 @@ try:
             os.mkdir(dir_base + folder)
 
 
-    # def rename(folder: str, dir_name: str):
-    #     if os.path.exists(dir_base + folder):
-    #         return
-    #     os.rename(dir_base + folder, dir_base + dir_name)
+    def rename(folder: str, dir_name: str):
+        if os.path.exists(dir_base + dir_name):
+            return
+        os.rename(dir_base + folder, dir_base + dir_name)
 
 
     # 翻译文件更新
@@ -141,6 +141,8 @@ try:
     download_to_plugin("ban_word/__init__")
 
     download_to_plugin("menu/__init__")
+
+    rename("content/plugins/translate", "content/plugins/translate_tencent")
 
     download_to_plugin("translate_tencent/translator")
 
