@@ -22,8 +22,8 @@ __plugin_meta__ = PluginMetadata(
     description="问答",
     usage="精准问{问题}答{回答} (超级用户)\n"
           "模糊问{问题}答{回答} (超级用户)\n"
-          "/问答 列表"
-          "/问答 删除 {问题} (超级用户)" + add_target(60)
+          "/问答列表"
+          "/问答删除 {问题} (超级用户)" + add_target(60)
 )
 
 
@@ -42,8 +42,10 @@ async def _(bot: Bot, event: GroupMessageEvent):
         Answer = msg_meta.split("答", 1)[1]
         question_path = question_base / f"{gid}.json"
         QAs: dict = json_tools.json_load(question_path)
+        if not Question:
+            await question_vague.finish("添加失败,无问题")
         if not Answer:
-            await question_vague.finish("添加失败,无回答内容")
+            await question_vague.finish("添加失败,无回答")
         try:
             vague = QAs["vague"]
             vague.update({Question: Answer})
@@ -71,6 +73,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
         Answer = msg_meta.split("答", 1)[1]
         question_path = question_base / f"{gid}.json"
         QAs: dict = json_tools.json_load(question_path)
+        if not Question:
+            await question_vague.finish("添加失败,无问题")
         if not Answer:
             await question_absolute.finish("添加失败,无回答内容")
         try:
