@@ -91,6 +91,8 @@ async def Dir_init():
         reboot_path.mkdir(exist_ok=True, parents=True)
     if not schedule_path.exists():
         schedule_path.mkdir(exist_ok=True, parents=True)
+    if not leave_base_path.exists():
+        leave_base_path.mkdir(exist_ok=True, parents=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):
@@ -185,7 +187,7 @@ async def init(bot: Bot, event: GroupMessageEvent):
     if not os.path.exists(demerit_path / gid / f"config.json"):
         await mk("file", demerit_path / gid / f"config.json", 'w', content=json.dumps({"limit": 5}))
 
-bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN |SUPERUSER)
+bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER)
 @bot_init.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     try:

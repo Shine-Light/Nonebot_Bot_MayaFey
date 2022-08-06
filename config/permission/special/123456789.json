@@ -39,5 +39,7 @@
     "remove_greating": "superuser", 
     "demerit": "superuser", 
     "admin_get_demerit": "superuser", 
-    "set_demerit_config": "superuser"
+    "set_demerit_config": "superuser",
+    "kicked_msg_update": "superuser",
+    "leave_msg_update": "superuser"
 }

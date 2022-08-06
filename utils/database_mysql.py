@@ -12,9 +12,9 @@ import pymysql
 
 host = get_driver().config.mysql_host
 port = get_driver().config.mysql_port
-user = get_driver().config.mysql_user
-password = get_driver().config.mysql_password
-database = get_driver().config.mysql_db
+user = str(get_driver().config.mysql_user)
+password = str(get_driver().config.mysql_password)
+database = str(get_driver().config.mysql_db)
 
 connect = pymysql.connect(host=host, user=user, passwd=password, autocommit=True)
 cursor = connect.cursor()

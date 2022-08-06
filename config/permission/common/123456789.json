@@ -1,8 +1,8 @@
 {
     "admin": "superuser",
-    "answersbooks": "member", 
+    "answersbooks": "member",
     "credit": "member",
-    "covid": "member", 
+    "covid": "member",
     "heweather": "member",
     "ian": "member",
     "menu": "member",
@@ -15,7 +15,7 @@
     "translate_tencent": "member",
     "translate_baidu": "member",
     "website": "member",
-    "word_cloud": "member", 
+    "word_cloud": "member",
     "xh": "member",
     "russian": "member",
     "logo": "member",
@@ -25,12 +25,13 @@
     "saymoney": "member",
     "morning": "member",
     "fortune": "member",
-    "what2eat": "member", 
-    "demerit": "member", 
-    "speakrank": "member", 
+    "what2eat": "member",
+    "demerit": "member",
+    "speakrank": "member",
     "flash": "baned",
     "AI_talk": "member",
     "help": "member",
     "torment": "superuser",
-    "schedule": "superuser"
+    "schedule": "superuser",
+    "leave": "baned"
 }

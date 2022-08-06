@@ -24,7 +24,7 @@ dir_plugin = dir_base + "content/plugins/"
 dir_plugin_private = dir_base + "content/plugin_private/"
 dir_utils = dir_base + "utils/"
 dir_api = dir_base + "Api/api/"
-dir_hook = dir_base + "hook/"
+dir_hook = dir_base + "hook/hook/"
 dir_resource = dir_base + "resource/"
 url_base = "http://cdn.shinelight.xyz/nonebot/version/" + f"{version}/"
 
@@ -82,16 +82,16 @@ try:
     #         file.write(requests.get(url_base + "hook/" + path + last).content.decode("utf-8").replace("\r", ""))
 
 
-    def download_to_resource(path, isBin, *args):
-        last = ".json"
-        if args:
-            last = args[0]
-        if isBin:
-            mode = "wb+"
-        else:
-            mode = "w+"
-        with open(dir_resource + path + last, mode, encoding="utf-8") as file:
-            file.write(requests.get(url_base + "resource/" + path + last).content.decode("utf-8").replace("\r", ""))
+    # def download_to_resource(path, isBin, *args):
+    #     last = ".json"
+    #     if args:
+    #         last = args[0]
+    #     if isBin:
+    #         mode = "wb+"
+    #     else:
+    #         mode = "w+"
+    #     with open(dir_resource + path + last, mode, encoding="utf-8") as file:
+    #         file.write(requests.get(url_base + "resource/" + path + last).content.decode("utf-8").replace("\r", ""))
 
 
     def mkd(folder: str):
@@ -119,16 +119,16 @@ try:
             file.write(requests.get("http://cdn.shinelight.xyz/nonebot/permission_common.json").content.decode("utf-8").replace("\r", ""))
             file.close()
 
-    # for f in os.listdir(dir_base + "config/" + "permission/" + "special"):
-    #     name = f.split(".")[0]
-    #     with open(dir_base + "config/" + "permission/" + "special/" + f"{name}.json", "w+", encoding="utf-8") as file:
-    #         file.write(requests.get("http://cdn.shinelight.xyz/nonebot/permission_special.json").content.decode("utf-8").replace("\r", ""))
-    #         file.close()
+    for f in os.listdir(dir_base + "config/" + "permission/" + "special"):
+        name = f.split(".")[0]
+        with open(dir_base + "config/" + "permission/" + "special/" + f"{name}.json", "w+", encoding="utf-8") as file:
+            file.write(requests.get("http://cdn.shinelight.xyz/nonebot/permission_special.json").content.decode("utf-8").replace("\r", ""))
+            file.close()
 
     # 不统计列表更新
-    # with open(dir_base + "config/" + "total/" + "unable.txt", "w+", encoding="utf-8") as file:
-    #     file.write(requests.get("http://cdn.shinelight.xyz/nonebot/unable.txt").content.decode("utf-8").replace("\r", ""))
-    #     file.close()
+    with open(dir_base + "config/" + "total/" + "unable.txt", "w+", encoding="utf-8") as file:
+        file.write(requests.get("http://cdn.shinelight.xyz/nonebot/unable.txt").content.decode("utf-8").replace("\r", ""))
+        file.close()
 
     # # 不可关闭列表更新
     # with open(dir_base + "config/" + "control/" + "unset.txt", "w+", encoding="utf-8") as file:
@@ -138,30 +138,17 @@ try:
     # 更新部分
     download_readme()
 
-    download_to_plugin("admin/__init__")
-    download_to_plugin("AI_talk/__init__")
-    download_to_plugin("AI_talk/tools")
-
-    download_to_plugin("fortune/__init__")
-    download_to_plugin("fortune/config")
-    download_to_plugin("fortune/data_source")
-    download_to_plugin("fortune/utils")
-
     download_to_plugin("passive/__init__")
+    download_to_plugin("passive/rule")
 
-    download_to_resource("fortune/copywriting", False)
-
-    rename("content/plugins/translate", "content/plugins/translate_tencent")
+    download_to_utils("__init__")
+    download_to_utils("path")
+    download_to_utils("database_mysql")
 
     # 新增部分
-    mkd("content/plugins/translate_baidu")
-    mkd("content/plugins/translate_baidu/utils")
-    download_to_plugin("translate_baidu/__init__")
-    download_to_plugin("translate_baidu/config")
-    download_to_plugin("translate_baidu/data_source")
-    download_to_plugin("translate_baidu/utils/__init__")
-    download_to_plugin("translate_baidu/utils/exceptions")
-    download_to_plugin("translate_baidu/utils/langs")
+    mkd("content/plugins/leave")
+    download_to_plugin("leave/__init__")
+    download_to_plugin("leave/tools")
 
     # 结束
 

@@ -116,6 +116,8 @@ reboot_config_path = reboot_path / "reboot.json"
 schedule_path = config_path / "schedule"
 # 自定义定时消息群列表
 schedule_groups_path = schedule_path / "groups.txt"
+# 离群提示配置目录
+leave_base_path = config_path / "leave"
 
 
 # 俄罗斯轮盘游戏配置

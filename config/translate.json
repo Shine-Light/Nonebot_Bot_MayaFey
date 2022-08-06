@@ -44,5 +44,6 @@
     "api": "Api",
     "execSql": "SQL查询",
     "torment": "折磨群友",
-    "schedule": "自定义定时任务"
+    "schedule": "自定义定时任务", 
+    "leave": "离群提示"
 }

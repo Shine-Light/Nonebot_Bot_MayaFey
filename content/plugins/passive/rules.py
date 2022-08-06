@@ -11,17 +11,6 @@ from nonebot.adapters.onebot.v11 import Bot, Event
 from nonebot.rule import Rule
 
 
-# 退群检测
-def checker_leave():
-    async def _checker(bot: Bot, event: Event) -> bool:
-        description = event.get_event_description()
-        values = json.loads(description.replace("'", '"'))
-        if values['notice_type'] == 'group_decrease':
-            return True
-
-    return Rule(_checker)
-
-
 # 管理增加检测
 def checker_admin_set():
     async def _checker(bot: Bot, event: Event) -> bool:

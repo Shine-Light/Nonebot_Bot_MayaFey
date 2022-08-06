@@ -25,7 +25,7 @@
 ## 更新日志
 [更新日志](https://mayafey.shinelight.xyz/updatelog)
 
-# 吹水群
+## 吹水群
 [622945924](https://jq.qq.com/?_wv=1027&k=ElDdjklL)
 
 ## 功能
@@ -33,8 +33,8 @@
 <summary>已实现的功能</summary>
 
 ### 帮助功能  
-- [X] 菜单 ([https://github.com/XZhouQD/nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help)修改而来)
-- [X] 插件帮助
+- [X] 菜单
+- [X] 插件帮助 ([https://github.com/XZhouQD/nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help)修改而来)
 ### 娱乐功能
 - [X] 签到  
 - [X] 积分  
@@ -70,6 +70,8 @@
 - [X] 增删问答   
 - [X] 记过
 - [X] 自定义定时任务
+- [X] 入群欢迎
+- [X] 离群提示
 ### 私聊管理功能
 - [X] SQL查询  
 ### 权限系统
@@ -84,7 +86,7 @@
 - [X] 违禁图片检测  
 - [X] 闪照捕获  
 - [X] 拉群自接受  
-- [X] 拉群自接受  
+- [X] 好友自接受  
 - [X] 复读  
 - [X] 定时撤回  
 </details>
@@ -101,6 +103,7 @@
 [Onebot](https://github.com/botuniverse/onebot-11)  
 [Nonebot](https://github.com/nonebot/nonebot2)  
 [go-cqhttp](https://github.com/Mrs4s/go-cqhttp)  
+[htmlrender](https://github.com/kexue-z/nonebot-plugin-htmlrender)  
 以及各位插件开发者
 
 ## License

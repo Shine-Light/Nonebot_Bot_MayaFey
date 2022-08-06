@@ -27,14 +27,7 @@ db = database_mysql.connect
 config = get_driver().config
 
 
-# 离群事件
-leave = on_notice(rule=rules.checker_leave(), priority=4)
-@leave.handle()
-async def _(bot: Bot, event: NoticeEvent):
-    uid = str(event.get_user_id())
-    gid = str(json.loads(event.get_event_description().replace("'", '"'))['group_id'])
-    users.member_leave(uid, gid)
-    db.commit()
+
 
 
 # 管理员增加事件
