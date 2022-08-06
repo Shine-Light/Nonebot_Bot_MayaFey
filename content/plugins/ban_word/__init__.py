@@ -263,6 +263,8 @@ async def _(event: GroupMessageEvent, bot: Bot):
 # 违禁词检测
 @event_preprocessor
 async def _(event: GroupMessageEvent, bot: Bot):
+    if "启用机器人" in event.get_plaintext() or "停用机器人" in event.get_plaintext():
+        return
     if "初始化" in event.get_plaintext():
         return
     # 是否为增删指令
