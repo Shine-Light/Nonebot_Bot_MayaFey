@@ -4,7 +4,7 @@
 @Date: 2022/8/5 19:55
 """
 from nonebot import on_notice, on_command
-from nonebot.adapters.onebot.v11 import NoticeEvent, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import NoticeEvent, GroupMessageEvent, Message
 from nonebot.plugin import PluginMetadata
 from utils import users
 from utils.other import add_target, translate
@@ -42,7 +42,7 @@ async def _(bot: Bot, event: NoticeEvent):
         nickname_o = (await bot.get_group_member_info(group_id=int(gid), user_id=int(operator_id), no_cache=True))["nickname"]
         msg = (await get_text(gid, "kick")).replace("{kicked}", nickname_u).replace("{kicker}", nickname_o)
 
-    await leave.send(msg)
+    await leave.send(Message(msg))
 
 
 leave_msg_update = on_command(cmd="离群提示", aliases={"退群提示"}, priority=7)
