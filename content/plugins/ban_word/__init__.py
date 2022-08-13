@@ -268,7 +268,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
     if "初始化" in event.get_plaintext():
         return
     # 是否为增删指令
-    msg_meta: str = str(event.get_message())
+    msg_meta: str = event.get_message().extract_plain_text()
     msgs = msg_meta.split(" ", 2)
     if len(msgs) >= 2:
         if (msgs[1] == "++" or msgs[1] == "+" or msgs[1] == "-") and event.sender.role != "member":
@@ -277,7 +277,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
     group_id = str(event.group_id)
     uid = event.get_user_id()
     word_list_url = word_list_urls / group_id / "words.txt"
-    msg_meta = str(event.get_message())
+    msg_meta = event.get_message().extract_plain_text()
     role: str = users.get_role(group_id, uid)
     ban_words: list = open(word_list_url, "r", encoding="utf-8").read().split("\n")
     preBanWords: list = open(preBanWord, "r", encoding="utf-8").read().split("\n")
@@ -319,17 +319,22 @@ async def _(event: GroupMessageEvent, bot: Bot):
     if level == "strict":
         for word in preBanWords:
             if word and word in msg_meta:
-                if role == "member":
+                if role in ["member", "baned"]:
                     await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
                     await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
+                    logger.info("触发违禁词:" + word)
+            else:
+                logger.info("超级用户及以上触发违禁词:" + word)
 
     elif level == "easy":
         for word in preBanWords_easy:
             if word and word in msg_meta:
-                if role == "member":
+                if role in ["member", "baned"]:
                     await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
                     await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
-
+                    logger.info("触发违禁词:" + word)
+                else:
+                    logger.info("超级用户及以上触发违禁词:" + word)
 
 ban_easy = on_command("简单违禁词", priority=5)
 @ban_easy.handle()
