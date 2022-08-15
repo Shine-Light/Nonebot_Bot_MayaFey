@@ -31,7 +31,7 @@ async def enable_check(bot: Bot, event: GroupMessageEvent):
         if not enable:
             raise IgnoredException(f"群 {gid} 已停用机器人")
     except IgnoredException:
-        pass
+        IgnoredException(f"群 {gid} 已停用机器人")
     except Exception:
         await bot.send(event, '未找到该群配置文件,请确认本群是否开启机器人,"/启用|停用机器人"')
         a.append(gid)

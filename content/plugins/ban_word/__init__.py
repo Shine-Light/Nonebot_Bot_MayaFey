@@ -323,8 +323,8 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
                     await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
                     logger.info("触发违禁词:" + word)
-            else:
-                logger.info("超级用户及以上触发违禁词:" + word)
+                else:
+                    logger.info("超级用户及以上触发违禁词:" + word)
 
     elif level == "easy":
         for word in preBanWords_easy:
