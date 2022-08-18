@@ -10,7 +10,9 @@ config_path = Path() / "config"
 # 资源目录
 res_path = Path() / "resource"
 # 插件总目录
-plugin_path = Path() / "content" / "plugins"
+plugin_path = Path() / "content"
+# 群聊插件目录
+plugins_path = plugin_path / "plugins"
 # 字体总目录
 font_path = res_path / "font"
 # 文本总目录
@@ -73,7 +75,7 @@ permission_special_base = permission_base / "special"
 # 表情包制作配置
 memes_path = config_path / "memes"
 # 更新插件目录
-update_path = plugin_path / "update"
+update_path = plugins_path / "update"
 # 更新插件配置
 update_cfg_path = config_path / "update"
 # 更新检测文件
@@ -118,6 +120,10 @@ schedule_path = config_path / "schedule"
 schedule_groups_path = schedule_path / "groups.txt"
 # 离群提示配置目录
 leave_base_path = config_path / "leave"
+# 原神祈福配置目录
+GenshinPray_path = config_path / "GenshinPray"
+# 原神祈福图片目录
+GenshinPray_img_path = img_path / "GenshinPray"
 
 
 # 俄罗斯轮盘游戏配置

@@ -16,13 +16,13 @@ a = []
 @event_preprocessor
 async def enable_check(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
-    if "初始化" in event.get_plaintext():
+    msg = event.get_plaintext()
+    if "初始化" in msg:
         return
     if event.get_user_id == bot.self_id:
         return
     if gid in a:
         return
-    msg = event.get_plaintext()
     js = json_load(enable_config_path)
     if "启用" in msg or "停用" in msg:
         return

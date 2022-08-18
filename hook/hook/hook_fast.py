@@ -26,6 +26,8 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
     module_names = matcher.module_name
     if "init" in module_names or "utils" in module_names:
         return
+    if "启用" in msg or "停用" in msg:
+        return
     plugin_name = matcher.plugin_name
     uid = str(event.user_id)
     gid = event.group_id

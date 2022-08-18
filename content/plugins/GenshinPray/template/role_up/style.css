@@ -1,0 +1,24 @@
+.item-icon-img-back-5star {
+    position: absolute;
+    z-index: 1;
+    float: left;
+    top: 10px;
+}
+
+.item-icon-img-role {
+    position: absolute;
+    z-index: 2;
+    float: left;
+    top: 11px;
+    height: 103px;
+    left: 10px;
+}
+
+.item-icon-img-ele {
+    position: absolute;
+    z-index: 3;
+    float: left;
+    top: 10px;
+    left: 8px;
+    height: 34px;
+}

@@ -12,7 +12,7 @@ from utils.path import *
 # 配置文件目录
 config_url = config_path
 # 插件目录
-plugin_url = plugin_path
+plugin_url = plugins_path
 # 获取目录下文件夹
 dirs = os.listdir(plugin_url)
 # 插件列表

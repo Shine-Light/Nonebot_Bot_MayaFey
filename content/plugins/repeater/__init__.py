@@ -29,16 +29,22 @@ async def _(event: GroupMessageEvent):
     if isinstance(event, GroupMessageEvent):
         try:
             global repeater_last
+            gid = event.group_id
             pres: set = get_driver().config.command_start
             # 只重复文字信息
-            msg = event.get_plaintext()
+            msg = str(event.get_message())
             if not msg:
                 return
 
-            # 防止重复 CQ码+空格 信息
-            if msg == " ":
-                if not str(event.get_message()) == " ":
-                    return
+            if "[CQ" in msg:
+                if "[CQ:face" in msg or "[CQ:at" in msg:
+                    pass
+                else:
+                    try:
+                        msg_last.pop(gid)
+                        return
+                    except:
+                        return
 
             # 只重复一个 +1 事件
             if repeater_last == msg:
@@ -49,7 +55,6 @@ async def _(event: GroupMessageEvent):
                 if pre in msg:
                     return
 
-            gid = event.group_id
             if gid in msg_last and msg == msg_last[gid]:
                 msg_last.pop(gid)
                 repeater_last = msg

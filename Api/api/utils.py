@@ -4,7 +4,7 @@
 @Date: 2022/7/4 20:36
 """
 import os
-from utils.path import plugin_path
+from utils.path import plugins_path
 from content.plugins.permission.tools import get_plugin_permission, role_cn
 from content.plugins.total.tools import get_count
 from content.plugins.plugin_control.functions import get_state, is_unset
@@ -13,7 +13,7 @@ from utils.other import translate
 
 async def get_plugin_list() -> list:
     plugins = []
-    dirs = os.listdir(plugin_path)
+    dirs = os.listdir(plugins_path)
     for file in dirs:
         if str(file) != '.idea' and str(file) != "__pycache__" and len(file.split('.')) == 1:
             plugins.append(file)
