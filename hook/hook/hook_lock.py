@@ -14,7 +14,10 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent
 @run_preprocessor
 async def lock_state(matcher: Matcher, event: GroupMessageEvent):
     name = matcher.plugin_name
+    msg = event.get_plaintext()
     module_names = matcher.module_name
+    if "启用" in msg or "停用" in msg:
+        return
     if "init" in module_names or "utils" in module_names or "enable" in module_names:
         return
     state: bool = await functions.get_state(name, str(event.group_id))
