@@ -8,7 +8,6 @@ import requests
 
 from nonebot import get_driver
 
-
 config = get_driver().config
 try:
     api_host = config.genshin_host
@@ -85,7 +84,7 @@ class ResultCode(object):
 
     def to_String(self):
         try:
-            if self.msg:
+            if self.msg and self.code != 0:
                 return self.msg
             return self.code_str[self.code]
         except:
@@ -160,7 +159,7 @@ class Request(object):
             if result.status_code == 200:
                 js = result.json()
                 data = js["data"]
-                code = ResultCode(js["code"])
+                code = ResultCode(js["code"], js["message"])
                 self.result = Result(code, data, source=result.json())
             else:
                 data = {}
@@ -182,7 +181,7 @@ class Request(object):
             if result.status_code == 200:
                 js = result.json()
                 data = js["data"]
-                code = ResultCode(js["code"])
+                code = ResultCode(js["code"], js["message"])
                 self.result = Result(code, data)
             else:
                 data = {}

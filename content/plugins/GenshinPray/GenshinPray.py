@@ -251,6 +251,10 @@ class GenshinPray(object):
                         "star41": star41,
                         "star42": star42,
                         "star43": star43,
+                    },
+                    {
+                        "viewport": {"width": 1920, "height": 900},
+                        "base_url": f"file://{str(Path(__file__).parent / 'template' / 'arm_up')}"
                     }
                 )
                 result.imgUrl = img
@@ -311,6 +315,10 @@ class GenshinPray(object):
                     "star43": star43,
                     "star44": star44,
                     "star45": star45
+                },
+                {
+                    "viewport": {"width": 1920, "height": 900},
+                    "base_url": f"file://{str(Path(__file__).parent / 'template' / 'arm_up')}"
                 }
             )
             result.imgUrl = img

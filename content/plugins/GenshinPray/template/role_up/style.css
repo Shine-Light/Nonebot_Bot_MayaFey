@@ -1,24 +1,32 @@
+.item-icon-img-back-card {
+    position: absolute;
+    z-index: 2;
+    float: left;
+}
+
 .item-icon-img-back-5star {
     position: absolute;
-    z-index: 1;
+    z-index: 3;
     float: left;
-    top: 10px;
+    width: 117px;
+    left: 5px;
+    top: 5px;
 }
 
 .item-icon-img-role {
     position: absolute;
-    z-index: 2;
+    z-index: 4;
     float: left;
-    top: 11px;
-    height: 103px;
-    left: 10px;
+    width: 117px;
+    top: 5px;
+    left: 7px;
 }
 
 .item-icon-img-ele {
     position: absolute;
-    z-index: 3;
+    z-index: 5;
     float: left;
-    top: 10px;
-    left: 8px;
-    height: 34px;
+    width: 34px;
+    top: 3px;
+    left: 3px;
 }

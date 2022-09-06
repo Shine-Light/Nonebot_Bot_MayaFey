@@ -67,12 +67,12 @@ try:
         download_to_root("README", url_base + "README", ".md")
 
 
-    # def download_to_api(path, *args):
-    #     last = ".py"
-    #     if args:
-    #         last = args[0]
-    #     with open(dir_api + path + last, 'w+', encoding="utf-8") as file:
-    #         file.write(requests.get(url_base + "api/" + path + last).content.decode("utf-8").replace("\r", ""))
+    def download_to_api(path, *args):
+        last = ".py"
+        if args:
+            last = args[0]
+        with open(dir_api + path + last, 'w+', encoding="utf-8") as file:
+            file.write(requests.get(url_base + "api/" + path + last).content.decode("utf-8").replace("\r", ""))
 
 
     def download_to_hook(path, *args):
@@ -152,11 +152,17 @@ try:
     download_to_plugin("repeater/__init__")
     download_to_plugin("credit/__init__")
     download_to_plugin("credit/tools")
+    download_to_plugin("menu/__init__")
+    download_to_plugin("plugin_control/functions")
 
     download_to_hook("hook_enable")
+    download_to_hook("hook_permission")
+    download_to_hook("hook_total")
 
     download_to_utils("path")
     download_to_utils("__init__")
+
+    download_to_api("utils")
     # 新增部分
     mkd("content/plugins/GenshinPray")
     mkd("content/plugins/GenshinPray/template")
@@ -188,13 +194,13 @@ try:
     download_to_plugin("GenshinPray/template/role_up/img/avatar/name", ".txt")
     download_to_plugin("GenshinPray/template/role_up/img/ele/name", ".txt")
     download_to_plugin("GenshinPray/template/role_up/down")
-    run_py("content/plugins/GenshinPray/template/role_up/down")
+    run_py("content/plugins/GenshinPray/template/role_up/down.py")
 
-    download_img("content/plugins/GenshinPray/role_up/img/card-back.png",
+    download_img("content/plugins/GenshinPray/template/role_up/img/card-back.png",
                  "http://cdn.shinelight.xyz/nonebot/resource/GenshinPray/role_up/img/card-back.png")
-    download_img("content/plugins/GenshinPray/role_up/img/role-back-4star.png",
+    download_img("content/plugins/GenshinPray/template/role_up/img/role-back-4star.png",
                  "http://cdn.shinelight.xyz/nonebot/resource/GenshinPray/role_up/img/role-back-4star.png")
-    download_img("content/plugins/GenshinPray/role_up/img/role-back-5star.png",
+    download_img("content/plugins/GenshinPray/template/role_up/img/role-back-5star.png",
                  "http://cdn.shinelight.xyz/nonebot/resource/GenshinPray/role_up/img/role-back-5star.png")
     # 结束
 

@@ -157,15 +157,18 @@ async def _():
 
 
 async def clean_out_job():
-    for gid in open(schedule_groups_path, "r", encoding="utf-8").read().strip().split("\n"):
-        js = json_load(schedule_path / gid / "config.json")
-        for title in js:
-            if js[title]["mode"] == "date":
-                if datetime.datetime.now() > datetime.datetime.strptime(js[title]["time"], fmt_str_datetime):
-                    try:
-                        await delete_job(gid, title)
-                    except:
-                        pass
+    try:
+        for gid in open(schedule_groups_path, "r", encoding="utf-8").read().strip().split("\n"):
+            js = json_load(schedule_path / gid / "config.json")
+            for title in js:
+                if js[title]["mode"] == "date":
+                    if datetime.datetime.now() > datetime.datetime.strptime(js[title]["time"], fmt_str_datetime):
+                        try:
+                            await delete_job(gid, title)
+                        except:
+                            pass
+    except FileNotFoundError:
+        pass
 
 
 async def save(js: dict, gid: str):

@@ -93,6 +93,8 @@ async def Dir_init():
         schedule_path.mkdir(exist_ok=True, parents=True)
     if not leave_base_path.exists():
         leave_base_path.mkdir(exist_ok=True, parents=True)
+    if not (config_path / "friends_request").exists():
+        (config_path / "friends_request").mkdir(exist_ok=True, parents=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):
@@ -119,6 +121,8 @@ async def Dir_init():
         await mk("file", torment_config_path, 'w', content=json.dumps({}))
     if not os.path.exists(reboot_config_path):
         await mk("file", reboot_config_path, 'w', content=json.dumps({"rebooting": False, "gid": ""}))
+    if not os.path.exists(friends_request_info):
+        await mk("file", friends_request_info, 'w', content=json.dumps({}))
 
 
 @driver.on_startup

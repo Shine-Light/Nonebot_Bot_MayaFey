@@ -34,7 +34,7 @@
 
 ### 帮助功能  
 - [X] 菜单
-- [X] 插件帮助 ([https://github.com/XZhouQD/nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help)修改而来)
+- [X] 插件帮助 ([nonebot-plugin-help](https://github.com/XZhouQD/nonebot-plugin-help)修改而来)
 ### 娱乐功能
 - [X] 签到  
 - [X] 积分  
@@ -52,6 +52,7 @@
 - [X] AI聊天  
 - [X] 折磨群友  
 - [X] 模拟原神祈愿  (基于[GenshinPray](https://github.com/GardenHamster/GenshinPray))
+- [X] 原神角色展柜 ([nonebot-plugin-gspanel](https://github.com/monsterxcn/nonebot-plugin-gspanel))
 ### 生活功能
 - [X] 腾讯翻译  ([nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator)修改而来) 
 - [X] 百度翻译  ([nonebot_plugin_baidutranslate](https://github.com/NumberSir/nonebot_plugin_baidutranslate)修改而来)  
@@ -75,6 +76,7 @@
 - [X] 离群提示
 ### 私聊管理功能
 - [X] SQL查询  
+- [X] 机器人好友请求管理
 ### 权限系统
 - [X] 权限检测(被动)  
 - [X] 查看权限  

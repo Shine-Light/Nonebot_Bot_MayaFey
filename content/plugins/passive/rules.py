@@ -6,7 +6,6 @@
 import json
 from utils import users
 from content.plugins.permission.tools import permission_
-
 from nonebot.adapters.onebot.v11 import Bot, Event
 from nonebot.rule import Rule
 
@@ -55,7 +54,7 @@ def checker_unban():
     return Rule(_checker)
 
 
-# 邀请事件
+# 超级用户邀请新用户事件
 def checker_invite():
     async def _checker(bot: Bot, event: Event) -> bool:
         description = event.get_event_description()
@@ -76,15 +75,12 @@ def checker_friend():
         description = event.get_event_description()
         values = json.loads(description.replace("'", '"'))
         if values["post_type"] == "request" and values["request_type"] == "friend":
-            uid = str(values["user_id"])
-            role = users.get_role_nogid(uid)
-            if permission_(role, "admin"):
-                return True
+            return True
 
     return Rule(_checker)
 
 
-# 邀请入群事件
+# 被邀请入群事件
 def checker_invite_group():
     async def _checker(bot: Bot, event: Event) -> bool:
         description = event.get_event_description()
