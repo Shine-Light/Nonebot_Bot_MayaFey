@@ -15,40 +15,25 @@ cursor = database_mysql.cursor
 db = database_mysql.connect
 
 
+async def init_one(
+        gid: str,
+        uid: str,
+        date_pre: str = datetime.datetime.strftime(datetime.datetime.now() - datetime.timedelta(days=1), ftr),
+        count_all: int = 0,
+        count_continue: int = 0
+):
+    sql_insert = f"INSERT INTO sign VALUES ('{gid}','{uid}','{date_pre}',{count_all},{count_continue})"
+    cursor.execute(sql_insert)
+
+
 async def init(bot: Bot, event: GroupMessageEvent):
     members = await bot.call_api(api="get_group_member_list", group_id=event.group_id)
-    date_now = datetime.datetime.now()
-    date_pre: str = datetime.datetime.strftime(date_now - datetime.timedelta(days=1), ftr)    # 查询用户语句
-    sql_query: str = f'''SELECT * FROM sign'''
+    sql_query: str = f"SELECT * FROM sign WHERE gid='{str(event.group_id)}'"
     cursor.execute(sql_query)
-    db.commit()
     result_query: tuple = cursor.fetchall()
-    added: list = []
     # 查找新用户
-    if result_query:
-        for member in members:
-            gid = str(member['group_id'])
-            uid = str(member['user_id'])
-            for re in result_query:
-                if gid == re[0] and uid == re[1]:
-                    added.append([gid, uid])
-                    break
-
-    # 首次创建
-    else:
+    if not result_query:
         for member in members:
             uid = member['user_id']
             gid = member['group_id']
-            sql_insert = f"INSERT INTO sign VALUES ('{gid}','{uid}','{date_pre}',0,0)"
-            cursor.execute(sql_insert)
-            db.commit()
-        return
-
-    # 添加新用户
-    for member in members:
-        gid = str(member['group_id'])
-        uid = str(member['user_id'])
-        if [gid, uid] not in added:
-            sql_insert = f"INSERT INTO sign VALUES ('{gid}','{uid}','{date_pre}',0,0)"
-            cursor.execute(sql_insert)
-            db.commit()
+            await init_one(gid, uid)

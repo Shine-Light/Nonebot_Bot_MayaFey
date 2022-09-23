@@ -15,7 +15,7 @@ from nonebot import on_command, get_driver
 from content.plugins import credit, plugin_control, ban_word, word_cloud, welcome, sign
 from .path import *
 from .other import mk
-from . import url
+from . import url, users
 
 
 db = database_mysql.connect
@@ -95,6 +95,8 @@ async def Dir_init():
         leave_base_path.mkdir(exist_ok=True, parents=True)
     if not (config_path / "friends_request").exists():
         (config_path / "friends_request").mkdir(exist_ok=True, parents=True)
+    if not auto_baned_path.exists():
+        auto_baned_path.mkdir(exist_ok=True, parents=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):
@@ -133,38 +135,13 @@ async def _():
 
 async def init(bot: Bot, event: GroupMessageEvent):
     # 用户表初始化开始
-    members = await bot.call_api(api="get_group_member_list", group_id=event.group_id)
-    cursor.execute(f"SELECT * FROM users WHERE gid='{event.group_id}';")
+    members = await bot.get_group_member_list(group_id=event.group_id)
+    cursor.execute(f"SELECT * FROM users WHERE gid='{str(event.group_id)}';")
     query: tuple = cursor.fetchall()
     month = time.strftime(fts, time.localtime())
-    # 已存在数据
-    if query:
-        l: list = []
-        for member in members:
-            gid = str(member['group_id'])
-            uid = str(member['user_id'])
-
-            for re in query:
-                # 已在群内
-                if re[0] == gid and re[1] == uid:
-                    l.append([gid, uid])
-
-        for member in members:
-            gid = str(member['group_id'])
-            uid = str(member['user_id'])
-            if [gid, uid] not in l:
-                role = member['role']
-                cursor.execute(f"INSERT INTO users VALUES('{gid}','{uid}','{role}',0,TRUE);")
-                db.commit()
-
-    # 第一次添加
-    else:
-        for member in members:
-            gid = str(member['group_id'])
-            uid = str(member['user_id'])
-            role = member['role']
-            cursor.execute(f"INSERT INTO users VALUES('{gid}', '{uid}', '{role}', 0, TRUE);")
-            db.commit()
+    # 不存在数据
+    if not query:
+        await users.user_init_all(members)
 
     # 根超级用户处理
     SUPERUSERS = get_driver().config.superusers
@@ -190,6 +167,13 @@ async def init(bot: Bot, event: GroupMessageEvent):
         await mk("file", demerit_path / gid / f"data.json", 'w', content=json.dumps({}))
     if not os.path.exists(demerit_path / gid / f"config.json"):
         await mk("file", demerit_path / gid / f"config.json", 'w', content=json.dumps({"limit": 5}))
+    if not os.path.exists(auto_baned_path / gid):
+        await mk("dir", auto_baned_path / gid, mode=None)
+    if not os.path.exists(auto_baned_path / gid / "time.json"):
+        await mk("file", auto_baned_path / gid / "time.json", 'w', content=json.dumps({}))
+    if not os.path.exists(auto_baned_path / gid / "baned.json"):
+        await mk("file", auto_baned_path / gid / "baned.json", 'w', content=json.dumps({}))
+
 
 bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER)
 @bot_init.handle()
@@ -197,6 +181,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     try:
         # 各插件初始化
         gid = str(event.group_id)
+        members = await bot.get_group_member_list(group_id=event.group_id)
         await init(bot, event)
         await credit.tools.init(bot, event)
         await plugin_control.init(gid)

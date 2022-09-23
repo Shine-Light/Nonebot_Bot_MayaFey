@@ -12,37 +12,23 @@ cursor = database_mysql.cursor
 db = database_mysql.connect
 
 
+async def init_one(gid: str, uid: str, credit: int = 0):
+    cursor.execute(f"INSERT INTO credit VALUES('{gid}', '{uid}', {credit});")
+
+
 # 初始化函数
 async def init(bot: Bot, event: GroupMessageEvent):
     # 积分表初始化开始
     members = await bot.call_api(api="get_group_member_list", group_id=event.group_id)
-    cursor.execute("SELECT * FROM credit;")
+    cursor.execute(f"SELECT * FROM credit WHERE gid='{str(event.group_id)}';")
     db.commit()
     query: tuple = cursor.fetchall()
-    # 已存在数据
-    if query:
-        l: list = []
+    # 不存在数据
+    if not query:
         for member in members:
             gid = str(member['group_id'])
             uid = str(member['user_id'])
-
-            for re in query:
-                if re[0] == gid and re[1] == uid:
-                    l.append([gid, uid])
-
-        for member in members:
-            gid = str(member['group_id'])
-            uid = str(member['user_id'])
-            if [gid, uid] not in l:
-                cursor.execute(f"INSERT INTO credit VALUES('{gid}', '{uid}', 0);")
-                db.commit()
-    # 第一次添加
-    else:
-        for member in members:
-            gid = str(member['group_id'])
-            uid = str(member['user_id'])
-            cursor.execute(f"INSERT INTO credit VALUES('{gid}', '{uid}', 0);")
-        db.commit()
+            await init_one(gid, uid)
     # 积分表初始化结束
 
 

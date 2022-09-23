@@ -11,7 +11,7 @@ from nonebot import on_command, on_notice, on_message, get_driver
 from nonebot.adapters.cqhttp import Bot, Event, GroupMessageEvent, NoticeEvent
 from nonebot.rule import Rule, to_me
 from nonebot.plugin import PluginMetadata
-from utils.other import add_target, translate
+from utils.other import add_target, translate, get_bot_name
 from .. import update
 
 
@@ -37,7 +37,7 @@ def checker_click():
 # 机器人id
 bot_id = get_driver().config.bot_id
 
-message_main: str = '''你好!我是真宵,让我来告诉如何使用机器人吧
+message_main: str = '''你好!我是%s,让我来告诉如何使用机器人吧
 命令提示:空格表示命令别名分隔,{}为自主输入的参数
 "|"表示或者,()中为补充内容,其余符号都是指令内容
 群成员所有命令在10s内只能触发5次,超过五次就禁言5min
@@ -224,23 +224,23 @@ main = on_command(cmd="菜单", priority=9)
 @main.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     version = update.tools.get_version()
-    await main.send(message=message_main % version)
+    await main.send(message=message_main % (get_bot_name(), version))
 
 # 总菜单 戳一戳
-main_click = on_notice(rule=checker_click(), priority=4)
+main_click = on_notice(rule=checker_click(), priority=4, block=False)
 @main_click.handle()
 async def _(bot: Bot, event: NoticeEvent):
     version = update.tools.get_version()
-    await main_click.send(message=message_main % version)
+    await main_click.send(message=message_main % (get_bot_name(), version))
 
 # 总菜单 @机器人
-main_at = on_message(rule=to_me(), priority=12)
+main_at = on_message(rule=to_me(), priority=12, block=False)
 @main_at.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     message_meta: str = str(event.get_message())
     if message_meta == '':
         version = update.tools.get_version()
-        await main_at.send(message=message_main % version)
+        await main_at.send(message=message_main % (get_bot_name(), version))
 
 
 # 娱乐菜单

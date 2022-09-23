@@ -6,7 +6,7 @@
 import datetime
 
 from utils import database_mysql
-from nonebot import logger
+from nonebot import logger, get_driver
 from threading import Timer
 from content.plugins.permission import tools
 
@@ -14,6 +14,33 @@ from content.plugins.permission import tools
 ftr: str = "%Y-%m-%d"
 cursor = database_mysql.cursor
 db = database_mysql.connect
+superusers = get_driver().config.superusers
+
+
+async def is_user_exist(gid: str, uid: str):
+    cursor.execute(f"SELECT * FROM users WHERE gid='{gid}' AND uid='{uid}';")
+    re = cursor.fetchone()
+    if re:
+        return True
+    return False
+
+
+async def user_init_one(gid: str, uid: str, role: str = "member", ban_count: int = 0, alive: bool = True):
+    if await is_user_exist(gid, uid):
+        cursor.execute(f"UPDATE users SET alive=TRUE WHERE gid='{gid}' AND uid='{uid}';")
+    else:
+        cursor.execute(f"INSERT INTO users VALUES('{gid}', '{uid}', '{role}', '{ban_count}', {alive});")
+
+
+async def user_init_all(member_list: list):
+    for member in member_list:
+        gid = str(member['group_id'])
+        uid = str(member['user_id'])
+        if uid in superusers:
+            role = "Van"
+        else:
+            role = member['role']
+        await user_init_one(gid, uid, role)
 
 
 def get_role(gid: str, uid: str) -> str:
@@ -88,9 +115,7 @@ def get_ban_count(uid: str, gid: str) -> int:
 
 
 def member_leave(uid, gid):
-    sql = f"UPDATE users SET alive=FALSE WHERE uid='{uid}' and gid='{gid}'"
-    if tools.permission_(get_role(gid, uid), "superuser"):
-        sql = f"UPDATE users SET role='member',alive=FALSE WHERE uid='{uid}' and gid='{gid}'"
+    sql = f"UPDATE users SET role='member',alive=FALSE WHERE uid='{uid}' and gid='{gid}'"
     cursor.execute(sql)
 
 

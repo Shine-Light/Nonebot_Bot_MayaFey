@@ -93,7 +93,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 
 # 问答检测
-ques_in = on_message(priority=12)
+ques_in = on_message(priority=12, block=False)
 @ques_in.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id

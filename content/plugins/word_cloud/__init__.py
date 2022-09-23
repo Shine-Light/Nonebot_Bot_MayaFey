@@ -80,7 +80,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     else:
         await update_mask.finish(f"无权限,权限需在 {get_special_per(str(event.group_id), 'word_stop')} 及以上")
 
-word = on_message(priority=12)
+word = on_message(priority=12, block=False)
 @word.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     """

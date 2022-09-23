@@ -314,7 +314,8 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     raise IgnoredException("触发违禁词")
             # 管理员不做限制
             else:
-                logger.info("超级用户及以上触发违禁词")
+                logger.info("超级用户及以上触发违禁词:" + word)
+            break
     # 违禁词检测(内置违禁词)
     if level == "strict":
         for word in preBanWords:
@@ -323,6 +324,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
                     await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
                     logger.info("触发违禁词:" + word)
+                    break
                 else:
                     logger.info("超级用户及以上触发违禁词:" + word)
 
@@ -333,6 +335,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
                     await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
                     logger.info("触发违禁词:" + word)
+                    break
                 else:
                     logger.info("超级用户及以上触发违禁词:" + word)
 

@@ -24,7 +24,7 @@ __plugin_meta__ = PluginMetadata(
 
 
 # 离群事件
-leave = on_notice(rule=checker_leave(), priority=4)
+leave = on_notice(rule=checker_leave(), priority=4, block=False)
 @leave.handle()
 async def _(bot: Bot, event: NoticeEvent):
     uid = str(event.get_user_id())

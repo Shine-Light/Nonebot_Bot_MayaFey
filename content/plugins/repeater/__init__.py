@@ -23,7 +23,7 @@ repeater_last = ""
 msg_last = {}
 
 
-repeater = on_message(priority=12)
+repeater = on_message(priority=12, block=False)
 @repeater.handle()
 async def _(event: GroupMessageEvent):
     if isinstance(event, GroupMessageEvent):

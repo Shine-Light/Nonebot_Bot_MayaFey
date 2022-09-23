@@ -5,6 +5,7 @@
 """
 import datetime
 
+from nonebot import get_driver
 from nonebot.internal.matcher import Matcher
 from nonebot.message import run_preprocessor
 from nonebot.exception import IgnoredException
@@ -17,7 +18,14 @@ from nonebot.log import logger
 
 d = {}
 unset: list = open(path.total_unable, "r", encoding="utf-8").read().split(",")
-
+config = get_driver().config
+try:
+    fast_time = int(config.fast_time)
+    fast_count = int(config.fast_count)
+except:
+    logger.warning("读取恶意触发配置失败,使用默认配置")
+    fast_time = 10
+    fast_count = 5
 
 @run_preprocessor
 async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State):
@@ -42,7 +50,10 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
     if plugin_name in unset:
         return
     # 不是命令信息
-    if not state["_prefix"]["raw_command"]:
+    try:
+        if not state["_prefix"]["raw_command"]:
+            return
+    except:
         return
     # 非命令信息优先级
     if matcher.priority not in range(1, 12):
@@ -55,7 +66,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
             time_past: datetime = d[uid]['time']
             time_delta = (time_now - time_past).seconds
             count = d[uid]['count']
-            if time_delta <= 10 and count + 1 >= 5:
+            if time_delta <= fast_time and count + 1 >= fast_count:
                 baning = banSb(gid, [int(uid)], time=300)
                 async for ban in baning:
                     if ban:

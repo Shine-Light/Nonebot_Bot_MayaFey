@@ -12,7 +12,7 @@ from nonebot.log import logger
 
 from content.plugins.plugin_control.functions import get_state
 from utils.path import schedule_path, schedule_groups_path
-from utils.other import mk
+from utils.other import mk, get_bot_name
 from utils.json_tools import json_write, json_load
 
 
@@ -234,7 +234,7 @@ async def raw_msg_checker(raw_msg: str, gid: str) -> dict:
             time = raw_msg.split(" ")[3].strip()
             temp = datetime.datetime.strptime(time, fmt_str_time)
             if mode == "interval" and int(datetime.datetime.strftime(temp, "%S")) <= 0:
-                return {"state": "error", "error": "你想累死真宵吗?间隔最少1秒啦!"}
+                return {"state": "error", "error": f"你想{get_bot_name}吗?间隔最少1秒啦!"}
         except:
             return {"state": "error", "error": "时间格式不对哦, 格式应为 `时:分:秒`?间隔最少1秒啦!"}
 

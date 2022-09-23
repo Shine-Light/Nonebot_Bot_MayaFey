@@ -15,7 +15,7 @@ from utils.other import add_target, translate
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
     name=translate("e2c", "flash"),
-    description="反闪照",
+    description="将捕获的闪照,通过私聊发送给根用户",
     usage="被动,无命令" + add_target(60)
 )
 
@@ -36,7 +36,7 @@ def checker():
     return Rule(_checker)
 
 
-flash = on_message(rule=checker(), priority=12)
+flash = on_message(rule=checker(), priority=12, block=False)
 @flash.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     supers = get_driver().config.superusers

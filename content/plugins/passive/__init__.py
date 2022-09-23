@@ -33,7 +33,7 @@ superusers = config.superusers
 
 
 # 管理员增加事件
-admin_set = on_notice(rule=rules.checker_admin_set(), priority=4)
+admin_set = on_notice(rule=rules.checker_admin_set(), priority=4, block=False)
 @admin_set.handle()
 async def _(bot: Bot, event: NoticeEvent):
     uid = str(event.get_user_id())
@@ -43,7 +43,7 @@ async def _(bot: Bot, event: NoticeEvent):
 
 
 # 管理员减少事件
-admin_unset = on_notice(rule=rules.checker_admin_unset(), priority=4)
+admin_unset = on_notice(rule=rules.checker_admin_unset(), priority=4, block=False)
 @admin_unset.handle()
 async def _(bot: Bot, event: NoticeEvent):
     uid = str(event.get_user_id())
@@ -53,7 +53,7 @@ async def _(bot: Bot, event: NoticeEvent):
 
 
 # 超级用户邀请新用户事件
-superuser_invite = on_request(rule=rules.checker_invite(), priority=4)
+superuser_invite = on_request(rule=rules.checker_invite(), priority=4, block=False)
 @superuser_invite.handle()
 async def _(bot: Bot, event: NoticeEvent):
     await bot.set_group_add_request(
@@ -62,7 +62,7 @@ async def _(bot: Bot, event: NoticeEvent):
 
 
 # 请求好友事件
-admin_friend = on_request(rule=rules.checker_friend(), priority=4)
+admin_friend = on_request(rule=rules.checker_friend(), priority=4, block=False)
 @admin_friend.handle()
 async def _(bot: Bot, event: RequestEvent):
     uid = str(event.get_user_id())
@@ -97,7 +97,7 @@ async def _(bot: Bot, event: RequestEvent):
 
 
 # 被根用户邀请入群事件
-van_invite = on_request(rule=rules.checker_invite_group(), priority=4)
+van_invite = on_request(rule=rules.checker_invite_group(), priority=4, block=False)
 @van_invite.handle()
 async def _(bot: Bot, event: RequestEvent):
     uid = str(event.get_user_id())

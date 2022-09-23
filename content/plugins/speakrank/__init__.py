@@ -28,7 +28,7 @@ __plugin_meta__ = PluginMetadata(
           "/今日发言数" + add_target(60)
 )
 
-speakrank_record = on_message(priority=12)
+speakrank_record = on_message(priority=12, block=False)
 @speakrank_record.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     uid = str(event.user_id)

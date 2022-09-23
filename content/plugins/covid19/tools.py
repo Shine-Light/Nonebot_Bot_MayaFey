@@ -1,7 +1,6 @@
 import requests
-from typing import Dict, List
-import json
-from .policy import POLICY_ID, get_city_poi_list, get_policy
+from typing import Dict
+
 
 class Area():
     def __init__(self, data):
@@ -9,27 +8,23 @@ class Area():
         self.today = data['today']
         self.total = data['total']
         self.grade = data['total'].get('grade', '风险未确认')
-        self.isUpdated = self.today['isUpdated']
+        self.isUpdated = self.today['isUpdated'] # 是否推送
         wzz_add = data['today'].get('wzz_add')
         self.wzz_add = int(wzz_add) if wzz_add else 0
         self.all_add = self.today['confirm'] + self.wzz_add
         self.children = data.get('children', None)
+        if self.all_add == 0:
+            self.isUpdated = False
 
-    @property
-    def policy(self):
-        return get_policy(POLICY_ID.get(self.name))
-
-    @property
-    def poi_list(self):
-        return get_city_poi_list(POLICY_ID.get(self.name))
 
     @property
     def main_info(self):
         update = {True: '', False: '（未更新）'}
-        return (f"{self.name}{update[self.today['isUpdated']]}\n新增确诊: {self.today['confirm']}\n新增无症状: {self.wzz_add}\n目前确诊: {self.total['nowConfirm']}")
+        return (f"{self.name}{update[self.today['isUpdated']]}\n新增确诊: {self.today['confirm']}\n新增无症状: {self.wzz_add}")
 
     def __eq__(self, obj):
         return (isinstance(obj, Area) and self.today == obj.today)
+
 
 class AreaList(Dict):
     def add(self, data):
@@ -70,3 +65,4 @@ class NewsData:
             return True
 
 
+NewsBot = NewsData()

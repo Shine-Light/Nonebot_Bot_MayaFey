@@ -5,14 +5,16 @@
 """
 import os
 import platform
+import random
 import sys
 
 import httpx
 
-from nonebot import logger
+from nonebot import logger, get_driver
 from .json_tools import json_load
 from .path import config_path
 
+nicknames = get_driver().config.nickname
 
 async def mk(type_, path_, *mode, **kwargs):
     """
@@ -89,3 +91,7 @@ def reboot():
         os.execv(sys.executable, ['python'] + sys.argv)
     else:
         os.execv(sys.executable, ['python3'] + sys.argv)
+
+
+def get_bot_name() -> str:
+    return random.sample(nicknames, 1)[0]

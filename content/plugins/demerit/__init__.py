@@ -11,8 +11,7 @@ from content.plugins.permission.tools import special_per, get_special_per
 from utils import users, admin_tools
 from .tools import *
 from content.plugins.permission.tools import permission_
-
-from utils.other import add_target, translate
+from utils.other import add_target, translate, get_bot_name
 
 
 # 插件元数据定义
@@ -49,7 +48,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
 
         for uid in uids:
             if str(uid) == str(bot.self_id):
-                await demerit.send("真宵是做错什么了吗?!")
+                await demerit.send(f"{get_bot_name()}是做错什么了吗?!")
                 continue
             uid = str(uid)
             nickname = (await bot.get_group_member_info(group_id=int(gid), user_id=int(uid)))["nickname"]

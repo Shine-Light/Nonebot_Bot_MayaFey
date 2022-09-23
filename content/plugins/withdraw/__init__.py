@@ -25,8 +25,6 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-
-
 # 保存需要撤回的信息
 async def save_msg_id(bot: Bot, e: Exception, api: str,  data: Dict[str, Any], result: Any) -> None:
     # 处理群聊消息
