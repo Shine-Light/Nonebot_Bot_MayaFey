@@ -37,3 +37,11 @@ async def init(bot: Bot, event: GroupMessageEvent):
             uid = member['user_id']
             gid = member['group_id']
             await init_one(gid, uid)
+    # 0.5.8过渡,将在下个版本删除
+    else:
+        for member in members:
+            uid = member['user_id']
+            gid = member['group_id']
+            cursor.execute(f"SELECT gid, uid FROM sign WHERE gid='{gid}' AND uid='{uid}'")
+            if not cursor.fetchone():
+                await init_one(gid, uid)
