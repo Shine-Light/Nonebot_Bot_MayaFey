@@ -57,7 +57,7 @@ async def _(bot: Bot, event: NoticeEvent):
         role = "Van"
     else:
         role = "member"
-    re = users.is_user_exist(gid, uid)
+    re = await users.is_user_exist(gid, uid)
     # 入群欢迎
     welcome_txt = welcome_path_base / f"{gid}.txt"
     message: str = open(welcome_txt, 'r', encoding="utf-8").read()
