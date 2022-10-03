@@ -53,6 +53,8 @@ class DailyWife(object):
                     else:
                         self.member_list.remove(wife)
                         continue
+                else:
+                    break
             else:
                 break
 
