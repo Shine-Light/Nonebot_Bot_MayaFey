@@ -22,7 +22,7 @@ baned_record = on_notice(rule=checker_leave(), priority=4, block=False)
 async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
     uid = str(event.user_id)
     gid = str(event.group_id)
-    if is_time_to_baned(uid, gid):
+    if await is_time_to_baned(uid, gid):
         auto_baned_config_path = auto_baned_path / gid / "baned.json"
         js = json_load(auto_baned_config_path)
         js.update({uid: ""})

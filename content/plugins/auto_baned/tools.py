@@ -54,7 +54,7 @@ def checker_in():
 
 
 async def is_time_to_baned(uid: str, gid: str) -> bool:
-    auto_baned_config_path = auto_baned_path / gid / "config.json"
+    auto_baned_config_path = auto_baned_path / gid / "time.json"
     js = json_load(auto_baned_config_path)
     join_time = datetime.datetime.strptime(js[uid], "%Y-%m-%d %H:%M:%S")
     if (datetime.datetime.now() - join_time) < datetime.timedelta(minutes=delta_time):
