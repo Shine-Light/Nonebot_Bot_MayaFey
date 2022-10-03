@@ -30,7 +30,7 @@ class DailyWife(object):
         await self.record.init()
         if not self.config.NTR:
             await self.remove_NTR()
-        if not self.config.activity:
+        if self.config.activity:
             await self.remove_inactive()
         if not self.config.same_gender:
             await self.remove_same_gender()
@@ -71,19 +71,24 @@ class DailyWife(object):
 
     async def remove_inactive(self):
         today = datetime.datetime.now()
-        for member in set(self.member_list):
+        copy = self.member_list[:]
+        for member in copy:
             last_time = datetime.datetime.fromtimestamp(member['last_sent_time'])
             if today - last_time > datetime.timedelta(days=self.config.activity_time):
                 self.member_list.remove(member)
 
     async def remove_same_gender(self):
-        for member in set(self.member_list):
+        copy = self.member_list[:]
+        for member in copy:
             if member['sex'] == self.gender:
                 self.member_list.remove(member)
 
     async def remove_NTR(self):
         if not self.record.get_selected_list():
             return
-        for member in set(self.member_list):
-            if member['user_id'] in (await self.record.get_selected_list()):
-                self.member_list.remove(member)
+        copy = self.member_list[:]
+        for member in copy:
+            selected_list = await self.record.get_selected_list()
+            for selected in selected_list:
+                if str(member['user_id']) == selected_list[selected]:
+                    self.member_list.remove(member)
