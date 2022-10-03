@@ -133,7 +133,7 @@ class Weather:
         return AirApi(**res.json())
 
     @property
-    async def _warning(self) -> AirApi:
+    async def _warning(self) -> WarningApi:
         res = await self._get_data(
             url=self.url_weather_warning,
             params={"location": self.city_id, "key": self.apikey},

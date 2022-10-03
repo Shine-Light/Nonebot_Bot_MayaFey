@@ -3,8 +3,9 @@
 @Version: 1.0
 @Date: 2022/4/21 12:51
 """
-from nonebot import on_command, require
-from nonebot.exception import FinishedException
+from nonebot import on_command, require, get_bot, get_driver
+from nonebot.exception import FinishedException, ActionFailed
+from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
 from . import tools
 from utils.other import add_target, translate, reboot
@@ -65,7 +66,15 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 timezone = "Asia/Shanghai"
 scheduler = require("nonebot_plugin_apscheduler").scheduler
-@scheduler.scheduled_job("cron", hour="8", minute="00", timezone=timezone)
+@scheduler.scheduled_job("interval", minutes=1, timezone=timezone)
 async def run():
     if await tools.check_update():
-        await check_update.finish("检测到有新版本,请及时更新,更新前记得备份")
+        logger.info("检测到新版本,向根用户推送更新信息")
+        bot: Bot = get_bot()
+        for superuser in get_driver().config.superusers:
+            try:
+                await bot.send_private_msg(user_id=int(superuser), message="检测到有新版本,请及时更新,更新前记得备份")
+            except ActionFailed:
+                logger.error(f"向根用户 {superuser} 发起会话失败")
+            except Exception as e:
+                logger.error(f"发送好友请求提示失败,{str(e)}")

@@ -89,7 +89,6 @@ async def banSb(gid: int, ban_list: list, time: int):
             enable=True
         )
     else:
-        print(time)
         if time is None:
             time = random.randint(int(config.ban_rand_time_min), int(config.ban_rand_time_max))
 
@@ -97,7 +96,6 @@ async def banSb(gid: int, ban_list: list, time: int):
             if int(qq) in su or str(qq) in su:
                 logger.info(f"SUPERUSER无法被禁言")
             else:
-                print(time)
                 yield nonebot.get_bot().set_group_ban(
                     group_id=gid,
                     user_id=qq,

@@ -41,5 +41,12 @@
     "admin_get_demerit": "superuser", 
     "set_demerit_config": "superuser",
     "kicked_msg_update": "superuser",
-    "leave_msg_update": "superuser"
+    "leave_msg_update": "superuser",
+    "SetOneCost": "superuser",
+    "SetSkinRate": "superuser",
+    "ResetRolePond": "superuser",
+    "ResetArmPond": "superuser",
+    "SetArmPond": "superuser",
+    "SetRolePond": "superuser",
+    "dailyWife_setting": "superuser"
 }

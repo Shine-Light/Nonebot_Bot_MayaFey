@@ -33,5 +33,9 @@
     "help": "member",
     "torment": "superuser",
     "schedule": "superuser",
-    "leave": "baned"
+    "leave": "baned",
+    "GenshinPray": "member",
+    "gspanel": "member",
+    "auto_baned": "baned",
+    "DailyWife": "member"
 }

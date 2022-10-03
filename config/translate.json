@@ -45,5 +45,8 @@
     "execSql": "SQL查询",
     "torment": "折磨群友",
     "schedule": "自定义定时任务", 
-    "leave": "离群提示"
+    "leave": "离群提示",
+    "GenshinPray": "原神祈愿",
+    "auto_baned": "防白嫖",
+    "DailyWife": "随机群友老婆"
 }

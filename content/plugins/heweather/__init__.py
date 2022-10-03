@@ -7,10 +7,24 @@ from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from .config import Config
 from .render_pic import render
-from .weather_data import Weather, CityNotFoundError, ConfigError
+from .weather_data import Weather, ConfigError, CityNotFoundError
 
 from utils.other import add_target, translate
 
+plugin_config = Config.parse_obj(get_driver().config.dict())
+
+if plugin_config.qweather_apikey and plugin_config.qweather_apitype:
+    api_key = plugin_config.qweather_apikey
+    api_type = int(plugin_config.qweather_apitype)
+else:
+    raise ConfigError("请设置 qweather_apikey 和 qweather_apitype")
+
+
+if plugin_config.debug:
+    DEBUG = True
+    logger.debug("将会保存图片到 weather.png")
+else:
+    DEBUG = False
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
@@ -35,7 +49,7 @@ if plugin_config.debug:
 else:
     DEBUG = False
 
-weather = on_regex(r".*?(.*)天气(.*).*?", priority=7)
+weather = on_regex(r".*?(.*)天气(.*).*?", priority=12, block=False)
 @weather.handle()
 async def _(matcher: Matcher, args: Tuple[str, ...] = RegexGroup()):
     city = args[0].strip() or args[1].strip()

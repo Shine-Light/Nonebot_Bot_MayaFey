@@ -301,9 +301,9 @@ async def _(event: GroupMessageEvent, bot: Bot):
                         await kick_user(uid, group_id, bot)
                     except:
                         await bot.send(event=event, message="检测到违禁词,无管理员权限,无法进行处罚")
-                        IgnoredException("触发违禁词")
+                        raise IgnoredException("触发违禁词")
                     await bot.send(event=event, message=f"检测到违禁词,次数已达{ban_count_allow}次,踢出并拉黑")
-                    IgnoredException("触发违禁词")
+                    raise IgnoredException("触发违禁词")
                 else:
                     try:
                         await ban_user(uid, group_id, bot)
@@ -315,7 +315,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
             # 管理员不做限制
             else:
                 logger.info("超级用户及以上触发违禁词:" + word)
-            break
+                break
     # 违禁词检测(内置违禁词)
     if level == "strict":
         for word in preBanWords:
@@ -327,6 +327,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     break
                 else:
                     logger.info("超级用户及以上触发违禁词:" + word)
+                    break
 
     elif level == "easy":
         for word in preBanWords_easy:
@@ -338,6 +339,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     break
                 else:
                     logger.info("超级用户及以上触发违禁词:" + word)
+                    break
 
 ban_easy = on_command("简单违禁词", priority=5)
 @ban_easy.handle()

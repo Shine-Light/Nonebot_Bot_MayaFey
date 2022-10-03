@@ -53,6 +53,7 @@
 - [X] 折磨群友  
 - [X] 模拟原神祈愿  (基于[GenshinPray](https://github.com/GardenHamster/GenshinPray))
 - [X] 原神角色展柜 ([nonebot-plugin-gspanel](https://github.com/monsterxcn/nonebot-plugin-gspanel))
+- [X] 随机群友老婆 
 ### 生活功能
 - [X] 腾讯翻译  ([nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator)修改而来) 
 - [X] 百度翻译  ([nonebot_plugin_baidutranslate](https://github.com/NumberSir/nonebot_plugin_baidutranslate)修改而来)  
@@ -86,7 +87,7 @@
 - [X] 21点  ([nonebot-plugin-blackjack](https://github.com/yaowan233/nonebot-plugin-blackjack)修改而来)  
 ### 被动功能
 - [X] 恶意触发命令检测  
-- [X] 违禁图片检测  
+- [X] 违禁图片检测(百度和腾讯接口)  
 - [X] 闪照捕获  
 - [X] 拉群自接受  
 - [X] 好友自接受  

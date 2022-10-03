@@ -63,7 +63,7 @@ async def is_time_to_baned(uid: str, gid: str) -> bool:
 
 
 async def is_baned(uid: str, gid: str) -> bool:
-    auto_baned_config_path = auto_baned_path / gid / "config.json"
+    auto_baned_config_path = auto_baned_path / gid / "baned.json"
     js = json_load(auto_baned_config_path)
     if uid in js:
         return True

@@ -16,6 +16,7 @@ from .path import config_path
 
 nicknames = get_driver().config.nickname
 
+
 async def mk(type_, path_, *mode, **kwargs):
     """
     创建文件夹 下载文件
@@ -94,4 +95,4 @@ def reboot():
 
 
 def get_bot_name() -> str:
-    return random.sample(nicknames, 1)[0]
+    return str(random.sample(nicknames, 1)[0])
