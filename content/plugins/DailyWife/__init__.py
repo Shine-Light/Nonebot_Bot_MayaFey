@@ -241,7 +241,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State, matcher: Matcher
     choice = matcher.get_arg("choice").extract_plain_text()
     option = state['option']
     config = state['config']
-    if option == "activity_time":
+    if option == Config.set_activity_time:
         try:
             activity_time = int(choice)
         except:
