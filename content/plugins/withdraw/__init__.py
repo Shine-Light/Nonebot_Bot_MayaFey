@@ -3,18 +3,13 @@
 @Version: 1.0
 @Date: 2022/3/11 22:10
 """
-import datetime
-import time
-import nonebot
-
 from typing import Any, Dict
 from nonebot import require, on_command, logger
-from nonebot.adapters.onebot.v11 import Bot, MessageSegment, Message
+from nonebot.adapters.onebot.v11 import Bot, MessageSegment, Message, Event
 from nonebot.plugin import PluginMetadata
 from utils.other import add_target, translate
-
-ft = "%Y%m%d%H%M%S"
-msgs: dict = {}
+scheduler = require("nonebot_plugin_apscheduler").scheduler
+from nonebot_plugin_apscheduler import scheduler
 
 
 # 插件元数据定义
@@ -23,6 +18,11 @@ __plugin_meta__ = PluginMetadata(
     description="定时撤回",
     usage="被动,无命令" + add_target(60)
 )
+
+
+# 撤回信息
+async def withdraw_message(bot: Bot, message_id: int):
+    await bot.delete_msg(message_id=message_id)
 
 
 # 保存需要撤回的信息
@@ -69,46 +69,12 @@ async def save_msg_id(bot: Bot, e: Exception, api: str,  data: Dict[str, Any], r
     # 时间处理
     mid: int = result["message_id"]
     second: int = int(message.data["text"].split("消息将于")[1].split("s")[0])
-    time_now = datetime.datetime.now()
-    time_last = time_now + datetime.timedelta(seconds=second)
-    time_result: int = int(time_last.strftime(ft))
-
-    # 更新撤回信息字典
-    msgs.update({mid: time_result})
+    scheduler.add_job(withdraw_message, "interval", seconds=second, args=[bot, mid])
 
 
 # 在bot调用API后执行函数
 Bot._called_api_hook.add(save_msg_id)
 
-
-# 撤回信息
-scheduler = require("nonebot_plugin_apscheduler").scheduler
-timezone = "Asia/Shanghai"
-@scheduler.scheduled_job("cron", second="*/1", timezone=timezone)
-async def _():
-    time_now = int(time.strftime(ft, time.localtime()))
-    count = 0
-    try:
-        bot: Bot = nonebot.get_bot()
-    except:
-        # 避免刷屏
-        count += 1
-        if count % 10 == 0:
-            logger.warning("等待机器人连接")
-            return
-
-    try:
-        deleted: list = []
-        # 若当前时间等于撤回时间则进行撤回
-        for msg in msgs:
-            if msgs[msg] == time_now:
-                await bot.delete_msg(message_id=msg)
-                deleted.append(msg)
-        # 已撤回信息从字典中删除
-        for key in deleted:
-            msgs.pop(key)
-    except Exception as e:
-        logger.error(f"撤回出错:{str(e)}")
 
 # 测试用
 # test = on_command("测试", priority=8)

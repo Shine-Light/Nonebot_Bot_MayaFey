@@ -7,7 +7,7 @@ from nonebot.adapters.onebot.v11 import (
     Message,
 )
 from nonebot.typing import T_State
-from nonebot.params import Depends, CommandArg, State
+from nonebot.params import Depends, CommandArg
 from nonebot.plugin import PluginMetadata
 from .utils import is_number, get_message_at
 from .data_source import russian_manager, max_bet_gold
@@ -92,7 +92,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 
 async def get_bullet_num(
-    event: GroupMessageEvent, arg: Message = CommandArg(), state: T_State = State()
+    event: GroupMessageEvent, state: T_State, arg: Message = CommandArg()
 ):
     msg = arg.extract_plain_text().strip()
     if state["bullet_num"]:
@@ -115,7 +115,7 @@ async def get_bullet_num(
 async def _(
     bot: Bot,
     event: GroupMessageEvent,
-    state: T_State = State(),
+    state: T_State,
     arg: Message = CommandArg(),
 ):
     msg = arg.extract_plain_text().strip()

@@ -10,8 +10,10 @@ from nonebot.message import event_preprocessor
 from nonebot.plugin import PluginMetadata
 from utils.admin_tools import banSb, image_moderation_async
 from utils.other import add_target, translate
+from utils import users
 from .config import Config
 from .data import Reqeust
+from content.plugins.permission.tools import permission_
 
 config = Config()
 
@@ -25,10 +27,13 @@ __plugin_meta__ = PluginMetadata(
 
 @event_preprocessor
 async def check_pic(bot: Bot, event: GroupMessageEvent):
-    uid = [event.get_user_id()]
+    uid = event.get_user_id()
     gid = event.group_id
     eid = event.message_id
     if isinstance(event, MessageEvent):
+        # 超级用户及以上不受影响
+        if permission_(users.get_role(str(gid), str(uid)), "superuser"):
+            return
         for msg in event.message:
             if msg.type == "image":
                 url: str = msg.data["url"]
@@ -42,7 +47,7 @@ async def check_pic(bot: Bot, event: GroupMessageEvent):
                             logger.info('检测到违规图片,撤回')
                         except ActionFailed:
                             logger.info('检测到违规图片,但权限不足,撤回失败')
-                        baning = banSb(gid, ban_list=uid, time=300)
+                        baning = banSb(gid, ban_list=[uid], time=300)
                         async for baned in baning:
                             if baned:
                                 try:

@@ -1,5 +1,5 @@
 from nonebot import logger, on_command, on_regex, on_fullmatch, require
-from nonebot.params import Depends, State, CommandArg, RegexMatched
+from nonebot.params import Depends, CommandArg, RegexMatched
 from nonebot.typing import T_State
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import GROUP, Message, GroupMessageEvent, MessageSegment
@@ -78,7 +78,7 @@ async def _(event: GroupMessageEvent, args: Message = CommandArg()):
     await divine.finish(msg, at_sender=True)
 
 
-async def get_user_theme(matcher: Matcher, args: str = RegexMatched(), state: T_State = State()):
+async def get_user_theme(matcher: Matcher, state: T_State, args: str = RegexMatched()):
     arg = args[:-2]
     if len(arg) < 1:
         await matcher.finish("输入参数错误")
@@ -115,7 +115,7 @@ async def _(event: GroupMessageEvent, state: T_State = Depends(get_user_theme)):
     await divine_specific.finish("还没有这种抽签主题哦~")
 
 
-async def get_user_arg(matcher: Matcher, args: str = RegexMatched(), state: T_State = State()):
+async def get_user_arg(matcher: Matcher, state: T_State, args: str = RegexMatched()):
     arg = args[2:-1]
     if len(arg) < 1:
         await matcher.finish("输入参数错误")

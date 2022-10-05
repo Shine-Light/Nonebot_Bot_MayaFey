@@ -88,6 +88,9 @@ class IllegalType(object):
     def __init__(self, mainType, subType):
         self.subType = types[mainType][subType]
 
+    def __str__(self):
+        return self.subType
+
 
 class Result(object):
     illegal_level: int
