@@ -3,6 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/11 22:10
 """
+import datetime
 from typing import Any, Dict
 from nonebot import require, on_command, logger
 from nonebot.adapters.onebot.v11 import Bot, MessageSegment, Message, Event
@@ -69,7 +70,9 @@ async def save_msg_id(bot: Bot, e: Exception, api: str,  data: Dict[str, Any], r
     # 时间处理
     mid: int = result["message_id"]
     second: int = int(message.data["text"].split("消息将于")[1].split("s")[0])
-    scheduler.add_job(withdraw_message, "interval", seconds=second, args=[bot, mid])
+    now = datetime.datetime.now()
+    withdraw_time = now + datetime.timedelta(seconds=second)
+    scheduler.add_job(withdraw_message, "date", run_date=withdraw_time, args=[bot, mid], coalesce=True)
 
 
 # 在bot调用API后执行函数
@@ -77,7 +80,7 @@ Bot._called_api_hook.add(save_msg_id)
 
 
 # 测试用
-# test = on_command("测试", priority=8)
-# @test.handle()
-# async def _(bot: Bot, event: Event):
-#     await bot.send(event=event, message=add_target(10))
+test = on_command("测试", priority=8)
+@test.handle()
+async def _(bot: Bot, event: Event):
+    await bot.send(event=event, message=add_target(10))

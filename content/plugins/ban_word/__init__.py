@@ -278,6 +278,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
     uid = event.get_user_id()
     word_list_url = word_list_urls / group_id / "words.txt"
     msg_meta = event.get_message().extract_plain_text()
+    message_id = event.message_id
     role: str = users.get_role(group_id, uid)
     ban_words: list = open(word_list_url, "r", encoding="utf-8").read().split("\n")
     preBanWords: list = open(preBanWord, "r", encoding="utf-8").read().split("\n")
@@ -298,6 +299,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                 # 第n次踢出并拉黑
                 if count >= ban_count_allow:
                     try:
+                        await bot.delete_msg(message_id=message_id)
                         await kick_user(uid, group_id, bot)
                     except:
                         await bot.send(event=event, message="检测到违禁词,无管理员权限,无法进行处罚")
@@ -306,6 +308,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     raise IgnoredException("触发违禁词")
                 else:
                     try:
+                        await bot.delete_msg(message_id=message_id)
                         await ban_user(uid, group_id, bot)
                     except:
                         await bot.send(event=event, message="无管理员权限,无法进行处罚")
@@ -321,6 +324,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
         for word in preBanWords:
             if word and word in msg_meta:
                 if role in ["member", "baned"]:
+                    await bot.delete_msg(message_id=message_id)
                     await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
                     await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
                     logger.info("触发违禁词:" + word)
@@ -333,6 +337,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
         for word in preBanWords_easy:
             if word and word in msg_meta:
                 if role in ["member", "baned"]:
+                    await bot.delete_msg(message_id=message_id)
                     await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
                     await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
                     logger.info("触发违禁词:" + word)
