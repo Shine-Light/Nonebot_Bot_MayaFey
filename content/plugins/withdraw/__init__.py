@@ -80,7 +80,7 @@ Bot._called_api_hook.add(save_msg_id)
 
 
 # 测试用
-test = on_command("测试", priority=8)
-@test.handle()
-async def _(bot: Bot, event: Event):
-    await bot.send(event=event, message=add_target(10))
+# test = on_command("测试", priority=8)
+# @test.handle()
+# async def _(bot: Bot, event: Event):
+#     await bot.send(event=event, message=add_target(10))
