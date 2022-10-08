@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "maya fey"
-version = "0.6.0"
+version = "0.6.0-fix1"
 description = ""
 authors = ["Shine-Light <3120815902@qq.com>"]
 
