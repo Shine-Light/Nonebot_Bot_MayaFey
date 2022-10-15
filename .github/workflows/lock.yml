@@ -14,10 +14,13 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Python
-        uses: he0119/setup-python@main
+      - id: python
+        uses: actions/setup-python@v2
         with:
-          python-version: "3.9"
+          python-version: ${{ inputs.python-version }}
+          architecture: "x64"
+      - uses: Gr1N/setup-poetry@v7
+      
       - name: poetry lock
         run: |
           rm -f poetry.lock
