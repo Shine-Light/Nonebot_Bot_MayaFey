@@ -41,7 +41,7 @@ msgpack = "^1.0.3"
 cryptography = "^36.0.1"
 
 [tool.poetry.dev-dependencies]
-nb-cli = "^0.6.0"
+
 
 [tool.nonebot]
 plugins = []
