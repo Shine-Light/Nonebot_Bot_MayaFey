@@ -3,7 +3,7 @@ import json
 import time
 
 from nonebot import on_command, get_driver
-from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.log import logger
 from nonebot.plugin import PluginMetadata
 from utils import requests_tools

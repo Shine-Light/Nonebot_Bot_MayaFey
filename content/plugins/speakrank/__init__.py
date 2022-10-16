@@ -71,7 +71,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 
 # FIXME: 这一块重复代码有点多了
-who_speak_most_today = on_command("今日榜首", aliases={'今天谁话多', '今儿谁话多', '今天谁屁话最多'}, block=True, priority=8)
+who_speak_most_today = on_command("今日榜首", aliases={'今天谁话多', '今儿谁话多', '今天谁屁话最多'}, block=False, priority=8)
 @who_speak_most_today.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
@@ -85,7 +85,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await who_speak_most_today.send(f"太强了！今日榜首：\n{top[0][0]}，发了{top[0][1]}条消息")
 
 
-speak_top = on_command("今日发言排行", aliases={'今日排行榜', '今日发言排行榜', '今日排行'}, block=True, priority=8)
+speak_top = on_command("今日发言排行", aliases={'今日排行榜', '今日发言排行榜', '今日排行'}, block=False, priority=8)
 @speak_top.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
@@ -101,7 +101,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await speak_top.send("\n".join(top_list))
 
 
-speak_top_yesterday = on_command("昨日发言排行", aliases={'昨日发言排行榜'}, block=True, priority=8)
+speak_top_yesterday = on_command("昨日发言排行", aliases={'昨日发言排行榜'}, block=False, priority=8)
 @speak_top_yesterday.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
@@ -121,7 +121,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await speak_top_yesterday.send("昨日没有记录")
 
 
-who_speak_most = on_command("排行", aliases={'谁话多', '谁屁话最多', '排行', '排行榜'}, block=True, priority=8)
+who_speak_most = on_command("排行", aliases={'谁话多', '谁屁话最多', '排行', '排行榜'}, block=False, priority=8)
 @who_speak_most.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
@@ -137,7 +137,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await who_speak_most.send("\n".join(top_list))
 
 
-get_speak_num = on_command("发言数", aliases={'发言数', '发言量'}, block=True, priority=8)
+get_speak_num = on_command("发言数", aliases={'发言数', '发言量'}, block=False, priority=8)
 @get_speak_num.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
@@ -152,7 +152,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 await get_speak_num.send(f"{qq}没有发消息")
 
 
-get_speak_num_today = on_command("今日发言数", aliases={'今日发言数', '今日发言', '今日发言量'}, block=True, priority=8)
+get_speak_num_today = on_command("今日发言数", aliases={'今日发言数', '今日发言', '今日发言量'}, block=False, priority=8)
 @get_speak_num_today.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id

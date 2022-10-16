@@ -10,7 +10,7 @@ import datetime
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
 from utils import database_mysql, time_tools, requests_tools, users
 from nonebot import on_command
-from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.plugin import PluginMetadata
 from . import tools
 from content.plugins import credit

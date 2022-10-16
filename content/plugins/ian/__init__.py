@@ -6,7 +6,7 @@
 import requests
 from nonebot.exception import IgnoredException
 from nonebot import on_command
-from nonebot.adapters.cqhttp import Bot, GroupMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from utils import requests_tools
 
 from utils.other import add_target, translate

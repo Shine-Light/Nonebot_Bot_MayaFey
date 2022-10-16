@@ -29,15 +29,15 @@ __plugin_meta__ = PluginMetadata(
     usage=__fortune_notes__
 )
 
-divine = on_command("今日运势", aliases={"抽签", "运势"}, permission=GROUP, priority=8, block=True)
-limit_setting = on_regex(r"指定(.*?)签", permission=GROUP, priority=8, block=True)
-theme_setting = on_regex(r"设置(.*?)签", permission=GROUP, priority=8, block=True)
-fortune_reset = on_command("重置抽签", permission=GROUP, priority=8, block=True)
-theme_list = on_command("主题列表", permission=GROUP, priority=8, block=True)
-show = on_command("抽签设置", permission=GROUP, priority=8, block=True)
+divine = on_command("今日运势", aliases={"抽签", "运势"}, permission=GROUP, priority=8, block=False)
+limit_setting = on_regex(r"指定(.*?)签", permission=GROUP, priority=8, block=False)
+theme_setting = on_regex(r"设置(.*?)签", permission=GROUP, priority=8, block=False)
+fortune_reset = on_command("重置抽签", permission=GROUP, priority=8, block=False)
+theme_list = on_command("主题列表", permission=GROUP, priority=8, block=False)
+show = on_command("抽签设置", permission=GROUP, priority=8, block=False)
 divine_specific = on_regex(r"^.+抽签$", permission=GROUP, priority=8)
-reset = on_regex("^重置(抽签)?主题$", permission=GROUP, priority=8, block=True)
-fortune_refresh = on_fullmatch("/刷新抽签", priority=8, block=True)
+reset = on_regex("^重置(抽签)?主题$", permission=GROUP, priority=8, block=False)
+fortune_refresh = on_fullmatch("/刷新抽签", priority=8, block=False)
 
 
 @show.handle()

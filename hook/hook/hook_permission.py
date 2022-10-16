@@ -28,6 +28,9 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
             return
         if "启用" in msg or "停用" in msg:
             return
+        # 非命令信息优先级
+        if matcher.priority not in range(1, 12):
+            return
         plugin_name = matcher.plugin_name
         role: str = users.get_role(gid, uid)
         permission_path = permission_base / "common" / f"{str(event.group_id)}.json"

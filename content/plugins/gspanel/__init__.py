@@ -5,14 +5,9 @@ from nonebot import get_driver
 from nonebot.log import logger
 from nonebot.plugin import on_command
 from nonebot.typing import T_State
-
-try:
-    from nonebot.adapters.onebot.v11 import Bot
-    from nonebot.adapters.onebot.v11.event import MessageEvent
-    from nonebot.adapters.onebot.v11.message import MessageSegment
-except ImportError:
-    from nonebot.adapters.cqhttp import Bot, MessageSegment  # type: ignore
-    from nonebot.adapters.cqhttp.event import MessageEvent  # type: ignore
+from nonebot.adapters.onebot.v11 import Bot
+from nonebot.adapters.onebot.v11.event import MessageEvent
+from nonebot.adapters.onebot.v11.message import MessageSegment
 
 from .__utils__ import fetchInitRes, uidHelper
 from .data_source import getPanelMsg

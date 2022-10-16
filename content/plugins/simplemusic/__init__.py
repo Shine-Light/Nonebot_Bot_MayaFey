@@ -44,7 +44,7 @@ def create_matchers():
         matcher = on_command(
             source.keywords[0],
             aliases=set(source.keywords),
-            block=True,
+            block=False,
             priority=12,
         )
         matcher.append_handler(create_handler(source))

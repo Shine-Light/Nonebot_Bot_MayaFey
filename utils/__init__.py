@@ -9,13 +9,13 @@ import time
 import requests
 
 from nonebot.permission import SUPERUSER
-from . import database_mysql
+from . import database_mysql, url, users
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, GROUP_ADMIN, GROUP_OWNER
 from nonebot import on_command, get_driver
 from content.plugins import credit, plugin_control, ban_word, word_cloud, welcome, sign
 from .path import *
 from .other import mk
-from . import url, users
+from .permission import superuser, Van
 
 
 db = database_mysql.connect
@@ -135,24 +135,36 @@ async def _():
 
 async def init(bot: Bot, event: GroupMessageEvent):
     # 用户表初始化开始
-    members = await bot.get_group_member_list(group_id=event.group_id)
-    cursor.execute(f"SELECT * FROM users WHERE gid='{str(event.group_id)}';")
+    gid = str(event.group_id)
+    members = await bot.get_group_member_list(group_id=int(gid))
+    cursor.execute(f"SELECT * FROM users WHERE gid='{gid}';")
     query: tuple = cursor.fetchall()
     month = time.strftime(fts, time.localtime())
     # 不存在数据
     if not query:
         await users.user_init_all(members)
 
+    # 未添加至数据库的成员处理
+    members_database = users.get_members_uid_by_gid(gid)
+    for member in members:
+        if str(member['user_id']) not in members_database:
+            await users.user_init_one(gid, str(member['user_id']), member['role'])
+
     # 根超级用户处理
     SUPERUSERS = get_driver().config.superusers
     for superuser in SUPERUSERS:
         cursor.execute(f"UPDATE users SET role='Van' WHERE uid='{superuser}'")
 
+    # 清除过期根用户
+    superusers_database = users.get_all_Van_in_database()
+    for superuser in superusers_database:
+        if users.get_role(gid, superuser[1]) == "Van" and superuser[1] not in SUPERUSERS:
+            users.update_role(superuser[0], superuser[1], "member")
+
     # 用户表初始化结束
     # 目录初始化
     await Dir_init()
     # 文件初始化
-    gid = str(event.group_id)
     if not os.path.exists(total_base / month / f"{gid}.json"):
         await mk("file", total_base / month / f"{gid}.json", 'w', content=json.dumps({}))
     if not os.path.exists(question_base / f"{gid}.json"):
@@ -175,13 +187,12 @@ async def init(bot: Bot, event: GroupMessageEvent):
         await mk("file", auto_baned_path / gid / "baned.json", 'w', content=json.dumps({}))
 
 
-bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER)
+bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER | Van | superuser)
 @bot_init.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     try:
         # 各插件初始化
         gid = str(event.group_id)
-        members = await bot.get_group_member_list(group_id=event.group_id)
         await init(bot, event)
         await credit.tools.init(bot, event)
         await plugin_control.init(gid)
@@ -192,4 +203,5 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await bot_init.send("初始化成功,该项目完全免费,如果你是付费获得的，请立即退款并举报")
     # 初始化异常
     except Exception as e:
+        print(str(e))
         await bot_init.send("初始化出错:" + str(e))

@@ -35,19 +35,19 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-morning = on_command("早安", aliases={"哦嗨哟", "おはよう"}, permission=GROUP, priority=8, block=True)
-night = on_command("晚安", aliases={"哦呀斯密", "おやすみ"}, permission=GROUP, priority=8, block=True)
+morning = on_command("早安", aliases={"哦嗨哟", "おはよう"}, permission=GROUP, priority=8, block=False)
+night = on_command("晚安", aliases={"哦呀斯密", "おやすみ"}, permission=GROUP, priority=8, block=False)
 # routine
-my_routine = on_command("我的作息", permission=GROUP, priority=8, block=True)
-fellow_routine = on_command("群友作息", permission=GROUP, priority=8, block=True)
+my_routine = on_command("我的作息", permission=GROUP, priority=8, block=False)
+fellow_routine = on_command("群友作息", permission=GROUP, priority=8, block=False)
 # setting
-setting = on_command("早晚安设置", permission=GROUP, priority=8, block=True)
-morning_setting = on_command("早安设置", permission=GROUP, priority=8, block=True)
-morning_on = on_command("早安开启", permission=GROUP, priority=8, block=True)
-morning_off = on_command("早安关闭", permission=GROUP, priority=8, block=True)
-night_setting = on_command("晚安设置", permission=GROUP, priority=8, block=True)
-night_on = on_command("晚安开启", permission=GROUP, priority=8, block=True)
-night_off = on_command("晚安关闭", permission=GROUP, priority=8, block=True)
+setting = on_command("早晚安设置", permission=GROUP, priority=8, block=False)
+morning_setting = on_command("早安设置", permission=GROUP, priority=8, block=False)
+morning_on = on_command("早安开启", permission=GROUP, priority=8, block=False)
+morning_off = on_command("早安关闭", permission=GROUP, priority=8, block=False)
+night_setting = on_command("晚安设置", permission=GROUP, priority=8, block=False)
+night_on = on_command("晚安开启", permission=GROUP, priority=8, block=False)
+night_off = on_command("晚安关闭", permission=GROUP, priority=8, block=False)
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 

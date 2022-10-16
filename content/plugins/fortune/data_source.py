@@ -138,7 +138,7 @@ class FortuneManager:
         '''
             Check whether a theme is enable
         '''
-        return True if _theme == "random" or theme_flag_check.get(_theme, False) else False
+        return _theme == "random" or theme_flag_check(_theme)
 
     def divination_setting(self, theme: str, gid: str) -> bool:
         '''

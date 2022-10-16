@@ -41,7 +41,7 @@ fts: str = "%Y-%m-%d"
 ft: str = "%Y-%m-%d %H:%M:%S"
 
 
-word_start = on_command("记录本群", block=True, priority=4)
+word_start = on_command("记录本群", block=False, priority=4)
 @word_start.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
@@ -61,7 +61,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await word_start.finish(f"无权限,权限需在 {get_special_per(str(event.group_id), 'word_start')} 及以上")
 
 
-word_stop = on_command("停止记录本群", block=True, priority=4)
+word_stop = on_command("停止记录本群", block=False, priority=4)
 @word_stop.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
@@ -276,7 +276,7 @@ async def run():
     file.close()
 
 
-update_mask = on_command("更新mask", aliases={'下载mask'}, block=True, priority=7)
+update_mask = on_command("更新mask", aliases={'下载mask'}, block=False, priority=7)
 @update_mask.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     """

@@ -23,15 +23,8 @@ __plugin_meta__ = PluginMetadata(
 def checker():
     async def _checker(bot: Bot, event: Event) -> bool:
         meta_msg = str(event.get_message())
-        if "CQ:image" in meta_msg:
-            CQ = meta_msg.split(",")
-            type = ""
-            if len(CQ) == 4:
-                pass
-            elif len(CQ) == 5:
-                type = CQ[3].split("type=")[1]
-            if type == "flash":
-                return True
+        if "type=flash" in meta_msg:
+            return True
 
     return Rule(_checker)
 

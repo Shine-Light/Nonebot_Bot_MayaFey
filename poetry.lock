@@ -794,39 +794,6 @@ url = "https://pypi.tuna.tsinghua.edu.cn/simple"
 reference = "tsinghua"
 
 [[package]]
-name = "nonebot-adapter-cqhttp"
-version = "2.0.0b1"
-description = "OneBot(CQHTTP) adapter for nonebot2"
-category = "main"
-optional = false
-python-versions = ">=3.7.3,<4.0.0"
-
-[package.dependencies]
-nonebot-adapter-onebot = "*"
-
-[package.source]
-type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "tsinghua"
-
-[[package]]
-name = "nonebot-adapter-onebot"
-version = "2.1.4"
-description = "OneBot(CQHTTP) adapter for nonebot2"
-category = "main"
-optional = false
-python-versions = ">=3.8,<4.0"
-
-[package.dependencies]
-msgpack = ">=1.0.3,<2.0.0"
-nonebot2 = ">=2.0.0-beta.3,<3.0.0"
-
-[package.source]
-type = "legacy"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple"
-reference = "tsinghua"
-
-[[package]]
 name = "nonebot-plugin-apscheduler"
 version = "0.2.0"
 description = "APScheduler Support for NoneBot2"
@@ -1638,7 +1605,7 @@ reference = "tsinghua"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "c7e62ebd0b876fd166bf328cbdbe1b626e26897e51b984e5d26c2568ad863a18"
+content-hash = "b9b51fc8e99d041133d9ddb2107dc728066776b82d51659361595e25f593404b"
 
 [metadata.files]
 aiocache = [
@@ -2455,14 +2422,6 @@ multidict = [
     {file = "multidict-6.0.2-cp39-cp39-win32.whl", hash = "sha256:23b616fdc3c74c9fe01d76ce0d1ce872d2d396d8fa8e4899398ad64fb5aa214a"},
     {file = "multidict-6.0.2-cp39-cp39-win_amd64.whl", hash = "sha256:4bae31803d708f6f15fd98be6a6ac0b6958fcf68fda3c77a048a4f9073704aae"},
     {file = "multidict-6.0.2.tar.gz", hash = "sha256:5ff3bd75f38e4c43f1f470f2df7a4d430b821c4ce22be384e1459cb57d6bb013"},
-]
-nonebot-adapter-cqhttp = [
-    {file = "nonebot-adapter-cqhttp-2.0.0b1.tar.gz", hash = "sha256:57a27c5c6b47bd77dbaddaf063738c0548110424f559deca2e37654814f122d0"},
-    {file = "nonebot_adapter_cqhttp-2.0.0b1-py3-none-any.whl", hash = "sha256:09433d0d91cfbae42acd1e1ffab96d51e8949ed979d39eff142916fcc27698ab"},
-]
-nonebot-adapter-onebot = [
-    {file = "nonebot_adapter_onebot-2.1.4-py3-none-any.whl", hash = "sha256:c49cb5fc8f046a99467873dcd5883486eb36c80c62c3379f5446a1c41a348e23"},
-    {file = "nonebot_adapter_onebot-2.1.4.tar.gz", hash = "sha256:09f910db7e51c362ae06dc75c04776a06650a043dc87aaa72af839cb489d4994"},
 ]
 nonebot-plugin-apscheduler = [
     {file = "nonebot-plugin-apscheduler-0.2.0.tar.gz", hash = "sha256:7b63e99a611b657533b48fcf1f8c6627c18c2eb3fa820a906cd4ec4666c0ceb0"},

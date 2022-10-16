@@ -34,16 +34,16 @@ greating_helper = require("nonebot_plugin_apscheduler").scheduler
 eating_helper = require("nonebot_plugin_apscheduler").scheduler
 
 
-what2eat = on_regex(r"^/(今天|[早中午晚][上饭餐午]|早上|夜宵|今晚|晚上|早餐|午餐|晚餐)吃(什么|啥|点啥)", permission=GROUP, priority=9, block=True)
-add_group_food = on_command("添加", priority=9, block=True)
-remove_food = on_command("移除", priority=9, block=True)
-add_basic = on_command("加菜", priority=9, block=True)
-show_group = on_command("群特色菜单", permission=GROUP, priority=9, block=True)
-show_basic = on_command("基础菜菜单", priority=9, block=True)
+what2eat = on_regex(r"^/(今天|[早中午晚][上饭餐午]|早上|夜宵|今晚|晚上|早餐|午餐|晚餐)吃(什么|啥|点啥)", permission=GROUP, priority=9, block=False)
+add_group_food = on_command("添加", priority=9, block=False)
+remove_food = on_command("移除", priority=9, block=False)
+add_basic = on_command("加菜", priority=9, block=False)
+show_group = on_command("群特色菜单", permission=GROUP, priority=9, block=False)
+show_basic = on_command("基础菜菜单", priority=9, block=False)
 
-switch_greating = on_regex(r"/(开启|关闭)饭点小助手", priority=9, block=True)
-add_greating = on_command("添加问候", aliases={"添加问候语"}, priority=9, block=True)
-remove_greating = on_command("删除问候", aliases={"删除问候语"}, priority=9, block=True)
+switch_greating = on_regex(r"/(开启|关闭)饭点小助手", priority=9, block=False)
+add_greating = on_command("添加问候", aliases={"添加问候语"}, priority=9, block=False)
+remove_greating = on_command("删除问候", aliases={"删除问候语"}, priority=9, block=False)
 
 
 @what2eat.handle()

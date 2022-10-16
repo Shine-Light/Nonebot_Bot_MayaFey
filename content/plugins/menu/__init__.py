@@ -8,7 +8,7 @@ import json
 import asyncio
 
 from nonebot import on_command, on_notice, on_message, get_driver
-from nonebot.adapters.cqhttp import Bot, Event, GroupMessageEvent, NoticeEvent
+from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, NoticeEvent
 from nonebot.rule import Rule, to_me
 from nonebot.plugin import PluginMetadata
 from utils.other import add_target, translate, get_bot_name

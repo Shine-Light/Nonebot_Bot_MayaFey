@@ -8,7 +8,7 @@ import os
 
 import httpx
 from nonebot import logger
-from nonebot.adapters.cqhttp import Bot
+from nonebot.adapters.onebot.v11 import Bot
 from utils import database_mysql, json_tools, users
 from utils.path import *
 from utils.other import mk

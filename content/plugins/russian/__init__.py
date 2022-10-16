@@ -47,28 +47,28 @@ russian_rank = on_command(
     "俄罗斯轮盘排名",
     permission=GROUP,
     priority=8,
-    block=True,
+    block=False,
 )
 
 russian = on_command(
-    "俄罗斯轮盘", aliases={"装弹", "俄罗斯转盘"}, permission=GROUP, priority=8, block=True
+    "俄罗斯轮盘", aliases={"装弹", "俄罗斯转盘"}, permission=GROUP, priority=8, block=False
 )
 
 accept = on_command(
-    "接受对决", aliases={"接受决斗", "接受挑战"}, permission=GROUP, priority=8, block=True
+    "接受对决", aliases={"接受决斗", "接受挑战"}, permission=GROUP, priority=8, block=False
 )
 
 refuse = on_command(
-    "拒绝对决", aliases={"拒绝决斗", "拒绝挑战"}, permission=GROUP, priority=8, block=True
+    "拒绝对决", aliases={"拒绝决斗", "拒绝挑战"}, permission=GROUP, priority=8, block=False
 )
 
 shot = on_command(
-    "开枪", aliases={"咔", "嘭", "嘣"}, permission=GROUP, priority=8, block=True
+    "开枪", aliases={"咔", "嘭", "嘣"}, permission=GROUP, priority=8, block=False
 )
 
-settlement = on_command("结算", permission=GROUP, priority=8, block=True)
+settlement = on_command("结算", permission=GROUP, priority=8, block=False)
 
-record = on_command("我的战绩", permission=GROUP, priority=8, block=True)
+record = on_command("我的战绩", permission=GROUP, priority=8, block=False)
 
 
 

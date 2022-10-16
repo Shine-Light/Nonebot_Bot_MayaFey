@@ -20,7 +20,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-translate = on_regex(r"^(.*)?(翻|译)(.*?)\s(.*)?$", priority=12, block=True)
+translate = on_regex(r"^(.*)?(翻|译)(.*?)\s(.*)?$", priority=12, block=False)
 @translate.handle()
 async def _(reg_group: Tuple[Any, ...] = RegexGroup()):
     _query = reg_group[-1].strip()  # 翻译内容

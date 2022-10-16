@@ -257,7 +257,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     await baned.finish(message=msg)
 
     else:
-        await baned.send("无权限")
+        await baned.send(f"权限不足,权限需在 {permission.tools.get_special_per(gid, 'baned')} 及以上")
 
 
 # 违禁词检测
@@ -357,7 +357,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         json_tools.json_write(level_path, level)
         await ban_easy.send("设置成功")
     else:
-        await ban_easy.send("无权限")
+        await ban_easy.send(f"权限不足,权限需在 {permission.tools.get_special_per(gid, 'ban_easy')} 及以上")
 
 
 ban_strict = on_command("严格违禁词", priority=5)
@@ -371,7 +371,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         json_tools.json_write(level_path, level)
         await ban_strict.send("设置成功")
     else:
-        await ban_strict.send("无权限")
+        await ban_strict.send(f"权限不足,权限需在 {permission.tools.get_special_per(gid, 'ban_strict')} 及以上")
 
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler

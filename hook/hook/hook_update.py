@@ -34,6 +34,7 @@ async def updating(bot: Bot):
         error = js["error"]
         if error:
             await bot.send_group_msg(message=f"更新中出错:{error}", group_id=gid)
+            json_tools.json_write(path.updating_path, {"updating": False, "error": "", "gid": ""})
         else:
             try:
                 with open("__version__", "w+", encoding="utf-8") as f:
@@ -46,5 +47,5 @@ async def updating(bot: Bot):
                                                               "完整日志地址:https://mayafey.shinelight.xyz/updatelog/")]),
                                          group_id=gid)
             except Exception as e:
-                await bot.send_group_msg(message=f"[hook_update] 更新日志发送失败:账号可能风控", group_id=gid)
+                await bot.send_group_msg(message=f"更新日志发送失败,账号可能风控", group_id=gid)
                 logger.error(str(e))

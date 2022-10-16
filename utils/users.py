@@ -6,8 +6,7 @@
 import datetime
 
 from utils import database_mysql
-from nonebot import logger, get_driver
-from threading import Timer
+from nonebot import logger, get_driver, require
 from content.plugins.permission import tools
 
 
@@ -102,7 +101,10 @@ def get_credit(gid, uid) -> int:
 
 
 def set_member_later(gid, uid, time: int):
-    Timer(time + 3600, update_role, (gid, uid, 'member')).start()
+    scheduler = require("nonebot_plugin_apscheduler").scheduler
+    timezone = "Asia/Shanghai"
+    date = datetime.datetime.now() + datetime.timedelta(seconds=time)
+    scheduler.add_job(func=update_role, trigger="date", run_date=date, timezone=timezone, args=[str(gid), str(uid), "member"])
 
 
 def get_ban_count(uid: str, gid: str) -> int:
@@ -112,6 +114,16 @@ def get_ban_count(uid: str, gid: str) -> int:
         return count[0]
     else:
         return 0
+
+
+def get_all_Van_in_database():
+    cursor.execute("SELECT * FROM users WHERE role='Van'")
+    return cursor.fetchall()
+
+
+def get_all_Van_in_database_distinct():
+    cursor.execute("SELECT DISTINCT uid FROM users WHERE role='Van'")
+    return cursor.fetchall()
 
 
 def member_leave(uid, gid):
@@ -171,3 +183,49 @@ def is_Van(uid: str) -> bool:
         return True
     else:
         return False
+
+
+def is_member_with_gid(uid: str, gid: str) -> bool:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND gid='{gid}' AND role='member';")
+    re = cursor.fetchone()
+    if re:
+        return True
+    else:
+        return False
+
+
+def is_superuser_with_gid(uid: str, gid: str) -> bool:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND gid='{gid}' AND role='superuser';")
+    re = cursor.fetchone()
+    if re:
+        return True
+    else:
+        return False
+
+
+def is_admin_with_gid(uid: str, gid: str) -> bool:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND gid='{gid}' AND role='admin';")
+    re = cursor.fetchone()
+    if re:
+        return True
+    else:
+        return False
+
+
+def is_owner_with_gid(uid: str, gid: str) -> bool:
+    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND gid='{gid}' AND role='owner';")
+    re = cursor.fetchone()
+    if re:
+        return True
+    else:
+        return False
+
+
+def get_members_uid_by_gid(gid: str) -> list:
+    cursor.execute(f"SELECT * FROM users WHERE gid='{gid}';")
+    members = cursor.fetchall()
+    uid = []
+    for member in members:
+        uid.append(member[1])
+
+    return uid

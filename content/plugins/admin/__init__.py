@@ -32,7 +32,7 @@ config = get_driver().config
 cb_notice = plugin_config.callback_notice
 
 
-ban = on_command('禁', priority=4, block=True)
+ban = on_command('禁', priority=4, block=False)
 @ban.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     """
@@ -48,24 +48,20 @@ async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
     if sb:
         baning = banSb(gid, ban_list=sb, time=time)
-        try:
-            async for baned in baning:
-                if baned:
-                    await baned
-        except ActionFailed:
-            await ban.finish("权限不足")
-        else:
-            logger.info("禁言操作成功")
-            if cb_notice:  # 迭代结束再通知
-                if time is not None:
-                    await ban.finish("禁言操作成功")
-                else:
-                    await ban.finish("该用户已被禁言随机时长")
+        async for baned in baning:
+            if baned:
+                await baned
+        logger.info("禁言操作成功")
+        if cb_notice:  # 迭代结束再通知
+            if time is not None:
+                await ban.finish("禁言操作成功")
+            else:
+                await ban.finish("该用户已被禁言随机时长")
     else:
         pass
 
 
-unban = on_command("解", priority=4, block=True)
+unban = on_command("解", priority=4, block=False)
 @unban.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     sb = At(event.json())
@@ -84,13 +80,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
                 await unban.finish("解禁操作成功")
 
 
-kick = on_command('踢', priority=3, block=True)
+kick = on_command('踢', priority=3, block=False)
 @kick.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     """
-        /踢 @user 踢出某人
-        """
-    msg = str(event.get_message())
+    /踢 @user 踢出某人
+    """
     sb = At(event.json())
     gid = event.group_id
     if sb:
@@ -112,13 +107,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
             await kick.finish("不能含有@全体成员")
 
 
-kick_ = on_command('黑', priority=3, block=True)
+kick_ = on_command('黑', priority=3, block=False)
 @kick_.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     """
     黑 @user 踢出并拉黑某人
     """
-    msg = str(event.get_message())
     sb = At(event.json())
     gid = event.group_id
     if sb:
@@ -140,7 +134,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             await kick_.finish("不能含有@全体成员")
 
 
-set_g_admin = on_command("管理员+", priority=3, block=True, permission=SUPERUSER)
+set_g_admin = on_command("管理员+", priority=3, block=False, permission=SUPERUSER)
 
 
 @set_g_admin.handle()
@@ -148,7 +142,6 @@ async def _(bot: Bot, event: GroupMessageEvent):
     """
     管理员+ @user 添加群管理员
     """
-    msg = str(event.get_message())
     sb = At(event.json())
     gid = event.group_id
     if sb:
@@ -169,13 +162,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
             await set_g_admin.finish("指令不正确 或 不能含有@全体成员")
 
 
-unset_g_admin = on_command("管理员-", priority=3, block=True, permission=SUPERUSER)
+unset_g_admin = on_command("管理员-", priority=3, block=False, permission=SUPERUSER)
 @unset_g_admin.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     """
     管理员- @user 取消群管理员
     """
-    msg = str(event.get_message())
     sb = At(event.json())
     gid = event.group_id
     if sb:
