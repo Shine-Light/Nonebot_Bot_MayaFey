@@ -13,27 +13,38 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
-      - id: python
-        uses: actions/setup-python@v2
+        uses: actions/checkout@v3
+        
+      - name: Setup python
+        id: setup-python
+        uses: actions/setup-python@v4.3.0
         with:
-          python-version: ${{ inputs.python-version }}
+          python-version: 3.9
           architecture: "x64"
-      - uses: Gr1N/setup-poetry@v7
       
-      - name: poetry lock
+      - name: Install poetry
+        uses: snok/install-poetry@v1.3.3
+      
+      - name: Load cached venv
+        id: cached-poetry-dependencies
+        uses: actions/cache@v3
+        with:
+          path: .venv
+          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          
+      - name: build poetry.lock
         run: |
           rm -f poetry.lock
-          sed -i.bak "8,11d" pyproject.toml
           poetry lock
-          mv pyproject.toml.bak pyproject.toml
+          
       # commit
       - name: commit file
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
           git add poetry.lock
-          git commit -m "poetry.lock" -a
+          git commit -m "build poetry.lock" -a
+          
       # push 
       - name: push changes
         uses: ad-m/github-push-action@master
