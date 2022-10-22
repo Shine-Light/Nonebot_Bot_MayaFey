@@ -21,17 +21,16 @@ jobs:
         with:
           python-version: 3.9
           architecture: "x64"
-      
-      - name: Install poetry
-        uses: snok/install-poetry@v1.3.3
-      
-      - name: Load cached venv
-        id: cached-poetry-dependencies
+          cache: 'pip'
+        - name: Load cached Poetry installation
         uses: actions/cache@v3
         with:
-          path: .venv
-          key: venv-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles('**/poetry.lock') }}
+          path: ~/.local  # the path depends on the OS
+          key: poetry-0  # increment to reset cache
           
+      - name: Install poetry
+        uses: snok/install-poetry@v1.3.3
+
       - name: build poetry.lock
         run: |
           rm -f poetry.lock
