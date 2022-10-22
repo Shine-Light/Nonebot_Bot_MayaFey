@@ -326,11 +326,11 @@ reference = "aliyun"
 
 [[package]]
 name = "emoji"
-version = "1.7.0"
+version = "2.1.0"
 description = "Emoji for Python"
 category = "main"
 optional = false
-python-versions = "*"
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*"
 
 [package.extras]
 dev = ["coverage", "coveralls", "pytest"]
@@ -1575,7 +1575,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "d76ee3f0f25760a4be32956eda6669d628a2c3f80ea628b5d670b715d587b521"
+content-hash = "8164c4b44b862e43a5a0ea400311cf39875ea37bf2ee82f6785842f61f94f1b7"
 
 [metadata.files]
 aiocache = [
@@ -1888,7 +1888,7 @@ cycler = [
     {file = "cycler-0.11.0.tar.gz", hash = "sha256:9c87405839a19696e837b3b818fed3f5f69f16f1eec1a1ad77e043dcea9c772f"},
 ]
 emoji = [
-    {file = "emoji-1.7.0.tar.gz", hash = "sha256:65c54533ea3c78f30d0729288998715f418d7467de89ec258a31c0ce8660a1d1"},
+    {file = "emoji-2.1.0.tar.gz", hash = "sha256:56a8c5e906c11694eb7694b78e5452d745030869b3945f6306a8151ff5cdbc39"},
 ]
 fastapi = [
     {file = "fastapi-0.79.1-py3-none-any.whl", hash = "sha256:3c584179c64e265749e88221c860520fc512ea37e253282dab378cc503dfd7fd"},
