@@ -7,7 +7,7 @@ from pathlib import Path
 from typing import List, Union
 
 from nonebot.log import logger
-from nonebot_plugin_htmlrender import get_new_page, html_to_pic
+from utils.htmlrender import get_new_page, html_to_pic
 
 
 dir_path = Path(__file__).parent
