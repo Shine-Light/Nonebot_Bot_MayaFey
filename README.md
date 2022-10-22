@@ -109,7 +109,6 @@
 [Nonebot](https://github.com/nonebot/nonebot2)  
 [go-cqhttp](https://github.com/Mrs4s/go-cqhttp)  
 [htmlrender](https://github.com/kexue-z/nonebot-plugin-htmlrender)  
-[WorkFlow](https://github.com/HibiKier/zhenxun_bot/blob/main/.github/workflows/Generate.yml)
 以及各位插件开发者
 
 ## License
