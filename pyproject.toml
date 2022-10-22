@@ -5,8 +5,8 @@ description = ""
 authors = ["Shine-Light <3120815902@qq.com>"]
 
 [[tool.poetry.source]]
-name = "tsinghua"
-url = "https://pypi.tuna.tsinghua.edu.cn/simple/"
+name = "aliyun"
+url = "https://mirrors.aliyun.com/pypi/simple/"
 default = true
 
 [tool.poetry.dependencies]
