@@ -6,7 +6,7 @@ authors = ["Shine-Light <3120815902@qq.com>"]
 
 [[tool.poetry.source]]
 name = "aliyun"
-url = "https://mirrors.aliyun.com/pypi/simple/"
+url = "https://mirrors.aliyun.com/pypi/simple"
 default = true
 
 [tool.poetry.dependencies]
