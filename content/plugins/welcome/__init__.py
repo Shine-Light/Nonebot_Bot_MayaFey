@@ -15,7 +15,7 @@ from utils import database_mysql, users
 from utils.other import add_target, translate
 from content.plugins.plugin_control import init as control_init
 from content.plugins.credit.tools import init_one as credit_init_one
-from content.plugins.permission.tools import special_per, get_special_per
+from utils.permission import special_per, get_special_per
 from content.plugins.sign.tools import init_one as sign_init_one
 
 

@@ -3,20 +3,19 @@
 @Version: 1.0
 @Date: 2022/8/15 16:11
 """
-from nonebot import on_command, get_driver, require, logger
+from nonebot import on_command, require, logger
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment
 from nonebot.plugin import PluginMetadata
 from nonebot.params import CommandArg
 
-from content.plugins.permission.tools import special_per, get_special_per
-from utils.other import add_target, translate
+from utils.permission import special_per, get_special_per
+from utils.other import add_target, translate, get_bot_name
 from utils import users
 from .GenshinPray import GenshinPray, database
 from .tools import CommandUrl
 
 
 genshinpray = GenshinPray()
-bot_name = list(get_driver().config.nickname)[0]
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
@@ -41,7 +40,6 @@ __plugin_meta__ = PluginMetadata(
           "/清空原神角色池 (超级用户)\n"
           "/清空原神武器池 (超级用户)\n"
           "/设置祈愿服装概率 {概率} (0~100)\n"
-          "注: 修改角色池时,尽量不要修改 0 号蛋池,所需修改,请在修改后重启API\n"
           "不知道角色或武器全称?前往官方wiki查看:https://bbs.mihoyo.com/ys/obc/?bbs_presentation_style=no_header    " + add_target(60)
 )
 
@@ -328,7 +326,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         message.append(
             MessageSegment.node_custom(
                 bot_id,
-                bot_name,
+                get_bot_name(),
                 msg
             )
         )

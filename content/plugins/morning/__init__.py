@@ -5,7 +5,7 @@ from nonebot.adapters.onebot.v11 import Bot, GROUP, Message, GroupMessageEvent
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from .data_source import morning_manager
-from content.plugins.permission.tools import special_per, get_special_per
+from utils.permission import special_per, get_special_per
 from utils import users
 
 from utils.other import add_target, translate

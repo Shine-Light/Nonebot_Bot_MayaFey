@@ -1,57 +1,79 @@
+import json
 import httpx
+import asyncio
+import hashlib
+from pathlib import Path
+from nonebot import get_driver
 from nonebot.log import logger
-from aiocache import cached
-from utils import path
+
+from nonebot_plugin_imageutils import BuildImage
+from nonebot_plugin_imageutils.fonts import add_font
+
+from .config import memes_config
+from utils.path import memes_res_path
+
+data_path = memes_res_path
 
 
-data_path = path.memes_path
+def load_image(path: str) -> BuildImage:
+    return BuildImage.open(data_path / "images" / path)
 
 
-class DownloadError(Exception):
-    pass
+def load_thumb(path: str) -> BuildImage:
+    return BuildImage.open(data_path / "thumbs" / path)
 
 
-async def download(url: str) -> bytes:
+async def download_url(url: str) -> bytes:
     async with httpx.AsyncClient() as client:
         for i in range(3):
             try:
                 resp = await client.get(url, timeout=20)
-                if resp.status_code != 200:
-                    continue
+                resp.raise_for_status()
                 return resp.content
             except Exception as e:
                 logger.warning(f"Error downloading {url}, retry {i}/3: {e}")
-    raise DownloadError
+                await asyncio.sleep(3)
+    raise Exception(f"{url} 下载失败！")
 
 
-async def get_resource(path: str, name: str) -> bytes:
-    dir_path = data_path / path
-    file_path = dir_path / name
+def resource_url(path: str) -> str:
+    return f"{memes_config.memes_resource_url}/{path}"
 
-    if not dir_path.exists():
-        dir_path.mkdir(parents=True, exist_ok=True)
 
-    if not file_path.exists():
-        url = f"https://cdn.jsdelivr.net/gh/MeetWq/nonebot-plugin-memes@main/resources/{path}/{name}"
-        data = await download(url)
-        if data:
+async def download_resource(path: str) -> bytes:
+    return await download_url(resource_url(path))
+
+
+async def check_resources():
+    resource_list = json.loads(
+        (await download_resource("resource_list.json")).decode("utf-8")
+    )
+    for resource in resource_list:
+        file_name = str(resource["path"])
+        file_path = data_path / file_name
+        file_hash = str(resource["hash"])
+        if (
+            file_path.exists()
+            and hashlib.md5(file_path.read_bytes()).hexdigest() == file_hash
+        ):
+            continue
+        logger.debug(f"Downloading {file_name} ...")
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        try:
+            data = await download_resource(file_name)
             with file_path.open("wb") as f:
                 f.write(data)
-    if not file_path.exists():
-        raise DownloadError
-    return file_path.read_bytes()
+        except Exception as e:
+            logger.warning(str(e))
+    await add_font("FZXS14.ttf", resource_url("fonts/FZXS14.ttf"))
+    await add_font("FZSEJW.ttf", resource_url("fonts/FZSEJW.ttf"))
+    await add_font("FZSJ-QINGCRJ.ttf", resource_url("fonts/FZSJ-QINGCRJ.ttf"))
 
 
-@cached(ttl=600)
-async def get_image(name: str) -> bytes:
-    return await get_resource("images", name)
+driver = get_driver()
 
 
-@cached(ttl=600)
-async def get_font(name: str) -> bytes:
-    return await get_resource("fonts", name)
-
-
-@cached(ttl=600)
-async def get_thumb(name: str) -> bytes:
-    return await get_resource("thumbs", name)
+@driver.on_startup
+def _():
+    logger.info("正在检查资源文件...")
+    asyncio.ensure_future(check_resources())

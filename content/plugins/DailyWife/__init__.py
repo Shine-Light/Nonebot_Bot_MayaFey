@@ -14,7 +14,7 @@ from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, T_State
 from utils.other import translate, add_target
 from utils import users
-from content.plugins.permission.tools import get_special_per, special_per
+from utils.permission import get_special_per, special_per
 from .data import DailyWife, Config, Record
 
 # 插件元数据定义

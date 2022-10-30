@@ -16,7 +16,7 @@ permission_common_json = shine_light_cdn_base + "permission_common.json"
 # 不可设置插件列表
 unset_txt = shine_light_cdn_base + "unset.txt"
 # 最新版本页面
-version_html = shine_light_cdn_base + "version.html"
+version_html = shine_light_cdn_base + "version_test.html"
 
 # 早晚安插件配置文件
 morning_config = "https://cdn.jsdelivr.net/gh/MinatoAquaCrews/nonebot_plugin_morning@beta/nonebot_plugin_morning/resource/config.json"

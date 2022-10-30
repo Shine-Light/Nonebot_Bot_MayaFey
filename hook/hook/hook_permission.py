@@ -8,8 +8,8 @@ from nonebot.message import run_preprocessor
 from utils.path import *
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
 from utils import json_tools, database_mysql, users
-from content.plugins import permission
 from nonebot.exception import IgnoredException
+from utils.permission import permission_
 
 
 cursor = database_mysql.cursor
@@ -36,7 +36,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
         permission_path = permission_base / "common" / f"{str(event.group_id)}.json"
         per: dict = json_tools.json_load(permission_path)
         if plugin_name in per:
-            if permission.tools.permission_(role, per[plugin_name]):
+            if permission_(role, per[plugin_name]):
                 pass
             else:
                 await bot.send(message=f"无权限,权限需在 {per[plugin_name]} 及以上", event=event)

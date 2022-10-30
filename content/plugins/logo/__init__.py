@@ -63,14 +63,14 @@ def create_matchers():
 
     for style, params in commands.items():
         matcher = on_command(style, aliases=params['aliases'],
-                             priority=9, block=True)
+                             priority=9, block=False)
         matcher.append_handler(create_handler(style))
 
 
 create_matchers()
 
 
-helps = on_command(cmd="logo", aliases={"Logo"}, priority=9, block=True)
+helps = on_command(cmd="logo", aliases={"Logo"}, priority=9, block=False)
 @helps.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     cmd = str(event.get_message()).split(" ", 1)

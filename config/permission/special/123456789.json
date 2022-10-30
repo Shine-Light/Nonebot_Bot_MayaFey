@@ -1,8 +1,6 @@
 {
     "ban_easy": "superuser",
     "ban_strict": "superuser",
-    "add_focus": "superuser",
-    "delete_focus": "superuser",
     "question": "superuser",
     "question_vague": "superuser",
     "question_absolute": "superuser",
@@ -15,7 +13,6 @@
     "update_mask": "superuser", 
     "city_news": "member",
     "per": "superuser",
-    "my_per": "member",
     "city_poi_list": "member",
     "morning_setting": "superuser",
     "morning_on": "superuser",
@@ -48,5 +45,20 @@
     "ResetArmPond": "superuser",
     "SetArmPond": "superuser",
     "SetRolePond": "superuser",
-    "dailyWife_setting": "superuser"
+    "dailyWife_setting": "superuser",
+    "petpet_block_cmd": "superuser",
+    "petpet_unblock_cmd": "superuser",
+    "petpet_block_cmd_gl": "superuser",
+    "petpet_unblock_cmd_gl": "superuser",
+    "memes_block_cmd": "superuser",
+    "memes_unblock_cmd": "superuser",
+    "block_cmd_gl": "superuser",
+    "unblock_cmd_gl": "superuser",
+    "group_add": "superuser",
+    "basic_add": "superuser",
+    "group_remove": "superuser",
+    "greeting_on": "superuser",
+    "greeting_off": "superuser",
+    "add_greeting": "superuser",
+    "remove_greeting": "superuser"
 }

@@ -1,0 +1,7 @@
+冰.png
+草.png
+风.png
+火.png
+雷.png
+水.png
+岩.png

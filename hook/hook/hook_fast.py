@@ -12,7 +12,7 @@ from nonebot.exception import IgnoredException
 from utils import users, path
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
 from utils.admin_tools import banSb
-from content.plugins.permission import tools
+from utils.permission import permission_
 from nonebot.typing import T_State
 from nonebot.log import logger
 
@@ -44,7 +44,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
     role = users.get_role(str(gid), uid)
 
     # 超级用户及以上不受限制
-    if tools.permission_(role, "superuser"):
+    if permission_(role, "superuser"):
         return
     # 不触发插件
     if plugin_name in unset:

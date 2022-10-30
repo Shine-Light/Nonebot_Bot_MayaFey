@@ -41,7 +41,7 @@ words_contents_path = txt_path / "words"
 # 词云资源目录
 re_wordcloud_path = img_path / "word_cloud"
 # 词云图片目录
-re_img_path = re_wordcloud_path / "img"
+re_wordcloud_img_path = re_wordcloud_path / "img"
 # 词云背景目录
 wordcloud_bg_path = re_wordcloud_path / "background"
 # 词云字体
@@ -74,6 +74,8 @@ permission_common_base = permission_base / "common"
 permission_special_base = permission_base / "special"
 # 表情包制作配置
 memes_path = config_path / "memes"
+# 表情包资源目录
+memes_res_path = img_path / "memes"
 # 更新插件目录
 update_path = plugins_path / "update"
 # 更新插件配置
@@ -130,6 +132,12 @@ friends_request_info = config_path / "friends_request" / "requests.json"
 auto_baned_path = config_path / "auto_baned"
 # 随机老婆配置目录
 DailyWife_path = config_path / "DailyWife"
+# 头像表情包制作配置
+petpet_path = config_path / "petpet"
+# 表情包资源目录
+petpet_res_path = img_path / "petpet"
+# 吃什么配置目录
+what2eat_path = config_path / "what2eat"
 
 # 俄罗斯轮盘游戏配置
 russian_path = config_path / "russian"

@@ -1,96 +1,261 @@
-import shlex
-import traceback
-from nonebot import on_command
+from io import BytesIO
+from PIL import ImageFilter
+from typing import List, Union
+from typing_extensions import Literal
+
+from nonebot.params import Depends
+from nonebot.utils import run_sync
 from nonebot.matcher import Matcher
 from nonebot.typing import T_Handler
 from nonebot.params import CommandArg
-from nonebot.adapters.onebot.v11 import Message, MessageSegment, unescape
-from nonebot.log import logger
+from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
-from .models import NormalMeme
-from .download import DownloadError
-from .utils import help_image
-from .normal_meme import normal_memes
-from .gif_subtitle_meme import gif_subtitle_memes
-
-from utils.other import add_target, translate
-
-
-__help__plugin_name__ = "memes"
-__des__ = "表情包制作"
-__cmd__ = "发送“表情包制作”查看表情包列表"
-__short_cmd__ = __cmd__
-__example__ = """
-鲁迅说 我没说过这句话
-王境泽 我就是饿死 死外边 不会吃你们一点东西 真香
-""".strip()
-__usage__ = f"{__des__}\n\nUsage:\n{__cmd__}\n\nExamples:\n{__example__}" + add_target(60)
-
-
-# 插件元数据定义
-__plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "memes"),
-    description="鲁迅说,王境泽等表情包制作",
-    usage=__usage__
+from nonebot import require, on_command, on_message
+from nonebot.adapters.onebot.v11 import (
+    Message,
+    MessageSegment,
+    MessageEvent,
+    GroupMessageEvent,
+)
+from nonebot.adapters.onebot.v11.permission import (
+    GROUP_ADMIN,
+    GROUP_OWNER,
+    PRIVATE_FRIEND,
 )
 
-help_cmd = on_command("表情包制作", block=True, priority=8)
+require("nonebot_plugin_imageutils")
+from nonebot_plugin_imageutils import BuildImage, Text2Image
 
-memes = normal_memes + gif_subtitle_memes
+from .utils import Meme
+from .depends import regex
+from .data_source import memes
+from .download import load_thumb
+from .manager import meme_manager, ActionResult, MemeMode
+from utils.permission import special_per, get_special_per
+from utils.other import translate, add_target
+from utils import users
+
+
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "memes"),
+    description="生成各种表情包",
+    usage="触发方式：指令 + 文字 (部分表情包需要多段文字)\n发送“/表情包制作”查看表情包列表" + add_target(60),
+    extra={
+        "unique_name": "memes",
+        "example": "鲁迅说 我没说过这句话\n举牌 aya大佬带带我",
+        "author": "meetwq <meetwq@gmail.com>",
+        "version": "0.3.5",
+    },
+)
+
+
+PERM_EDIT = GROUP_ADMIN | GROUP_OWNER | PRIVATE_FRIEND | SUPERUSER
+PERM_GLOBAL = SUPERUSER
+
+help_cmd = on_command("表情包制作", block=False, priority=8)
+memes_block_cmd = on_command("禁用表情", block=False, priority=8)
+memes_unblock_cmd = on_command("启用表情", block=False, priority=8)
+memes_block_cmd_gl = on_command("全局禁用表情", block=False, priority=8)
+memes_unblock_cmd_gl = on_command("全局启用表情", block=False, priority=8)
+
+
+@run_sync
+def help_image(user_id: str, memes: List[Meme]) -> BytesIO:
+    def thumb_image(meme: Meme) -> BuildImage:
+        thumb = load_thumb(f"{meme.name}.jpg")
+        thumb = thumb.resize_canvas((200, thumb.height), bg_color="white")
+        text = "/".join(meme.keywords)
+        if not meme_manager.check(user_id, meme):
+            text = f"[color=lightgrey]{text}[/color]"
+            thumb = thumb.filter(ImageFilter.GaussianBlur(radius=3))
+            thumb.paste(BuildImage.new("RGBA", thumb.size, (0, 0, 0, 64)), alpha=True)
+        text_img = (
+            Text2Image.from_bbcode_text(text, 24).wrap(200).to_image(padding=(5, 2))
+        )
+        text_img = BuildImage(text_img).resize_canvas(
+            (200, text_img.height), bg_color="white"
+        )
+        frame = BuildImage.new("RGB", (200, thumb.height + text_img.height), "white")
+        frame.paste(thumb).paste(text_img, (0, thumb.height), alpha=True)
+        frame = frame.resize_canvas(
+            (frame.width + 10, frame.height + 10), bg_color="white"
+        )
+        return frame
+
+    num_per_line = 5
+    line_imgs: List[BuildImage] = []
+    for i in range(0, len(memes), num_per_line):
+        imgs = [thumb_image(meme) for meme in memes[i : i + num_per_line]]
+        line_w = sum([img.width for img in imgs])
+        line_h = max([img.height for img in imgs])
+        line_img = BuildImage.new("RGB", (line_w, line_h), "white")
+        current_x = 0
+        for img in imgs:
+            line_img.paste(img, (current_x, line_h - img.height))
+            current_x += img.width
+        line_imgs.append(line_img)
+    img_w = max([img.width for img in line_imgs])
+    img_h = sum([img.height for img in line_imgs])
+    frame = BuildImage.new("RGB", (img_w, img_h), "white")
+    current_y = 0
+    for img in line_imgs:
+        frame.paste(img, (0, current_y))
+        current_y += img.height
+    frame = frame.resize_canvas((frame.width + 20, frame.height + 20), bg_color="white")
+    return frame.save_jpg()
+
+
+def get_user_id():
+    def dependency(event: MessageEvent) -> str:
+        return (
+            f"group_{event.group_id}"
+            if isinstance(event, GroupMessageEvent)
+            else f"private_{event.user_id}"
+        )
+
+    return Depends(dependency)
+
+
+def check_flag(meme: Meme):
+    def dependency(user_id: str = get_user_id()) -> bool:
+        return meme_manager.check(user_id, meme)
+
+    return Depends(dependency)
 
 
 @help_cmd.handle()
-async def _():
-    img = await help_image(memes)
+async def _(user_id: str = get_user_id()):
+    img = await help_image(user_id, memes)
     if img:
-        await help_cmd.finish(Message([MessageSegment.image(img),
-                                      MessageSegment.text(add_target(60))]))
+        await help_cmd.finish(MessageSegment.image(img))
 
 
-async def handle(matcher: Matcher, meme: NormalMeme, text: str):
-    arg_num = meme.arg_num
-    if arg_num == 1:
-        texts = [text]
+@memes_block_cmd.handle()
+async def _(
+    event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg(), user_id: str = get_user_id()
+):
+    gid = str(event.group_id)
+    role = users.get_role(gid, str(event.user_id))
+    if special_per(role, "memes_block_cmd", gid):
+        meme_names = msg.extract_plain_text().strip().split()
+        if not meme_names:
+            matcher.block = False
+            await matcher.finish()
+        results = meme_manager.block(user_id, meme_names)
+        messages = []
+        for name, result in results.items():
+            if result == ActionResult.SUCCESS:
+                message = f"表情 {name} 禁用成功"
+            elif result == ActionResult.NOTFOUND:
+                message = f"表情 {name} 不存在！"
+            else:
+                message = f"表情 {name} 禁用失败"
+            messages.append(message)
+        await matcher.finish("\n".join(messages))
     else:
-        try:
-            texts = shlex.split(text)
-        except:
-            await matcher.finish(f"参数解析错误，若包含特殊符号请转义或加引号")
+        await matcher.finish(
+            f"无权限,权限需在 {get_special_per(gid, 'memes_block_cmd')} 及以上")
 
-    if len(texts) < arg_num:
-        await matcher.finish(f"该表情包需要输入{arg_num}段文字")
-    elif len(texts) > arg_num:
-        await matcher.finish(f"参数数量不符，需要输入{arg_num}段文字，若包含空格请加引号")
 
-    try:
-        res = await meme.func(texts)
-    except DownloadError:
-        logger.warning(traceback.format_exc())
-        await matcher.finish("资源下载出错，请稍后再试")
-    except:
-        logger.warning(traceback.format_exc())
-        await matcher.finish("出错了，请稍后再试")
-
-    if isinstance(res, str):
-        await matcher.finish(res)
+@memes_unblock_cmd.handle()
+async def _(
+    event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg(), user_id: str = get_user_id()
+):
+    gid = str(event.group_id)
+    role = users.get_role(gid, str(event.user_id))
+    if special_per(role, "memes_unblock_cmd", gid):
+        meme_names = msg.extract_plain_text().strip().split()
+        if not meme_names:
+            matcher.block = False
+            await matcher.finish()
+        results = meme_manager.unblock(user_id, meme_names)
+        messages = []
+        for name, result in results.items():
+            if result == ActionResult.SUCCESS:
+                message = f"表情 {name} 启用成功"
+            elif result == ActionResult.NOTFOUND:
+                message = f"表情 {name} 不存在！"
+            else:
+                message = f"表情 {name} 启用失败"
+            messages.append(message)
+        await matcher.finish("\n".join(messages))
     else:
-        await matcher.finish(Message(MessageSegment.image(res)))
+        await matcher.finish(
+            f"无权限,权限需在 {get_special_per(gid, 'memes_unblock_cmd')} 及以上")
+
+
+@memes_block_cmd_gl.handle()
+async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg()):
+    gid = str(event.group_id)
+    role = users.get_role(gid, str(event.user_id))
+    if special_per(role, "block_cmd_gl", gid):
+        meme_names = msg.extract_plain_text().strip().split()
+        if not meme_names:
+            matcher.block = False
+            await matcher.finish()
+        results = meme_manager.change_mode(MemeMode.WHITE, meme_names)
+        messages = []
+        for name, result in results.items():
+            if result == ActionResult.SUCCESS:
+                message = f"表情 {name} 已设为白名单模式"
+            elif result == ActionResult.NOTFOUND:
+                message = f"表情 {name} 不存在！"
+            else:
+                message = f"表情 {name} 设置失败"
+            messages.append(message)
+        await matcher.finish("\n".join(messages))
+    else:
+        await matcher.finish(
+            f"无权限,权限需在 {get_special_per(gid, 'memes_block_cmd_gl')} 及以上")
+
+
+@memes_unblock_cmd_gl.handle()
+async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg()):
+    gid = str(event.group_id)
+    role = users.get_role(gid, str(event.user_id))
+    if special_per(role, "unblock_cmd_gl", gid):
+        meme_names = msg.extract_plain_text().strip().split()
+        if not meme_names:
+            matcher.block = False
+            await matcher.finish()
+        results = meme_manager.change_mode(MemeMode.BLACK, meme_names)
+        messages = []
+        for name, result in results.items():
+            if result == ActionResult.SUCCESS:
+                message = f"表情 {name} 已设为黑名单模式"
+            elif result == ActionResult.NOTFOUND:
+                message = f"表情 {name} 不存在！"
+            else:
+                message = f"表情 {name} 设置失败"
+            messages.append(message)
+        await matcher.finish("\n".join(messages))
+    else:
+        await matcher.finish(
+            f"无权限,权限需在 {get_special_per(gid, 'memes_unblock_cmd_gl')} 及以上")
 
 
 def create_matchers():
-    def create_handler(meme: NormalMeme) -> T_Handler:
-        async def handler(matcher: Matcher, msg: Message = CommandArg()):
-            text = unescape(msg.extract_plain_text()).strip()
-            if not text:
-                await matcher.finish()
-            await handle(matcher, meme, text)
+    def handler(meme: Meme) -> T_Handler:
+        async def handle(
+            matcher: Matcher,
+            flag: Literal[True] = check_flag(meme),
+            res: Union[str, BytesIO] = Depends(meme.func),
+        ):
+            if not flag:
+                return
+            matcher.stop_propagation()
+            if isinstance(res, str):
+                await matcher.finish(res)
+            await matcher.finish(MessageSegment.image(res))
 
-        return handler
+        return handle
 
     for meme in memes:
-        on_command(
-            meme.keywords[0], aliases=set(meme.keywords), block=True, priority=8
-        ).append_handler(create_handler(meme))
+        on_message(
+            regex(meme.pattern),
+            block=False,
+            priority=12,
+        ).append_handler(handler(meme))
 
 
 create_matchers()

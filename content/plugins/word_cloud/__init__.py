@@ -21,7 +21,7 @@ from utils import users, requests_tools
 
 from utils.other import add_target, translate
 from content.plugins.plugin_control.functions import get_state
-from content.plugins.permission.tools import special_per, get_special_per
+from utils.permission import special_per, get_special_per
 
 
 # 插件元数据定义
@@ -91,8 +91,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     """
     date: str = time.strftime(fts, time.localtime())
 
-    if not os.path.exists(re_img_path / date):
-        os.mkdir(re_img_path / date)
+    if not os.path.exists(re_wordcloud_img_path / date):
+        os.mkdir(re_wordcloud_img_path / date)
     if not os.path.exists(words_contents_path / date):
         os.mkdir(words_contents_path / date)
     # QQ管家不记录
@@ -128,8 +128,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if gid not in txt:
             await cloud.finish("该群未开启词云")
         date: str = time.strftime(fts, time.localtime())
-        if not os.path.exists(re_img_path / date):
-            os.mkdir(re_img_path / date)
+        if not os.path.exists(re_wordcloud_img_path / date):
+            os.mkdir(re_wordcloud_img_path / date)
         if not os.path.exists(words_contents_path / date):
             os.mkdir(words_contents_path / date)
         localTime = time.strftime(ft, time.localtime())
@@ -176,7 +176,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
                                    background_color="#ffffff",
                                    mask=background_image,
                                    stopwords=stop_).generate(string)
-                    img = Path(re_img_path / f"wordcloud_{gid}.png")
+                    img = Path(re_wordcloud_img_path / f"wordcloud_{gid}.png")
                     img_colors = ImageColorGenerator(background_image, default_color=(255, 255, 255))
                     wc.recolor(color_func=img_colors)
                     wc.to_file(img)
@@ -201,8 +201,8 @@ async def run():
     from wordcloud import WordCloud, ImageColorGenerator
     import jieba
     date: str = time.strftime(fts, time.localtime())
-    if not os.path.exists(re_img_path / date):
-        os.mkdir(re_img_path / date)
+    if not os.path.exists(re_wordcloud_img_path / date):
+        os.mkdir(re_wordcloud_img_path / date)
     if not os.path.exists(words_contents_path / date):
         os.mkdir(words_contents_path / date)
 
@@ -260,7 +260,7 @@ async def run():
                                    background_color="#ffffff",
                                    mask=background_image,
                                    stopwords=stop_).generate(string)
-                    img = Path(re_img_path / f"wordcloud_{gid}.png")
+                    img = Path(re_wordcloud_img_path / f"wordcloud_{gid}.png")
                     img_colors = ImageColorGenerator(background_image, default_color=(255, 255, 255))
                     wc.recolor(color_func=img_colors)
                     wc.to_file(img)

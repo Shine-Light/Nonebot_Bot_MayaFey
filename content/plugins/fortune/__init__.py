@@ -8,7 +8,7 @@ from nonebot.plugin import PluginMetadata
 from .config import MainThemeList
 from utils.other import add_target, translate
 from utils import users
-from content.plugins.permission.tools import special_per, get_special_per
+from utils.permission import special_per, get_special_per
 
 __fortune_version__ = "v0.4.5"
 __fortune_notes__ = f'''

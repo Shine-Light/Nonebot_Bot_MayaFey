@@ -7,10 +7,9 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, Message
 from nonebot.params import CommandArg
 from nonebot import on_command
 from nonebot.plugin import PluginMetadata
-from content.plugins.permission.tools import special_per, get_special_per
+from utils.permission import special_per, get_special_per, permission_
 from utils import users, admin_tools
 from .tools import *
-from content.plugins.permission.tools import permission_
 from utils.other import add_target, translate, get_bot_name
 
 
@@ -26,7 +25,7 @@ __plugin_meta__ = PluginMetadata(
 )
 
 
-demerit = on_command(cmd="记过", priority=8, block=True)
+demerit = on_command(cmd="记过", priority=8, block=False)
 @demerit.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     if special_per(users.get_role(str(event.group_id), str(event.user_id)), "demerit", str(event.group_id)):
@@ -79,7 +78,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
         await demerit.finish(f"无权限,权限需在 {get_special_per(str(event.group_id), 'demerit')} 及以上")
 
 
-get_demerit = on_command(cmd="我的记过记录", priority=8, block=True)
+get_demerit = on_command(cmd="我的记过记录", priority=8, block=False)
 @get_demerit.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     uid = str(event.user_id)
@@ -96,7 +95,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await get_demerit.send(msg.strip("\n"))
 
 
-admin_get_demerit = on_command(cmd="查找记过记录", priority=8, block=True)
+admin_get_demerit = on_command(cmd="查找记过记录", priority=8, block=False)
 @admin_get_demerit.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     if special_per(users.get_role(str(event.group_id), str(event.user_id)), "admin_get_demerit", str(event.group_id)):

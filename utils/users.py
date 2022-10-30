@@ -6,8 +6,10 @@
 import datetime
 
 from utils import database_mysql
+from utils.permission import get_role, get_lev
 from nonebot import logger, get_driver, require
-from content.plugins.permission import tools
+from nonebot.adapters.onebot.v11 import GroupMessageEvent
+from nonebot.permission import Permission
 
 
 ftr: str = "%Y-%m-%d"
@@ -54,8 +56,8 @@ def get_role_nogid(uid: str) -> str:
     re = cursor.fetchall()
     levels = []
     for r in re:
-        levels.append(tools.get_lev(r[0]))
-    role = tools.get_role(max(levels))
+        levels.append(get_lev(r[0]))
+    role = get_role(max(levels))
     return role
 
 
@@ -229,3 +231,15 @@ def get_members_uid_by_gid(gid: str) -> list:
         uid.append(member[1])
 
     return uid
+
+
+async def superuser_checker(event: GroupMessageEvent) -> bool:
+    return is_superuser_with_gid(str(event.user_id), str(event.group_id))
+
+
+async def Van_checker(event: GroupMessageEvent) -> bool:
+    return is_Van(str(event.user_id))
+
+superuser: Permission = Permission(superuser_checker)
+Van: Permission = Permission(Van_checker)
+

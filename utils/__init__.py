@@ -15,7 +15,7 @@ from nonebot import on_command, get_driver
 from content.plugins import credit, plugin_control, ban_word, word_cloud, welcome, sign
 from .path import *
 from .other import mk
-from .permission import superuser, Van
+from .users import superuser, Van
 
 
 db = database_mysql.connect
@@ -42,15 +42,14 @@ async def Dir_init():
         await mk("dir", video_path, mode=None)
     if not os.path.exists(img_path):
         await mk("dir", img_path, mode=None)
-
     if not os.path.exists(admin_path):
         await mk("dir", admin_path, mode=None)
     if not os.path.exists(words_contents_path):
         await mk("dir", words_contents_path, mode=None)
     if not os.path.exists(re_wordcloud_path):
         await mk("dir", re_wordcloud_path, mode=None)
-    if not os.path.exists(re_img_path):
-        await mk("dir", re_img_path, mode=None)
+    if not os.path.exists(re_wordcloud_img_path):
+        await mk("dir", re_wordcloud_img_path, mode=None)
     if not os.path.exists(wordcloud_bg_path):
         await mk("dir", wordcloud_bg_path, mode=None)
     if not os.path.exists(group_message_data_path):
@@ -97,6 +96,16 @@ async def Dir_init():
         (config_path / "friends_request").mkdir(exist_ok=True, parents=True)
     if not auto_baned_path.exists():
         auto_baned_path.mkdir(exist_ok=True, parents=True)
+    if not memes_path.exists():
+        memes_path.mkdir(exist_ok=True, parents=True)
+    if not memes_res_path.exists():
+        memes_res_path.mkdir(exist_ok=True, parents=True)
+    if not petpet_path.exists():
+        petpet_path.mkdir(exist_ok=True, parents=True)
+    if not petpet_res_path.exists():
+        petpet_res_path.mkdir(exist_ok=True, parents=True)
+    if not what2eat_path.exists():
+        what2eat_path.mkdir(parents=True, exist_ok=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):

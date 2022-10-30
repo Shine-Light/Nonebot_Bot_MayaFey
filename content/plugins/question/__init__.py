@@ -11,7 +11,7 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
 from nonebot.plugin import PluginMetadata
 from utils.path import *
 from utils import json_tools, users, database_mysql
-from .. import permission
+from utils.permission import special_per, permission_
 
 from utils.other import add_target, translate
 
@@ -36,7 +36,7 @@ question_vague = on_regex("^模糊问.*?(答)", priority=5)
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "question", gid):
+    if special_per(role, "question", gid):
         msg_meta = str(event.get_message())
         Question = msg_meta.split("问", 1)[1].split("答", 1)[0]
         Answer = msg_meta.split("答", 1)[1]
@@ -67,7 +67,7 @@ question_absolute = on_regex("^精准问.*?(答)", priority=5)
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "question_absolute", gid):
+    if special_per(role, "question_absolute", gid):
         msg_meta = str(event.get_message())
         Question = msg_meta.split("问", 1)[1].split("答", 1)[0]
         Answer = msg_meta.split("答", 1)[1]
@@ -167,7 +167,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
         gid = str(event.group_id)
         role = users.get_role(gid, uid)
         # 成员无权限添加/删除
-        if permission.tools.permission_(role, "superuser"):
+        if permission_(role, "superuser"):
             content = args.split(" ", 1)[1]
 
             for qaS in qas:

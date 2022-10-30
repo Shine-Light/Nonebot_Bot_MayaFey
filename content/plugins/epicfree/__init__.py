@@ -8,7 +8,7 @@ from nonebot.adapters.onebot.v11 import (Bot, Event, GroupMessageEvent,
                                          Message, MessageEvent)
 from nonebot.plugin import PluginMetadata
 from .data_source import getEpicFree, subscribeHelper
-from ..permission.tools import permission_
+from utils.permission import permission_
 from utils import users
 
 from utils.other import add_target, translate

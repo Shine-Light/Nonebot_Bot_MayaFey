@@ -8,7 +8,7 @@ from nonebot.adapters.onebot.v11 import NoticeEvent, GroupMessageEvent, Message
 from nonebot.plugin import PluginMetadata
 from utils import users
 from utils.other import add_target, translate
-from content.plugins.permission.tools import special_per, get_special_per
+from utils.permission import special_per, get_special_per
 from .tools import *
 
 

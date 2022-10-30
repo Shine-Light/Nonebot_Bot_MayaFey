@@ -13,7 +13,7 @@ from utils.other import add_target, translate
 from utils import users
 from .config import Config
 from .data import Reqeust
-from content.plugins.permission.tools import permission_
+from utils.permission import permission_
 
 config = Config()
 

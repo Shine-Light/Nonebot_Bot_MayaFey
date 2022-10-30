@@ -33,14 +33,14 @@ database = database_mysql.connect
 
 
 menu = on_command("黑杰克帮助", aliases={"21点帮助"}, priority=7)
-blackjack = on_command("21点", aliases={"发起21点", '发起黑杰克', '黑杰克'}, priority=7, block=True)
-accept_blackjack = on_command("21点加入", aliases={'21点接受', '黑杰克加入', '黑杰克接受'}, priority=7, block=True)
-blackjack_list = on_command("21点列表", aliases={'黑杰克列表'}, priority=7, block=True)
-call = on_command("叫牌", aliases={'call'}, priority=7, block=True)
-stop = on_command("停牌", aliases={'stop'}, priority=7, block=True)
-point_battle = on_command("21点对战", aliases={"黑杰克对战", "发起21点对战"}, priority=7, block=True)
-accept_battle = on_command("21点接受对战", aliases={"黑杰克接受对战"}, priority=7, block=True)
-battle_list = on_command("21点对战列表", aliases={"黑杰克对战列表"}, priority=7, block=True)
+blackjack = on_command("21点", aliases={"发起21点", '发起黑杰克', '黑杰克'}, priority=7, block=False)
+accept_blackjack = on_command("21点加入", aliases={'21点接受', '黑杰克加入', '黑杰克接受'}, priority=7, block=False)
+blackjack_list = on_command("21点列表", aliases={'黑杰克列表'}, priority=7, block=False)
+call = on_command("叫牌", aliases={'call'}, priority=7, block=False)
+stop = on_command("停牌", aliases={'stop'}, priority=7, block=False)
+point_battle = on_command("21点对战", aliases={"黑杰克对战", "发起21点对战"}, priority=7, block=False)
+accept_battle = on_command("21点接受对战", aliases={"黑杰克接受对战"}, priority=7, block=False)
+battle_list = on_command("21点对战列表", aliases={"黑杰克对战列表"}, priority=7, block=False)
 # rank = on_command("rank", aliases={'排名'})
 battle_dic: Dict[int, List[List[int]]] = {}
 

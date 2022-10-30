@@ -5,7 +5,7 @@
 """
 import json
 from utils import users
-from content.plugins.permission.tools import permission_
+from utils.permission import permission_
 from nonebot.adapters.onebot.v11 import Bot, Event
 from nonebot.rule import Rule
 

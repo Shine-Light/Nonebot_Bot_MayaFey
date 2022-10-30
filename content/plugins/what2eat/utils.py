@@ -1,307 +1,122 @@
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, MessageSegment
+from nonebot.adapters.onebot.v11 import Message, MessageSegment
 from nonebot import logger
-import nonebot
-import random
 from pathlib import Path
-from typing import Optional, List
+from typing import Any, List, Optional
 from enum import Enum
-from .download import get_preset
-from .config import PluginConfig
+import httpx
+import aiofiles
 try:
     import ujson as json
 except ModuleNotFoundError:
     import json
 
-global_config = nonebot.get_driver().config
-config: PluginConfig = PluginConfig.parse_obj(global_config.dict())
-
 class Meals(Enum):
-    BREAKFAST   = "breakfast"
-    LUNCH       = "lunch"
-    SNACK       = "snack"
-    DINNER      = "dinner"
-    MIDNIGHT    = "midnight"
-
-class EatingManager:
-
-    def __init__(self, path: Optional[Path]):
-        self.greating_enbale = True
-        self._data = {}
-        self._greating = {}
-        if not path:
-            data_file = Path(config.what2eat_path) / "data.json"
-            greating_file = Path(config.what2eat_path) / "greating.json"
-        else:
-            data_file = path / "data.json"
-            greating_file = path / "greating.json"
-        
-        self.data_file = data_file
-        self.greating_file = greating_file
-        if not data_file.exists():
-            if config.use_preset_menu:
-                logger.info("Downloading preset what2eat menu resource...")
-                get_preset(data_file, "MENU")
-            else:
-                with open(data_file, "w", encoding="utf-8") as f:
-                    f.write(json.dumps(dict()))
-                    f.close()
-
-        if data_file.exists():
-            with open(data_file, "r", encoding="utf-8") as f:
-                self._data = json.load(f)
-        
-        if not greating_file.exists():
-            if config.use_preset_greating:
-                logger.info("Downloading preset what2eat greating resource...")
-                get_preset(greating_file, "GREATING")
-            else:
-                with open(greating_file, "w", encoding="utf-8") as f:
-                    f.write(json.dumps(dict()))
-                    f.close()
-
-        if greating_file.exists():
-            with open(greating_file, "r", encoding="utf-8") as f:
-                self._greating = json.load(f)
-
-        self._init_json()
-
-    def _init_json(self) -> None:
-        if "basic_food" not in self._data.keys():
-            self._data["basic_food"] = []
-        if "group_food" not in self._data.keys():
-            self._data["group_food"] = {}
-        if "eating" not in self._data.keys():
-            self._data["eating"] = {}
-        
-        for meal in Meals:
-            if meal.value not in self._greating.keys():
-                self._greating[meal.value] = []
+    BREAKFAST = ["breakfast", "早餐", "早饭"]
+    LUNCH = ["lunch", "午餐", "午饭", "中餐"]
+    SNACK = ["snack", "摸鱼", "下午茶", "饮茶"]
+    DINNER = ["dinner", "晚餐", "晚饭"]
+    MIDNIGHT = ["midnight", "夜宵", "宵夜"]
     
-    def _init_data(self, group_id: str, user_id: str) -> None:
-        '''
-            初始化用户信息
-        '''
-        if group_id not in self._data["group_food"].keys():
-            self._data["group_food"][group_id] = []
-        if group_id not in self._data["eating"].keys():
-            self._data["eating"][group_id] = {}
-        if user_id not in self._data["eating"][group_id].keys():
-            self._data["eating"][group_id][user_id] = 0
+class FoodLoc(Enum):
+    IN_BASIC = "In basic"
+    IN_GROUP = "In group"
+    NOT_EXISTS = "Not exists"
 
-    def get2eat(self, event: GroupMessageEvent) -> str:
-        '''
-            今天吃什么
-        '''
-        user_id = str(event.user_id)
-        group_id = str(event.group_id)
-
-        self._init_data(group_id, user_id)
-        if not self.eating_check(event):
-            return random.choice(
-                [
-                    "你今天已经吃得够多了！",
-                    "吃这么多的吗？",
-                    "害搁这吃呢？不工作的吗？",
-                    "再吃肚子就要爆炸咯~"
-                ]
-            )
-        else:
-            # 菜单全为空，建议避免["basic_food"]为空
-            if len(self._data["basic_food"]) == 0 and len(self._data["group_food"][group_id]) == 0:
-                return "还没有菜单呢，就先饿着肚子吧，请[添加 菜名]🤤"
-            
-            food_list = self._data["basic_food"].copy()
-            if len(self._data["group_food"][group_id]) > 0:
-                food_list.extend(self._data["group_food"][group_id])
-
-            msg = "建议" + random.choice(food_list)
-            self._data["eating"][group_id][user_id] += 1
-            self.save()
-
-            return msg
+class SearchLoc(Enum):
+    IN_BASIC = "In basic"
+    IN_GROUP = "In group"
+    IN_GLOBAL = "In global"
     
-    '''
-        检查菜品是否存在
-        1:  存在于基础菜单
-        2:  存在于群菜单
-        0:  不存在
-    '''
-    def food_exists(self, _food_: str) -> int:
-        for food in self._data["basic_food"]:
-            if food == _food_:
-                return 1
+EatingEnough_List: List[str] = [
+    "你今天已经吃得够多了！",
+    "吃这么多的吗？",
+    "害搁这吃呢？不工作的吗？",
+    "再吃肚子就要爆炸咯~",
+    "你是米虫吗？今天碳水要爆炸啦！",
+    "你去码头整点薯条吧🍟"
+]
 
-        for group_id in self._data["group_food"]:
-            for food in self._data["group_food"][group_id]:
-                if food == _food_:
-                    return 2
+DrinkingEnough_List: List[str] = [
+    "你今天已经喝得够多了！",
+    "喝这么多的吗？",
+    "害搁这喝呢？不工作的吗？",
+    "再喝肚子就要爆炸咯~",
+    "你是水桶吗？今天糖分要超标啦！"
+]
+       
+def save_json(_file: Path, _data: Any) -> None:
+    with open(_file, 'w', encoding='utf-8') as f:
+        json.dump(_data, f, ensure_ascii=False, indent=4)
+  
+def load_json(_file: Path) -> Any:
+    with open(_file, 'r', encoding='utf-8') as f:
+        return json.load(f)
+ 
+async def get_image_from_url(url: str) -> Optional[bytes]:
+    headers = {
+        "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",  # noqa
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36 Edg/95.0.1020.53",  # noqa
+    }
+    async with httpx.AsyncClient() as client:
+        for i in range(3):
+            try:
+                resp = await client.get(url, headers=headers)
+                if resp.status_code != 200:
+                    continue
+                return resp.content
+            except Exception:
+                logger.warning(f"Error occurred when downloading {url}, retry: {i+1}/3")
+                
+    logger.warning(f"Download image failed: {url}")
+    return None
+
+async def save_image(_img: bytes, _path: Path):
+    async with aiofiles.open(_path, "wb") as f:
+        await f.write(_img)
         
-        return 0
-
-    '''
-        检查是否吃饱
-    '''
-    def eating_check(self, event: GroupMessageEvent) -> bool:
-        user_id = str(event.user_id)
-        group_id = str(event.group_id)
-        return False if self._data["eating"][group_id][user_id] >= config.eating_limit else True
-
-    '''
-        添加至群菜单中 GROUP_ADMIN | GROUP_OWNER 权限
-    '''
-    def add_group_food(self, new_food: str, event: GroupMessageEvent) -> str:
-        user_id = str(event.user_id)
-        group_id = str(event.group_id)
-
-        self._init_data(group_id, user_id)
-        status = self.food_exists(new_food)
-        if status == 1:
-            return f"{new_food} 已在基础菜单中~"
-        elif status == 2:
-            return f"{new_food} 已在群特色菜单中~"
-
-        self._data["group_food"][group_id].append(new_food)
-        self.save()
-        return f"{new_food} 已加入群特色菜单~"
-
-    '''
-        添加至基础菜单 SUPERUSER 权限
-    '''
-    def add_basic_food(self, new_food: str) -> str:
-        status = self.food_exists(new_food)
-        if status == 1:
-            return f"{new_food} 已在基础菜单中~"
-        elif status == 2:
-            return f"{new_food} 已在群特色菜单中~"
-
-        self._data["basic_food"].append(new_food)
-        self.save()
-        return f"{new_food} 已加入基础菜单~"
-
-    '''
-        从基础菜单移除 SUPERUSER 权限
-        从群菜单中移除 GROUP_ADMIN | GROUP_OWNER 权限
-    '''
-    def remove_food(self, food_to_remove: str, event: GroupMessageEvent) -> str:
-        user_id = str(event.user_id)
-        group_id = str(event.group_id)
-        
-        self._init_data(group_id, user_id)
-        status = self.food_exists(food_to_remove)
-        if not status:
-            return f"{food_to_remove} 不在菜单中哦~"
-
-        # 在群菜单
-        if status == 2:
-            self._data["group_food"][group_id].remove(food_to_remove)
-            self.save()
-            return f"{food_to_remove} 已从群菜单中删除~"
-        # 在基础菜单
-        else:
-            if user_id not in config.superusers:
-                return f"{food_to_remove} 在基础菜单中，非超管不可操作哦~"
-            else:
-                self._data["basic_food"].remove(food_to_remove)
-                self.save()
-                return f"{food_to_remove} 已从基础菜单中删除~"    
-
-    def reset_eating(self) -> None:
-        '''
-            重置三餐 eating times
-        '''
-        for group_id in self._data["eating"].keys():
-            for user_id in self._data["eating"][group_id].keys():
-                self._data["eating"][group_id][user_id] = 0
-        
-        self.save()
-
-    def save(self) -> None:
-        '''
-            保存数据
-        '''
-        with open(self.data_file, 'w', encoding='utf-8') as f:
-            json.dump(self._data, f, ensure_ascii=False, indent=4)
-        
-        with open(self.greating_file, 'w', encoding='utf-8') as f:
-            json.dump(self._greating, f, ensure_ascii=False, indent=4)
-
-    def show_group_menu(self, event: GroupMessageEvent) -> str:
-        user_id = str(event.user_id)
-        group_id = str(event.group_id)
-        msg = []
-        
-        self._init_data(group_id, user_id)
-        if len(self._data["group_food"][group_id]) > 0:
-            msg += MessageSegment.text("---群特色菜单---\n")
-            for food in self._data["group_food"][group_id]:
-                msg += MessageSegment.text(f"{food}\n")
-        
-        return msg if len(msg) > 0 else "还没有群特色菜单呢，请[添加 菜名]~"
-
-    def show_basic_menu(self) -> str:
-        msg = []
-
-        if len(self._data["basic_food"]) > 0:
-            msg += MessageSegment.text("---基础菜单---\n")
-            for food in self._data["basic_food"]:
-                msg += MessageSegment.text(f"{food}\n")
-        
-        return msg if len(msg) > 0 else "还没有基础菜单呢，请[添加 菜名]~"
-
-    '''
-        干饭/摸鱼小助手：获取问候语，问候语为空返回None
-    '''
-    def get2greating(self, meal: Meals) -> Optional[str]:
-        if len(self._greating.get(meal.value)) > 0:
-            greatings = self._greating[meal.value]
-            return random.choice(greatings)
-        else:
-            return None
-
-    '''
-        添加某一时段问候语
-    '''
-    def add_greating(self, args: List) -> str:
-        if args[0] == "早餐":
-            meal = Meals.BREAKFAST.value
-        elif args[0] == "中餐":
-            meal = Meals.LUNCH.value
-        elif args[0] == "摸鱼" or args[0] == "饮茶":
-            meal = Meals.SNACK.value
-        elif args[0] == "晚餐":
-            meal = Meals.DINNER.value
-        elif args[0] == "夜宵":
-            meal = Meals.MIDNIGHT.value
-        else:
-            return f"请检查输入参数{args[0]}是否正确~"
+async def save_cq_image(msg: Message, img_dir: Path) -> None:
+    for msg_seg in msg:
+        if msg_seg.type == "image":
+            filename = msg_seg.data.get("file", False)
+            if not filename:
+                continue
             
-        greating = args[1]
-        self._greating[meal].append(greating)
-        self.save()
+            # Check whether there is a same name image
+            images: List[str] = [f.name for f in img_dir.iterdir() if f.is_file()]
+            filepath: Path = img_dir / filename
+            
+            if filename not in images:
+                url = msg_seg.data.get("url", False)
+                if not url:
+                    continue
+                
+                data = await get_image_from_url(url)
+                if not data:
+                    continue
+                
+                await save_image(data, filepath)
+                
+            msg_seg.data["file"] = MessageSegment.image(filepath)
 
-        return f"{greating} 已加入 {args[0]} 问候~"
+def delete_cq_image(str_cq: str) -> bool:
+    _start = str_cq.find("file://")
+    if _start == -1:
+        return False
 
-    '''
-        删除某一时段最新的问候语
-    '''
-    def remove_greating(self, arg: str) -> str:
-        if arg == "早餐":
-            meal = Meals.BREAKFAST.value
-        elif arg == "中餐":
-            meal = Meals.LUNCH.value
-        elif arg == "摸鱼" or arg == "饮茶":
-            meal = Meals.SNACK.value
-        elif arg == "晚餐":
-            meal = Meals.DINNER.value
-        elif arg == "夜宵":
-            meal = Meals.MIDNIGHT.value
-        else:
-            return f"请检查输入参数{arg}是否正确~"
-        
-        greating = self._greating[meal].pop()
-        self.save()
+    _end = str_cq.find(".image")
+    if _end == -1:
+        return False
+    
+    delete_path: Path = Path(str_cq[_start + 7: _end + 6])
+    if not delete_path.is_file():
+        return False
+    
+    delete_path.unlink()
+    
+    if not delete_path.is_file():
+        return True
+    
+    return False
 
-        return f"{greating} 已从 {arg} 问候中移除~"
-
-
-eating_manager = EatingManager(Path(config.what2eat_path))
+def get_cq_image_path(str_cq: str) -> str:
+    return str_cq[str_cq.find("file://") + 7: str_cq.find(".image") + 6]
