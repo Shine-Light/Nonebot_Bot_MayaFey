@@ -12,7 +12,7 @@ proxy = get_driver().config.proxy
 
 def match_30X(url_source: str) -> str:
     """捕获30X后的网址"""
-    r = requests.get(url_source)
+    r = requests.get(url_source, verify=False)
     try:
         url = r.headers['Location']
     except:
