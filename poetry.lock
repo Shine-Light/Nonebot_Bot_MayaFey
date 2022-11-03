@@ -1307,7 +1307,7 @@ reference = "aliyun"
 
 [[package]]
 name = "tencentcloud-sdk-python"
-version = "3.0.762"
+version = "3.0.764"
 description = "Tencent Cloud SDK for Python"
 category = "main"
 optional = false
@@ -1618,7 +1618,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "21ebdef275750eaa4d5e0c30fb9a2cdd1bfa1d66ae58394c4fad2bc7cffc7cd7"
+content-hash = "8f71366a13e728bdeefa32c7bdcc3fbda2c997f0d5474d9109feb8cb3dac7c19"
 
 [metadata.files]
 aiocache = [
@@ -2713,8 +2713,8 @@ starlette = [
     {file = "starlette-0.19.1.tar.gz", hash = "sha256:c6d21096774ecb9639acad41b86b7706e52ba3bf1dc13ea4ed9ad593d47e24c7"},
 ]
 tencentcloud-sdk-python = [
-    {file = "tencentcloud-sdk-python-3.0.762.tar.gz", hash = "sha256:8514d373cee1e141c524ca7846d01e46777d97853143ca3109314da72057765c"},
-    {file = "tencentcloud_sdk_python-3.0.762-py2.py3-none-any.whl", hash = "sha256:ea5160401404ed816c54e4a52d89236c9a9d0a38363da37f7e8f59d004746d25"},
+    {file = "tencentcloud-sdk-python-3.0.764.tar.gz", hash = "sha256:1366e8fd670ccb1c72fd57081ef4a18c3d2c9cf81f24bff347813681e05b66c6"},
+    {file = "tencentcloud_sdk_python-3.0.764-py2.py3-none-any.whl", hash = "sha256:c3c4623c549a1098025db29b726f2d7117424def0d8d842575f130092856fffa"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
