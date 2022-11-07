@@ -21,8 +21,9 @@ async def enable_check(bot: Bot, event: GroupMessageEvent):
         return
     if event.get_user_id == bot.self_id:
         return
+    # 只提示一次
     if gid in a:
-        return
+        raise IgnoredException(f"群 {gid} 已停用机器人")
     js = json_load(enable_config_path)
     if "启用" in msg or "停用" in msg:
         return
