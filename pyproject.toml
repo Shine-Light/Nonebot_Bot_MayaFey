@@ -37,7 +37,7 @@ typing_extensions = "^4.2.0"
 ujson = "^5.1.0"
 wordcloud = "^1.8.1"
 msgpack = "^1.0.3"
-cryptography = "^38.0.1"
+cryptography = "^38.0.3"
 
 [tool.poetry.dev-dependencies]
 
