@@ -1307,7 +1307,7 @@ reference = "aliyun"
 
 [[package]]
 name = "tencentcloud-sdk-python"
-version = "3.0.762"
+version = "3.0.766"
 description = "Tencent Cloud SDK for Python"
 category = "main"
 optional = false
@@ -1618,7 +1618,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "a8881a7f3fb97a065a64c48a9445524c123225b66067df6ad1e1f4485b0735eb"
+content-hash = "b726c33de106d7136e0a8c5618b7409bdaf2d4271489280227772f7c3961ecae"
 
 [metadata.files]
 aiocache = [
@@ -2492,6 +2492,8 @@ packaging = [
     {file = "packaging-21.3.tar.gz", hash = "sha256:dd47c42927d89ab911e606518907cc2d3a1f38bbd026385970643f9c5b8ecfeb"},
 ]
 pillow = [
+    {file = "Pillow-9.3.0-1-cp37-cp37m-win32.whl", hash = "sha256:e6ea6b856a74d560d9326c0f5895ef8050126acfdc7ca08ad703eb0081e82b74"},
+    {file = "Pillow-9.3.0-1-cp37-cp37m-win_amd64.whl", hash = "sha256:32a44128c4bdca7f31de5be641187367fe2a450ad83b833ef78910397db491aa"},
     {file = "Pillow-9.3.0-cp310-cp310-macosx_10_10_x86_64.whl", hash = "sha256:0b7257127d646ff8676ec8a15520013a698d1fdc48bc2a79ba4e53df792526f2"},
     {file = "Pillow-9.3.0-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:b90f7616ea170e92820775ed47e136208e04c967271c9ef615b6fbd08d9af0e3"},
     {file = "Pillow-9.3.0-cp310-cp310-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:68943d632f1f9e3dce98908e873b3a090f6cba1cbb1b892a9e8d97c938871fbe"},
@@ -2713,8 +2715,8 @@ starlette = [
     {file = "starlette-0.19.1.tar.gz", hash = "sha256:c6d21096774ecb9639acad41b86b7706e52ba3bf1dc13ea4ed9ad593d47e24c7"},
 ]
 tencentcloud-sdk-python = [
-    {file = "tencentcloud-sdk-python-3.0.762.tar.gz", hash = "sha256:8514d373cee1e141c524ca7846d01e46777d97853143ca3109314da72057765c"},
-    {file = "tencentcloud_sdk_python-3.0.762-py2.py3-none-any.whl", hash = "sha256:ea5160401404ed816c54e4a52d89236c9a9d0a38363da37f7e8f59d004746d25"},
+    {file = "tencentcloud-sdk-python-3.0.766.tar.gz", hash = "sha256:ebcce84f97883b42fce864b29b4185b8c892969930b3dc29e43d9ae9f4de36fe"},
+    {file = "tencentcloud_sdk_python-3.0.766-py2.py3-none-any.whl", hash = "sha256:4835946c6e90fc890b2e1d0ef5724639c0d5875810285567aeaa640eb32ca30b"},
 ]
 toml = [
     {file = "toml-0.10.2-py2.py3-none-any.whl", hash = "sha256:806143ae5bfb6a3c6e736a764057db0e6a0e05e338b5630894a5f779cabb4f9b"},
