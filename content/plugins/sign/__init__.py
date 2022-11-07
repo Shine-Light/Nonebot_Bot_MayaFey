@@ -7,6 +7,7 @@ import time
 import datetime
 
 
+from requests.exceptions import SSLError
 from nonebot.adapters.onebot.v11 import MessageSegment, Message
 from utils import database_mysql, time_tools, requests_tools, users
 from nonebot import on_command
@@ -62,7 +63,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if re['result'] == "success":
             credit = re['credit']
             time_now = time.strftime("%H:%M:%S", time.localtime())
-            img = requests_tools.match_30X('https://api.ixiaowai.cn/api/api.php')
+            img = requests_tools.match_30X('https://api.yimian.xyz/img/?type=moe')
             await sign.send(message=Message([
                 MessageSegment(type='text', data={
                     'text': f'签到成功, 当前时间: {time_now}, 你已连续签到{users.get_countContinue(gid, uid)}天, 获得积分{credit}'}),
@@ -72,7 +73,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
             await sign.send('你今天已经签到过了哦', at_sender=True)
         else:
             await sign.send("未知异常:" + re['message'])
-    except ConnectionError:
+    except (ConnectionError, SSLError):
         await sign.send("网络出现异常,无法获取图片,但不影响签到")
     except Exception as e:
         await sign.send("未知异常:" + str(e))
