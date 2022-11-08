@@ -388,7 +388,7 @@ class EatingManager:
             for gid in self._greetings["groups_id"]:
                 if self._greetings["groups_id"].get(gid, False):
                     try:
-                        await bot.call_api("send_group_msg", group_id=int(gid), message=msg)
+                        await bot.call_api("send_group_msg", group_id=int(gid), message=Message(msg))
                     except ActionFailed as e:
                         logger.warning(f"发送群 {gid} 失败：{e}")
     
