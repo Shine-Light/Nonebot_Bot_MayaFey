@@ -44,8 +44,10 @@ jobs:
           git add poetry.lock
           git commit -m "build poetry.lock" -a
           
-      # push 
-      - name: push changes
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+      # pull request
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with: 
+          title: Update poetry.lock
+          body: Update poetry.lock
+          labels: automated pr
