@@ -63,7 +63,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if re['result'] == "success":
             credit = re['credit']
             time_now = time.strftime("%H:%M:%S", time.localtime())
-            img = requests_tools.match_30X('https://api.yimian.xyz/img/?type=moe')
+            img = requests_tools.match_30X('https://api.ixiaowai.cn/api/api.php')
             await sign.send(message=Message([
                 MessageSegment(type='text', data={
                     'text': f'签到成功, 当前时间: {time_now}, 你已连续签到{users.get_countContinue(gid, uid)}天, 获得积分{credit}'}),
