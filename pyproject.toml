@@ -2,7 +2,7 @@
 name = "maya fey"
 version = "0.6.2"
 description = ""
-authors = ["Shine-Light <3120815902@qq.com>"]
+authors = ["Shine-Light <shine_light@qq.com>"]
 
 [[tool.poetry.source]]
 name = "aliyun"
