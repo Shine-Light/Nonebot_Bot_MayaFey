@@ -51,3 +51,4 @@ jobs:
           title: Update poetry.lock
           body: Update poetry.lock
           labels: automated pr
+          delete-branch: true
