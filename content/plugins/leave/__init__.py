@@ -4,7 +4,7 @@
 @Date: 2022/8/5 19:55
 """
 from nonebot import on_notice, on_command
-from nonebot.adapters.onebot.v11 import NoticeEvent, GroupMessageEvent, Message
+from nonebot.adapters.onebot.v11 import GroupDecreaseNoticeEvent, GroupMessageEvent, Message
 from nonebot.plugin import PluginMetadata
 from utils import users
 from utils.other import add_target, translate
@@ -26,14 +26,12 @@ __plugin_meta__ = PluginMetadata(
 # 离群事件
 leave = on_notice(rule=checker_leave(), priority=4, block=False)
 @leave.handle()
-async def _(bot: Bot, event: NoticeEvent):
+async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
     uid = str(event.get_user_id())
-    gid = str(json.loads(event.get_event_description().replace("'", '"'))['group_id'])
-    users.member_leave(uid, gid)
+    gid = str(event.group_id)
     await init(gid)
-    desc = json.loads(event.get_event_description().replace("'", '"'))
-    sub_type = desc['sub_type']
-    operator_id = desc['operator_id']
+    sub_type = event.sub_type
+    operator_id = event.operator_id
     if sub_type == "leave":
         nickname = (await bot.get_stranger_info(user_id=int(uid), no_cache=True))["nickname"]
         msg = (await get_text(gid, "leave")).replace("{leaved}", nickname)
