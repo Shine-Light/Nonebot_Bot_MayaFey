@@ -11,12 +11,11 @@ from nonebot.plugin import PluginMetadata
 
 
 from .tools import *
-from utils import json_tools
+from utils import json_tools, database_mysql, users
 from utils.path import *
-from utils import database_mysql
-from .. import permission
-from utils import users
+from utils.permission import special_per, permission_, get_special_per
 from utils.other import add_target, translate
+from content.plugins.plugin_control.functions import get_state
 
 
 ban_count_allow = get_driver().config.ban_count_allow
@@ -58,9 +57,10 @@ baned = on_command(cmd="违禁词", priority=8)
 async def _(event: GroupMessageEvent, bot: Bot):
     uid = str(event.group_id)
     group_id = str(event.group_id)
+    await init(group_id)
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "baned", gid):
+    if special_per(role, "baned", gid):
         word_list_url = word_list_urls / group_id / "words.txt"
 
         # 简单信息处理
@@ -96,7 +96,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
             elif mode == "清空":
                 # 成员无权限清空
                 role = users.get_role(group_id, uid)
-                if permission.tools.permission_(role, "superuser"):
+                if permission_(role, "superuser"):
                     await baned.finish(message="无权限" + add_target(30))
                 file = open(word_list_url, "w+", encoding="utf-8")
                 file.close()
@@ -110,7 +110,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
         elif len(place) == 3:
             # 成员无权限添加/删除
             role = users.get_role(group_id, uid)
-            if permission.tools.permission_(role, "superuser"):
+            if permission_(role, "superuser"):
                 await baned.finish(message="无权限" + add_target(30))
 
             # 获取模式和内容
@@ -257,16 +257,20 @@ async def _(event: GroupMessageEvent, bot: Bot):
                     await baned.finish(message=msg)
 
     else:
-        await baned.send(f"权限不足,权限需在 {permission.tools.get_special_per(gid, 'baned')} 及以上")
+        await baned.send(f"权限不足,权限需在 {get_special_per(gid, 'baned')} 及以上")
 
 
 # 违禁词检测
 @event_preprocessor
 async def _(event: GroupMessageEvent, bot: Bot):
+    group_id = str(event.group_id)
     if "启用" in event.get_plaintext() or "停用" in event.get_plaintext():
         return
     if "初始化" in event.get_plaintext():
         return
+    if not (await get_state("ban_word", group_id)):
+        return
+    await init(group_id)
     # 是否为增删指令
     msg_meta: str = event.get_message().extract_plain_text()
     msgs = msg_meta.split(" ", 2)
@@ -274,7 +278,6 @@ async def _(event: GroupMessageEvent, bot: Bot):
         if (msgs[1] == "++" or msgs[1] == "+" or msgs[1] == "-") and event.sender.role != "member":
             return
     # 初始化设置
-    group_id = str(event.group_id)
     uid = event.get_user_id()
     word_list_url = word_list_urls / group_id / "words.txt"
     msg_meta = event.get_message().extract_plain_text()
@@ -287,7 +290,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
     # 检测是否触发关键词(自定义违禁词)
     for word in ban_words:
         if word and word in msg_meta:
-            if not permission.tools.permission_(role, "superuser"):
+            if not permission_(role, "superuser"):
                 await ban_count(uid, str(group_id))
                 count = users.get_ban_count(uid, group_id)
                 if count == 1:
@@ -350,28 +353,30 @@ ban_easy = on_command("简单违禁词", priority=5)
 @ban_easy.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
+    await init(gid)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "ban_easy", gid):
+    if special_per(role, "ban_easy", gid):
         level: dict = json_tools.json_load(level_path)
         level.update({gid: "easy"})
         json_tools.json_write(level_path, level)
         await ban_easy.send("设置成功")
     else:
-        await ban_easy.send(f"权限不足,权限需在 {permission.tools.get_special_per(gid, 'ban_easy')} 及以上")
+        await ban_easy.send(f"权限不足,权限需在 {get_special_per(gid, 'ban_easy')} 及以上")
 
 
 ban_strict = on_command("严格违禁词", priority=5)
 @ban_strict.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
+    await init(gid)
     role = users.get_role(gid, str(event.user_id))
-    if permission.tools.special_per(role, "ban_strict", gid):
+    if special_per(role, "ban_strict", gid):
         level: dict = json_tools.json_load(level_path)
         level.update({gid: "strict"})
         json_tools.json_write(level_path, level)
         await ban_strict.send("设置成功")
     else:
-        await ban_strict.send(f"权限不足,权限需在 {permission.tools.get_special_per(gid, 'ban_strict')} 及以上")
+        await ban_strict.send(f"权限不足,权限需在 {get_special_per(gid, 'ban_strict')} 及以上")
 
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
