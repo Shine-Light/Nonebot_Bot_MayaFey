@@ -18,44 +18,13 @@ db = database_mysql.connect
 
 
 async def init(gid: str):
-    # 初始化设置
-    word_list_url = word_list_urls / gid / "words.txt"
-
-    if not Path.exists(config_path):
-        os.mkdir(config_path)
-
-    if not Path.exists(word_list_urls):
-        os.mkdir(word_list_urls)
-
-    if not Path.exists(word_list_urls / gid):
-        os.mkdir(word_list_urls / gid)
-
-    if not Path.exists(word_list_url):
-        file = open(word_list_url, "w", encoding="utf-8")
-        file.close()
-
-    if not Path.exists(level_path):
-        file = open(level_path, "w", encoding="utf-8")
-        file.write(json.dumps({gid: "easy"}))
-        file.close()
-
-    if not os.path.exists(word_path):
-        await mk("file", word_path, "w", content='123456789\n')
-
-    if not os.path.exists(limit_word_path_easy):
-        await mk("file", limit_word_path_easy, "w",
-                 url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_easy",
-                 dec="简单违禁词词库")
-
-    if not os.path.exists(limit_word_path):
-        await mk("file", limit_word_path, "w",
-                 url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_s",
-                 dec="严格违禁词词库")
-
-    js = json_tools.json_load(level_path)
-    if gid not in js:
-        js.update({gid: "easy"})
-        json_tools.json_write(level_path, js)
+    try:
+        js = json_tools.json_load(level_path)
+        if gid not in js:
+            js.update({gid: "easy"})
+            json_tools.json_write(level_path, js)
+    except:
+        pass
 
 
 async def ban_user(uid: str, gid: str, bot: Bot):
