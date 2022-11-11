@@ -45,6 +45,7 @@ word_start = on_command("记录本群", block=False, priority=4)
 @word_start.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
+    await tools.init()
     role = users.get_role(gid, str(event.user_id))
     if special_per(role, "word_start", gid):
         with open(word_path, 'r+', encoding='utf-8') as c:
@@ -65,6 +66,7 @@ word_stop = on_command("停止记录本群", block=False, priority=4)
 @word_stop.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
+    await tools.init()
     role = users.get_role(gid, str(event.user_id))
     if special_per(role, "word_stop", gid):
         txt = open(word_path, 'r', encoding='utf-8').read()
@@ -89,6 +91,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     :param event:
     :return:
     """
+    await tools.init()
     date: str = time.strftime(fts, time.localtime())
 
     if not os.path.exists(re_wordcloud_img_path / date):
