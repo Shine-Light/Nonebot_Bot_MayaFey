@@ -23,7 +23,9 @@ __plugin_meta__ = PluginMetadata(
     usage="/禁 @xx @xx ... {时间}\n"
           "/解 @xx @xx ...\n"
           "/踢 @xx @xx ...\n"
-          "/黑 @xx @xx ..." + add_target(60)
+          "/黑 @xx @xx ...\n"
+          "/全员禁\n"
+          "/解全员禁" + add_target(60)
 )
 
 
@@ -72,8 +74,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
             async for baned in baning:
                 if baned:
                     await baned
-        except ActionFailed:
-            await unban.finish("权限不足")
+        except ActionFailed as e:
+            await unban.finish(str(e))
         else:
             logger.info("解禁操作成功")
             if cb_notice:  # 迭代结束再通知
@@ -97,8 +99,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
                         user_id=int(qq),
                         reject_add_request=False
                     )
-            except ActionFailed:
-                await kick.finish("权限不足")
+            except ActionFailed as e:
+                await unban.finish(str(e))
             else:
                 logger.info(f"踢人操作成功")
                 if cb_notice:
@@ -124,8 +126,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
                         user_id=int(qq),
                         reject_add_request=True
                     )
-            except ActionFailed:
-                await kick_.finish("权限不足")
+            except ActionFailed as e:
+                await unban.finish(str(e))
             else:
                 logger.info(f"踢人并拉黑操作成功")
                 if cb_notice:
@@ -153,8 +155,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
                         user_id=int(qq),
                         enable=True
                     )
-            except ActionFailed:
-                await set_g_admin.finish("权限不足")
+            except ActionFailed as e:
+                await unban.finish(str(e))
             else:
                 logger.info(f"设置管理员操作成功")
                 await set_g_admin.send("设置管理员操作成功")
@@ -179,10 +181,36 @@ async def _(bot: Bot, event: GroupMessageEvent):
                         user_id=int(qq),
                         enable=False
                     )
-            except ActionFailed:
-                await unset_g_admin.finish("权限不足")
+            except ActionFailed as e:
+                await unban.finish(str(e))
             else:
                 logger.info(f"取消管理员操作成功")
                 await unset_g_admin.send("取消管理员操作成功")
         else:
             await unset_g_admin.finish("指令不正确 或 不能含有@全体成员")
+
+
+ban_all = on_command(cmd="全员禁", aliases={"禁言全员", "禁言全员", "禁言所有人", "禁全员"}, priority=3, block=False)
+@ban_all.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    gid = event.group_id
+    try:
+        await bot.set_group_whole_ban(group_id=gid, enable=True)
+    except ActionFailed as e:
+        await unban.finish(str(e))
+    else:
+        logger.info(f"禁言全员操作成功")
+        await ban_all.finish(f"禁言全员操作成功")
+
+
+un_ban_all = on_command(cmd="解全员禁", aliases={"解禁全员", "全员解禁", "解禁所有人"}, priority=3, block=False)
+@un_ban_all.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    gid = event.group_id
+    try:
+        await bot.set_group_whole_ban(group_id=gid, enable=False)
+    except ActionFailed as e:
+        await unban.finish(str(e))
+    else:
+        logger.info(f"解禁全员操作成功")
+        await un_ban_all.finish(f"解禁全员操作成功")
