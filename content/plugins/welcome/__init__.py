@@ -6,17 +6,14 @@
 import json
 
 from nonebot import on_notice, on_command, get_driver
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, NoticeEvent, Event
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, GroupIncreaseNoticeEvent, Event
 from nonebot.rule import Rule
 from nonebot.plugin import PluginMetadata
 from . import tools
 from utils.path import *
 from utils import database_mysql, users
 from utils.other import add_target, translate
-from content.plugins.plugin_control import init as control_init
-from content.plugins.credit.tools import init_one as credit_init_one
 from utils.permission import special_per, get_special_per
-from content.plugins.sign.tools import init_one as sign_init_one
 
 
 # 插件元数据定义
@@ -44,19 +41,13 @@ def checker():
     return Rule(_checker)
 
 
-member_in = on_notice(rule=checker(), priority=5, block=False)
+member_in = on_notice(rule=checker(), priority=4, block=False)
 @member_in.handle()
-async def _(bot: Bot, event: NoticeEvent):
+async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
     if event.get_user_id() == bot.self_id:
         return
-    des = event.get_event_description()
-    data = json.loads(des.replace("'", '"'))
-    gid = str(data['group_id'])
+    gid = str(event.group_id)
     uid = str(event.get_user_id())
-    if uid in superusers:
-        role = "Van"
-    else:
-        role = "member"
     re = await users.is_user_exist(gid, uid)
     # 入群欢迎
     welcome_txt = welcome_path_base / f"{gid}.txt"
@@ -65,10 +56,6 @@ async def _(bot: Bot, event: NoticeEvent):
     if re:
         back_txt = back_path_base / f"{gid}.txt"
         message: str = open(back_txt, 'r', encoding="utf-8").read()
-    await users.user_init_one(gid, uid, role)  # 新人默认为member或Van
-    await sign_init_one(gid, uid)
-    await credit_init_one(gid, uid)
-    await control_init(gid)
     await member_in.send(message=Message(message), at_sender=True)
 
 

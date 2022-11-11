@@ -89,3 +89,25 @@ def checker_invite_group():
             return True
 
     return Rule(_checker)
+
+
+# 入群检测
+def checker_group_increase():
+    async def _checker(bot: Bot, event: Event) -> bool:
+        description = event.get_event_description()
+        values = json.loads(description.replace("'", '"'))
+        if values['notice_type'] == 'group_increase':
+            return True
+
+    return Rule(_checker)
+
+
+# 退/离群检测
+def checker_group_decrease():
+    async def _checker(bot: Bot, event: Event) -> bool:
+        description = event.get_event_description()
+        values = json.loads(description.replace("'", '"'))
+        if values['notice_type'] == 'group_decrease':
+            return True
+
+    return Rule(_checker)

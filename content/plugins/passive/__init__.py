@@ -9,13 +9,16 @@ import time
 from nonebot import on_notice, on_request, get_driver
 from nonebot.plugin import PluginMetadata
 from nonebot.log import logger
-from nonebot.adapters.onebot.v11 import Bot, NoticeEvent, RequestEvent
+from nonebot.adapters.onebot.v11 import Bot, NoticeEvent, GroupDecreaseNoticeEvent, RequestEvent, GroupIncreaseNoticeEvent
 from nonebot.exception import ActionFailed
 from utils import database_mysql, users
 from utils.other import add_target, translate
 from utils.json_tools import json_write, json_load
 from utils.path import friends_request_info
 from . import rules
+from content.plugins.plugin_control import init as control_init
+from content.plugins.credit.tools import init_one as credit_init_one
+from content.plugins.sign.tools import init_one as sign_init_one
 
 
 # 插件元数据定义
@@ -119,3 +122,31 @@ async def _(bot: Bot, event: RequestEvent):
                 await bot.set_group_leave(group_id=int(gid), is_dismiss=False)
             except:
                 pass
+
+
+# 新人入群初始化
+member_in = on_notice(rule=rules.checker_group_increase(), priority=4, block=False)
+@member_in.handle()
+async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
+    if event.get_user_id() == bot.self_id:
+        return
+
+    gid = str(event.group_id)
+    uid = str(event.get_user_id())
+    if uid in superusers:
+        role = "Van"
+    else:
+        role = "member"
+    await users.user_init_one(gid, uid, role)  # 新人默认为member或Van
+    await sign_init_one(gid, uid)
+    await credit_init_one(gid, uid)
+    await control_init(gid)
+
+
+# 离群事件
+leave = on_notice(rule=rules.checker_group_decrease(), priority=4, block=False)
+@leave.handle()
+async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
+    uid = str(event.get_user_id())
+    gid = str(event.group_id)
+    users.member_leave(uid, gid)
