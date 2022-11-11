@@ -12,7 +12,7 @@ from nonebot.permission import SUPERUSER
 from . import database_mysql, url, users
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, GROUP_ADMIN, GROUP_OWNER
 from nonebot import on_command, get_driver
-from content.plugins import credit, plugin_control, ban_word, word_cloud, welcome, sign
+from content.plugins import credit, plugin_control, word_cloud, welcome, sign
 from .path import *
 from .other import mk
 from .users import superuser, Van
@@ -106,6 +106,10 @@ async def Dir_init():
         petpet_res_path.mkdir(exist_ok=True, parents=True)
     if not what2eat_path.exists():
         what2eat_path.mkdir(parents=True, exist_ok=True)
+    if not curfew_path.exists():
+        curfew_path.mkdir(parents=True, exist_ok=True)
+    if not word_list_urls.exists():
+        word_list_urls.mkdir(parents=True, exist_ok=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):
@@ -173,6 +177,10 @@ async def init(bot: Bot, event: GroupMessageEvent):
     # 用户表初始化结束
     # 目录初始化
     await Dir_init()
+    if not (word_list_urls / gid).exists():
+        (word_list_urls / gid).mkdir(parents=True, exist_ok=True)
+    if not (curfew_path / gid).exists():
+        (curfew_path / gid).mkdir(parents=True, exist_ok=True)
     # 文件初始化
     if not os.path.exists(total_base / month / f"{gid}.json"):
         await mk("file", total_base / month / f"{gid}.json", 'w', content=json.dumps({}))
@@ -194,7 +202,30 @@ async def init(bot: Bot, event: GroupMessageEvent):
         await mk("file", auto_baned_path / gid / "time.json", 'w', content=json.dumps({}))
     if not os.path.exists(auto_baned_path / gid / "baned.json"):
         await mk("file", auto_baned_path / gid / "baned.json", 'w', content=json.dumps({}))
+    if not os.path.exists(curfew_path / gid / "config.json"):
+        await mk("file", curfew_path / gid / "config.json", 'w', content=json.dumps(
+            {"switch": False,
+             "time":
+                 {"start_hour": 23,
+                  "start_minute": 0,
+                  "stop_hour": 6,
+                  "stop_minute": 0}
+             }))
+    if not os.path.exists(word_list_urls / gid / "words.txt"):
+        await mk("file", word_list_urls / gid / "words.txt", 'w', content="")
+    if not os.path.exists(level_path):
+        await mk("file", level_path / gid / "words.txt", 'w', content=json.dumps({gid: "easy"}))
+    if not os.path.exists(word_path):
+        await mk("file", word_path, "w", content='123456789\n')
+    if not os.path.exists(limit_word_path_easy):
+        await mk("file", limit_word_path_easy, "w",
+                 url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_easy",
+                 dec="简单违禁词词库")
 
+    if not os.path.exists(limit_word_path):
+        await mk("file", limit_word_path, "w",
+                 url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_s",
+                 dec="严格违禁词词库")
 
 bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER | Van | superuser)
 @bot_init.handle()
@@ -205,9 +236,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await init(bot, event)
         await credit.tools.init(bot, event)
         await plugin_control.init(gid)
-        await ban_word.init(gid)
         await sign.tools.init(bot, event)
-        await word_cloud.tools.init()
         await welcome.tools.init(gid)
         await bot_init.send("初始化成功,该项目完全免费,如果你是付费获得的，请立即退款并举报")
     # 初始化异常

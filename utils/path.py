@@ -138,6 +138,8 @@ petpet_path = config_path / "petpet"
 petpet_res_path = img_path / "petpet"
 # 吃什么配置目录
 what2eat_path = config_path / "what2eat"
+# 宵禁配置目录
+curfew_path = config_path / "curfew"
 
 # 俄罗斯轮盘游戏配置
 russian_path = config_path / "russian"
