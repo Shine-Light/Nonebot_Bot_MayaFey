@@ -38,5 +38,6 @@
     "gspanel": "member",
     "auto_baned": "baned",
     "petpet": "member",
-    "permission": "member"
+    "permission": "member", 
+    "curfew": "superuser"
 }
