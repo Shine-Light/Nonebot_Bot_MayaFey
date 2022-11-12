@@ -19,7 +19,7 @@ __plugin_meta__ = PluginMetadata(
     usage="被动,无命令" + add_target(60)
 )
 
-repeater_last = ""
+repeater_last = {}
 msg_last = {}
 
 
@@ -28,7 +28,6 @@ repeater = on_message(priority=12, block=False)
 async def _(event: GroupMessageEvent):
     if isinstance(event, GroupMessageEvent):
         try:
-            global repeater_last
             gid = event.group_id
             pres: set = get_driver().config.command_start
 
@@ -48,11 +47,14 @@ async def _(event: GroupMessageEvent):
                         return
 
             # 只重复一个 +1 事件
-            if repeater_last == msg:
-                return
-            if "[CQ:image" in msg and "[CQ:image" in repeater_last:
-                if repeater_last.split("file=")[1].split(",")[0] == msg.split("file=")[1].split(",")[0]:
+            try:
+                if repeater_last[gid] == msg:
                     return
+                if "[CQ:image" in msg and "[CQ:image" in repeater_last[gid]:
+                    if repeater_last[gid].split("file=")[1].split(",")[0] == msg.split("file=")[1].split(",")[0]:
+                        return
+            except KeyError:
+                pass
 
             # 不重复命令
             for pre in pres:
@@ -66,16 +68,16 @@ async def _(event: GroupMessageEvent):
             try:
                 if "[CQ:image" not in msg and gid in msg_last and msg == msg_last[gid]:
                     msg_last.pop(gid)
-                    repeater_last = msg
+                    repeater_last[gid] = msg
                     await repeater.finish(Message(msg))
                 elif "[CQ:image" in msg and gid in msg_last and "[CQ:image" in msg_last[gid]:
                     if msg.split("file=")[1].split(",")[0] == msg_last[gid].split("file=")[1].split(",")[0]:
                         msg_last.pop(gid)
-                        repeater_last = msg
+                        repeater_last[gid] = msg
                         await repeater.finish(Message(msg))
-                elif repeater_last != "":
+                elif repeater_last[gid] != "":
                     msg_last[gid] = msg
-                    repeater_last = ""
+                    repeater_last[gid] = ""
                 else:
                     msg_last[gid] = msg
             except KeyError:
