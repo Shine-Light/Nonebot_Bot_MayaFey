@@ -21,12 +21,10 @@ async def enable_check(bot: Bot, event: GroupMessageEvent):
         return
     if event.get_user_id == bot.self_id:
         return
-    # 只提示一次
-    if gid in a:
-        raise IgnoredException(f"群 {gid} 已停用机器人")
-    js = json_load(enable_config_path)
     if "启用" in msg or "停用" in msg:
         return
+
+    js = json_load(enable_config_path)
     try:
         enable = js[gid]
         if not enable:
@@ -34,6 +32,9 @@ async def enable_check(bot: Bot, event: GroupMessageEvent):
     except IgnoredException:
         raise IgnoredException(f"群 {gid} 已停用机器人")
     except Exception:
+        # 只提示一次
+        if gid in a:
+            raise IgnoredException(f"群 {gid} 已停用机器人")
         await bot.send(event, '未找到该群配置文件,请确认本群是否开启机器人,"/启用|停用机器人"')
         a.append(gid)
         raise IgnoredException(f"群 {gid} 未确认是否启用机器人")
