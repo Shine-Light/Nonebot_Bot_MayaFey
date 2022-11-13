@@ -12,7 +12,7 @@ from nonebot.permission import SUPERUSER
 from . import database_mysql, url, users
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, GROUP_ADMIN, GROUP_OWNER
 from nonebot import on_command, get_driver
-from content.plugins import credit, plugin_control, word_cloud, welcome, sign
+from content.plugins import credit, plugin_control, word_cloud, sign
 from .path import *
 from .other import mk
 from .users import superuser, Van
@@ -221,6 +221,10 @@ async def init(bot: Bot, event: GroupMessageEvent):
         await mk("file", limit_word_path_easy, "w",
                  url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_easy",
                  dec="简单违禁词词库")
+    if not os.path.exists(welcome_path_base / f"{gid}.txt"):
+        await mk("file", welcome_path_base / f"{gid}.txt", "w", content="欢迎入群")
+    if not os.path.exists(back_path_base / f"{gid}.txt"):
+        await mk("file", back_path_base / f"{gid}.txt", "w", content="欢迎回归")
 
     if not os.path.exists(limit_word_path):
         await mk("file", limit_word_path, "w",
@@ -237,7 +241,6 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await credit.tools.init(bot, event)
         await plugin_control.init(gid)
         await sign.tools.init(bot, event)
-        await welcome.tools.init(gid)
         await bot_init.send("初始化成功,该项目完全免费,如果你是付费获得的，请立即退款并举报")
     # 初始化异常
     except Exception as e:
