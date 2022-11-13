@@ -18,7 +18,7 @@ from .tools import *
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "schedule"),
+    name=translate("e2c", "curfew"),
     description="在夜间禁言全员(除管理员,群主)",
     usage="/宵禁开始时间 {时间} (22:00)\n"
           "/宵禁结束时间 {时间} (7:00)\n"
