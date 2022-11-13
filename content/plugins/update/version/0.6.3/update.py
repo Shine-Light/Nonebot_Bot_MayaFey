@@ -198,6 +198,7 @@ try:
     download_to_plugin("passive/__init__")
     download_to_plugin("passive/rules")
     download_to_plugin("welcome/__init__")
+    download_to_plugin("welcome/__init__")
     download_to_plugin("word_cloud/__init__")
     download_to_plugin("admin/__init__")
     download_to_utils("__init__")
