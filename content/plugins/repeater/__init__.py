@@ -75,6 +75,8 @@ async def _(event: GroupMessageEvent):
                         msg_last.pop(gid)
                         repeater_last[gid] = msg
                         await repeater.finish(Message(msg))
+                    else:
+                        msg_last[gid] = msg
                 elif repeater_last[gid] != "":
                     msg_last[gid] = msg
                     repeater_last[gid] = ""
