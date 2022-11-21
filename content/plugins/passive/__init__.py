@@ -124,8 +124,8 @@ async def _(bot: Bot, event: RequestEvent):
                 pass
 
 
-# 新人入群初始化
-member_in = on_notice(rule=rules.checker_group_increase(), priority=4, block=False)
+# 新人入群初始化,优先级在欢迎之后
+member_in = on_notice(rule=rules.checker_group_increase(), priority=5, block=False)
 @member_in.handle()
 async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
     if event.get_user_id() == bot.self_id:
