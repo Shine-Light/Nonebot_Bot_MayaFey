@@ -20,16 +20,6 @@ try:
 except:
     delta_time = 10
 
-# 退群检测
-def checker_leave():
-    async def _checker(bot: Bot, event: Event) -> bool:
-        description = event.get_event_description()
-        values = json.loads(description.replace("'", '"'))
-        if values['notice_type'] == 'group_decrease' and values['sub_type'] == 'leave':
-            return True
-
-    return Rule(_checker)
-
 
 # 加群请求检测
 def checker_group_request():
@@ -37,17 +27,6 @@ def checker_group_request():
         description = event.get_event_description()
         values = json.loads(description.replace("'", '"'))
         if values['post_type'] == 'request' and values['sub_type'] == 'add' and values['request_type'] == 'group':
-            return True
-
-    return Rule(_checker)
-
-
-# 入群检测
-def checker_in():
-    async def _checker(bot: Bot, event: Event) -> bool:
-        description = event.get_event_description()
-        values = json.loads(description.replace("'", '"'))
-        if values['notice_type'] == 'group_increase':
             return True
 
     return Rule(_checker)
