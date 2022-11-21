@@ -17,12 +17,12 @@ __plugin_meta__ = PluginMetadata(
     usage="被动,无命令" + add_target(60)
 )
 
-baned_record = on_notice(rule=checker_leave(), priority=4, block=False)
+baned_record = on_notice(priority=4, block=False)
 @baned_record.handle()
 async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
     uid = str(event.user_id)
     gid = str(event.group_id)
-    if await is_time_to_baned(uid, gid):
+    if event.sub_type == "leave" and (await is_time_to_baned(uid, gid)):
         auto_baned_config_path = auto_baned_path / gid / "baned.json"
         js = json_load(auto_baned_config_path)
         js.update({uid: ""})
@@ -30,7 +30,7 @@ async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
         await baned_clean(bot)
 
 
-member_join_time = on_notice(rule=checker_in(), priority=4, block=False)
+member_join_time = on_notice(priority=4, block=False)
 @member_join_time.handle()
 async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
     uid = str(event.user_id)
@@ -50,7 +50,7 @@ async def _(bot: Bot, event: GroupRequestEvent):
     gid = str(event.group_id)
     uid = str(event.user_id)
     if await is_baned(uid, gid):
-        await bot.set_group_add_request(flag=event.flag, sub_type=event.sub_type, approve=False, reason="你已被拉黑")
+        await bot.set_group_add_request(flag=event.flag, sub_type=event.sub_type, approve=False, reason="你已被防白嫖系统拉黑")
 
 
 clean_out_record = require("nonebot_plugin_apscheduler").scheduler
