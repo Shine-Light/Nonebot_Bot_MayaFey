@@ -39,7 +39,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
             if permission_(role, per[plugin_name]):
                 pass
             else:
-                await bot.send(message=f"无权限,权限需在 {per[plugin_name]} 及以上", event=event)
+                await bot.send(message=f"[{matcher.plugin.name}] 无权限,权限需在 {per[plugin_name]} 及以上", event=event)
                 raise IgnoredException(f"{uid} 无权限使用 {plugin_name}")
 
     else:
