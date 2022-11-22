@@ -12,10 +12,11 @@ from nonebot.permission import SUPERUSER
 from . import database_mysql, url, users
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, GROUP_ADMIN, GROUP_OWNER
 from nonebot import on_command, get_driver
-from content.plugins import credit, plugin_control, word_cloud, sign
+from content.plugins import credit, plugin_control, sign
 from .path import *
 from .other import mk
 from .users import superuser, Van
+from .json_tools import json_load, json_write
 
 
 db = database_mysql.connect
@@ -214,7 +215,14 @@ async def init(bot: Bot, event: GroupMessageEvent):
     if not os.path.exists(word_list_urls / gid / "words.txt"):
         await mk("file", word_list_urls / gid / "words.txt", 'w', content="")
     if not os.path.exists(level_path):
-        await mk("file", level_path / gid / "words.txt", 'w', content=json.dumps({gid: "easy"}))
+        await mk("file", level_path, 'w', content=json.dumps({gid: "easy"}))
+
+    level = json_load(level_path)
+    if gid not in level:
+        level.update({gid: "easy"})
+        json_write(level_path, level)
+        del level
+
     if not os.path.exists(word_path):
         await mk("file", word_path, "w", content='123456789\n')
     if not os.path.exists(limit_word_path_easy):
