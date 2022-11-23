@@ -384,22 +384,22 @@ class EatingManager:
         self._greetings = load_json(self._greetings_json)
         msg = self._get_greeting(meal)
         
-        if isinstance(msg, MessageSegment) and bool(self._greetings["groups_id"]) > 0:
+        if isinstance(msg, Message) and bool(self._greetings["groups_id"]) > 0:
             for gid in self._greetings["groups_id"]:
                 if self._greetings["groups_id"].get(gid, False):
                     try:
-                        await bot.call_api("send_group_msg", group_id=int(gid), message=Message(msg))
+                        await bot.call_api("send_group_msg", group_id=int(gid), message=msg)
                     except ActionFailed as e:
                         logger.warning(f"发送群 {gid} 失败：{e}")
     
-    def _get_greeting(self, meal: Meals) -> Optional[MessageSegment]:
+    def _get_greeting(self, meal: Meals) -> Optional[Message]:
         '''
             Get a greeting, return None if empty
         ''' 
         if meal.value[0] in self._greetings:
             if len(self._greetings.get(meal.value[0])) > 0:
                 greetings: List[str] = self._greetings.get(meal.value[0])
-                return MessageSegment.text(random.choice(greetings))
+                return Message(random.choice(greetings))
         
         return None
 
