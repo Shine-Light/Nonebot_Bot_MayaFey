@@ -30,7 +30,10 @@ async def init(gid: str):
     if not (leave_base_path / gid).exists():
         (leave_base_path / gid).mkdir(exist_ok=True, parents=True)
     if not os.path.exists(leave_config_path):
-        await mk("file", leave_config_path, "w", content=json.dumps({"leave": "{leaved} 离开了", "kick": "{kicked} 被 {kicker} 踢出了"}))
+        await mk("file", leave_config_path, "w", content=json.dumps(
+            {"leave": "{leaved}({leaved_id}) 离开了",
+             "kick": "{kicked}({kicked_id}) 被 {kicker}({kicker_id}) 踢出了"
+             }))
 
 
 async def update(content: str, gid: str, mode: str):

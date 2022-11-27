@@ -34,11 +34,17 @@ async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
     operator_id = event.operator_id
     if sub_type == "leave":
         nickname = (await bot.get_stranger_info(user_id=int(uid), no_cache=True))["nickname"]
-        msg = (await get_text(gid, "leave")).replace("{leaved}", nickname)
+        msg = (await get_text(gid, "leave"))\
+            .replace("{leaved}", nickname)\
+            .replace("{leaved_id}", uid)
     elif sub_type == "kick":
         nickname_u = (await bot.get_stranger_info(user_id=int(uid), no_cache=True))["nickname"]
         nickname_o = (await bot.get_group_member_info(group_id=int(gid), user_id=int(operator_id), no_cache=True))["nickname"]
-        msg = (await get_text(gid, "kick")).replace("{kicked}", nickname_u).replace("{kicker}", nickname_o)
+        msg = (await get_text(gid, "kick"))\
+            .replace("{kicked}", nickname_u)\
+            .replace("{kicker}", nickname_o)\
+            .replace("{kicked_id}", uid)\
+            .replace("{kicker_id}", str(operator_id))
 
     await leave.send(Message(msg))
 
