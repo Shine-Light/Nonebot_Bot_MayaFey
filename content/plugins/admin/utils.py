@@ -16,7 +16,7 @@ async def load(path) -> Optional[dict]:
     try:
         async with aiofiles.open(path, mode='r', encoding="utf-8") as f:
             contents_ = await f.read()
-            contents = ujson.loads(contents_)
+            contents = json.loads(contents_)
             await f.close()
             return contents
     except FileNotFoundError:
