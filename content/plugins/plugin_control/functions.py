@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/24 22:10
 """
-import json
+import ujson as json
 import os
 
 from utils import json_tools

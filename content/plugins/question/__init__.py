@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/29 12:53
 """
-import json
+import ujson as json
 
 from nonebot.params import CommandArg
 from nonebot import on_regex, on_message, on_command

@@ -5,10 +5,7 @@ from typing import Any, List, Optional
 from enum import Enum
 import httpx
 import aiofiles
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 class Meals(Enum):
     BREAKFAST = ["breakfast", "早餐", "早饭"]

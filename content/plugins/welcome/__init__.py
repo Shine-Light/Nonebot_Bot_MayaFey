@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/27 22:04
 """
-import json
+import ujson as json
 
 from nonebot import on_notice, on_command, get_driver
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, GroupIncreaseNoticeEvent, Event

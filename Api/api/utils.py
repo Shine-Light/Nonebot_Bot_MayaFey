@@ -5,7 +5,7 @@
 """
 import os
 from utils.path import plugins_path
-from content.plugins.permission.tools import get_plugin_permission, role_cn
+from utils.permission import get_plugin_permission, role_cn
 from content.plugins.total.tools import get_count
 from content.plugins.plugin_control.functions import get_state, is_unset
 from utils.other import translate

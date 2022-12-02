@@ -1,7 +1,4 @@
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 
 def get_message_at(data: str) -> list:

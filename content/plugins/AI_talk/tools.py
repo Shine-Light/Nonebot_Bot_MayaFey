@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/7/16 12:41
 """
-import json
+import ujson as json
 
 import requests
 

@@ -4,7 +4,7 @@
 @Date: 2022/3/22 20:39
 """
 
-import json
+import ujson as json
 import asyncio
 
 from nonebot import on_command, on_notice, on_message, get_driver
@@ -73,7 +73,7 @@ logo生成: /logo 帮助
 小游戏: /游戏菜单
 折磨群友: /帮助 折磨群友
 模拟原神祈愿: /帮助 原神祈愿
-随机群友离谱: /帮助 随机群友老婆''' + add_target(60)
+随机群友老婆: /帮助 随机群友老婆''' + add_target(60)
 
 # message_fun: str = '''这是娱乐菜单
 # 每日一签: /签到 /打卡
@@ -120,6 +120,8 @@ message_admin: str = '''这是管理菜单
 解|禁言(可批量)
     /禁@某人 @某人 {时间}(单位:s 范围:1~25919999 不加则随机)
     /解@某人 @某人
+    /全员禁言
+    /全员解禁
 踢出|踢出并拉黑(可批量)
     /踢@某人 @某人
     /黑@某人 @某人
@@ -143,7 +145,9 @@ message_admin: str = '''这是管理菜单
 记过
     /帮助 记过
 自定义定时任务
-    /帮助 自定义定时任务''' + add_target(60)
+    /帮助 自定义定时任务
+宵禁
+    /帮助 宵禁''' + add_target(60)
 
 
 message_credit: str = '''这是积分系统菜单

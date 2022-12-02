@@ -1,10 +1,7 @@
 import requests
 from pathlib import Path
 from utils import url
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 
 class DownloadError(Exception):

@@ -5,10 +5,7 @@ from utils import path
 import datetime
 from .download import get_preset_config
 from ..withdraw import add_target
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 data_file = path.morning_data_path
 config_file = path.morning_config_path

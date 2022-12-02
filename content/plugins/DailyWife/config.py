@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/10/2 11:35
 """
-import json
+import ujson as json
 
 from nonebot import get_driver
 from utils.json_tools import json_load, json_write

@@ -10,10 +10,7 @@ import os
 from .config import Config
 from utils import database_mysql
 
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 cursor = database_mysql.cursor
 database = database_mysql.connect

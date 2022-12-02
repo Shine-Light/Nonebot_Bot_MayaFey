@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/7/1 21:42
 """
-import json
+import ujson as json
 
 from typing import Dict
 from utils import users
@@ -56,7 +56,7 @@ async def get_plugins_list(data=Body(None)) -> Dict[str, int]:
         if type(data) == bytes:
             data = json.loads(data.decode("gbk"))
         else:
-            data = json.loads(data)
+            data = ujson.loads(data)
         gid = str(data["gid"])
         plugins = await get_plugin_list()
         plugins_full_list = []

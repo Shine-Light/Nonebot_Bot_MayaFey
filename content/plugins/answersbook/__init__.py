@@ -7,10 +7,7 @@ from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
 from utils.other import add_target, translate
 
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 
 # 插件元数据定义

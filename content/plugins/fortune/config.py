@@ -3,10 +3,7 @@ from pydantic import BaseModel, Extra, ValidationError
 from typing import List, Dict
 from pathlib import Path
 
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 from .download import DownloadError, download_url
 from utils.path import fortune_path, fortune_copywriting_path, fortune_config_path

@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/24 21:30
 """
-import json
+import ujson as json
 from pathlib import Path
 
 

@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/28 21:48
 """
-import json
+import ujson as json
 import time
 
 from nonebot.internal.matcher import Matcher
@@ -35,7 +35,7 @@ async def total(matcher: Matcher, event: GroupMessageEvent):
         await other.mk("dir", total_base / month, content=None)
     if not Path.exists(total_path):
         await other.mk("file", total_path, 'w', content=json.dumps({}))
-    js: dict = json.loads(open(total_path, 'r', encoding='utf-8').read())
+    js: dict = json_tools.json_load(total_path)
     if plugin_name in js:
         js.update({plugin_name: int(js[plugin_name]) + 1})
     else:

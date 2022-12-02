@@ -4,7 +4,7 @@
 @Date: 2022/10/2 14:02
 """
 import datetime
-import json
+import ujson as json
 
 from utils.json_tools import json_write, json_load
 from utils.path import DailyWife_path

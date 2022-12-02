@@ -5,10 +5,7 @@ from nonebot import get_driver, logger
 from .utils import save_json, Meals
 from utils.path import what2eat_path
 import httpx
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 class PluginConfig(BaseModel, extra=Extra.ignore):
     what2eat_path: Path = what2eat_path

@@ -1,5 +1,5 @@
 import asyncio
-import json
+import ujson as json
 from pathlib import Path
 from typing import Optional, Union
 

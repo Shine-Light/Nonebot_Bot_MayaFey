@@ -1,6 +1,6 @@
 from os.path import dirname
 from collections import  defaultdict
-import json
+import ujson as json
 
 class DataLoader:
     def __init__(self, path_name: str):

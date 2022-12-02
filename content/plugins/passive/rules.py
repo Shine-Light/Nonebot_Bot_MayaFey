@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/28 20:38
 """
-import json
+import ujson as json
 from utils import users
 from utils.permission import permission_
 from nonebot.adapters.onebot.v11 import Bot, Event

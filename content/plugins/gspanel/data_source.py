@@ -1,5 +1,5 @@
 import asyncio
-import json
+import ujson as json
 from base64 import b64encode
 
 # from io import BytesIO

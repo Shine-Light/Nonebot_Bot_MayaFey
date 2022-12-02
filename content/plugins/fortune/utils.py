@@ -3,10 +3,7 @@ from typing import Optional, Tuple, Union, Dict, List
 from pathlib import Path
 import random
 
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 from utils.path import res_path, fortune_out_path, fortune_copywriting_path, fortune_config_path
 

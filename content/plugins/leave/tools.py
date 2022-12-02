@@ -4,7 +4,7 @@
 @Date: 2022/3/28 13:23
 """
 import os
-import json
+import ujson as json
 
 
 from nonebot.adapters.onebot.v11 import Bot, Event

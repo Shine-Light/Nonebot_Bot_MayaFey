@@ -1,5 +1,5 @@
 import requests
-import json
+import ujson as json
 import time
 
 from nonebot import on_command, get_driver

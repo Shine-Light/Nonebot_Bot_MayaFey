@@ -2,10 +2,7 @@ from typing import Optional, Union, Tuple, List, Dict
 from pathlib import Path
 import random
 
-try:
-    import ujson as json
-except ModuleNotFoundError:
-    import json
+import ujson as json
 
 from .config import MainThemeList
 from .utils import drawing, theme_flag_check

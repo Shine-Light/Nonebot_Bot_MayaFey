@@ -4,7 +4,7 @@
 @Date: 2022/7/29 13:25
 """
 import datetime
-import json
+import ujson as json
 
 from nonebot import get_bot, require, get_driver
 from nonebot.adapters.onebot.v11 import Bot, Message

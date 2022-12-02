@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/8/15 17:01
 """
-import json
+import ujson as json
 import requests
 
 from nonebot import get_driver

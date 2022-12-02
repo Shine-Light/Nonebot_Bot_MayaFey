@@ -5,7 +5,7 @@
 """
 import asyncio
 import base64
-import json
+import ujson as json
 import random
 import re
 

@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/7 20:49
 """
-import json
+import ujson as json
 import os
 
 import httpx

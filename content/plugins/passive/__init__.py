@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/28 20:35
 """
-import json
+import ujson as json
 import time
 
 from nonebot import on_notice, on_request, get_driver

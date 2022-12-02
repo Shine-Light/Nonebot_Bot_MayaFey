@@ -4,7 +4,7 @@
 @Date: 2022/10/1 22:24
 """
 import random
-import json
+import ujson as json
 
 from nonebot import on_command, on_notice, get_driver
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment, Event, GroupDecreaseNoticeEvent

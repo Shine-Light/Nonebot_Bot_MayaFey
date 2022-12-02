@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/26 18:34
 """
-import json
+import ujson as json
 from typing import Optional
 import aiofiles
 
@@ -16,7 +16,7 @@ async def load(path) -> Optional[dict]:
     try:
         async with aiofiles.open(path, mode='r', encoding="utf-8") as f:
             contents_ = await f.read()
-            contents = json.loads(contents_)
+            contents = ujson.loads(contents_)
             await f.close()
             return contents
     except FileNotFoundError:

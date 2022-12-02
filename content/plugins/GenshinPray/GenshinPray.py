@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/8/15 16:32
 """
-import json
+import ujson as json
 import pymysql
 import datetime
 

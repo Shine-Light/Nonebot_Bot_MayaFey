@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/28 22:07
 """
-import json
+import ujson as json
 import time
 
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
