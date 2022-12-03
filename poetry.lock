@@ -1649,7 +1649,7 @@ reference = "aliyun"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.9"
-content-hash = "25a2a23898917de56c0c2dd13bdae235fbe3369f2cc4efcd85f5f56094e9b6cb"
+content-hash = "36c6aea46515a9604994021aa064a26c8b40e1493733efa65ac9d9c62ae7f796"
 
 [metadata.files]
 aiocache = [
