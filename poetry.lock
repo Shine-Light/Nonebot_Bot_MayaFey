@@ -828,7 +828,7 @@ reference = "aliyun"
 
 [[package]]
 name = "nonebot-plugin-imageutils"
-version = "0.1.13.3"
+version = "0.1.13.4"
 description = "Nonebot2 PIL工具插件"
 category = "main"
 optional = false
@@ -2492,8 +2492,8 @@ nonebot-plugin-apscheduler = [
     {file = "nonebot_plugin_apscheduler-0.2.0-py3-none-any.whl", hash = "sha256:9285ee84ca1cfa4db73c86cedb5911bbbd25a21ec0cd5f22447cd12f89e48fb4"},
 ]
 nonebot-plugin-imageutils = [
-    {file = "nonebot_plugin_imageutils-0.1.13.3-py3-none-any.whl", hash = "sha256:a847f5323b4616c4e35428f5851aaf7ff30f4fbb9c03da1da516fb7671bafa85"},
-    {file = "nonebot_plugin_imageutils-0.1.13.3.tar.gz", hash = "sha256:8b035e6c841b5dd0262b074788ad1d0e8724451b1960ddb63a0b5360f755cb43"},
+    {file = "nonebot_plugin_imageutils-0.1.13.4-py3-none-any.whl", hash = "sha256:df72360b1fb28d188188196f8760b57eb596cd25eab76d6d04442c33b68d7bae"},
+    {file = "nonebot_plugin_imageutils-0.1.13.4.tar.gz", hash = "sha256:a5c01dcd3b783e9c508d6e2ea05cba702f9fbdc4db10e4c70f7f75e18ae7dd1b"},
 ]
 nonebot2 = [
     {file = "nonebot2-2.0.0rc2-py3-none-any.whl", hash = "sha256:ec09a1df5b33371d13b80cbe21b975bbf3e6b2caa5d690fac924b1c6aaae6c70"},
