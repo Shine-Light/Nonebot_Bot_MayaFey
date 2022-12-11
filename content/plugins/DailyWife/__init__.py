@@ -233,7 +233,7 @@ async def _(bot: Bot, event: GroupMessageEvent, state: T_State, matcher: Matcher
             break
 
     if not option:
-        await dailyWife_setting.finish(Message(f"没有 {args[0]} 配置项哦"))
+        await dailyWife_setting.finish(Message(f"没有 {args} 配置项哦"))
 
 
 @dailyWife_setting.got("choice", prompt="要设置成什么呢?")
