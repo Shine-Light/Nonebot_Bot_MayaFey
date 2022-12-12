@@ -111,6 +111,8 @@ async def Dir_init():
         curfew_path.mkdir(parents=True, exist_ok=True)
     if not word_list_urls.exists():
         word_list_urls.mkdir(parents=True, exist_ok=True)
+    if not guessMember_path.exists():
+        guessMember_path.mkdir(parents=True, exist_ok=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):
@@ -182,6 +184,8 @@ async def init(bot: Bot, event: GroupMessageEvent):
         (word_list_urls / gid).mkdir(parents=True, exist_ok=True)
     if not (curfew_path / gid).exists():
         (curfew_path / gid).mkdir(parents=True, exist_ok=True)
+    if not (guessMember_path / gid).exists():
+        (guessMember_path / gid).mkdir(parents=True, exist_ok=True)
     # 文件初始化
     if not os.path.exists(total_base / month / f"{gid}.json"):
         await mk("file", total_base / month / f"{gid}.json", 'w', content=json.dumps({}))
@@ -238,6 +242,18 @@ async def init(bot: Bot, event: GroupMessageEvent):
         await mk("file", limit_word_path, "w",
                  url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_s",
                  dec="严格违禁词词库")
+
+    if not os.path.exists(guessMember_path / gid / "config.json"):
+        await mk("file", guessMember_path / gid / "config.json", 'w', content=json.dumps({
+            "out_time": 60,
+            "cost": 10,
+            "bonus": 20,
+            "self_enable": True,
+            "bot_enable": True,
+            "only_active": False,
+            "active_time": 7,
+            "cut_length": 0.1
+        }))
 
 bot_init = on_command(cmd="初始化", aliases={"机器人初始化"}, priority=1, permission=GROUP_OWNER | GROUP_ADMIN | SUPERUSER | Van | superuser)
 @bot_init.handle()

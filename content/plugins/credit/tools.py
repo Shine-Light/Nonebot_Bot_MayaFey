@@ -72,21 +72,21 @@ async def top(gid: str, bot: Bot) -> str:
 
 
 # 获取积分
-async def get(gid: str, uid: str) -> str:
+def get(gid: str, uid: str) -> str:
     cursor.execute(f"SELECT credit FROM credit WHERE gid='{gid}' and uid='{uid}';")
     return str(cursor.fetchone()[0])
 
 
 # 积分是否足够
-async def check(gid: str, uid: str, cost: int) -> bool:
-    if int(await get(gid, uid)) >= cost:
+def check(gid: str, uid: str, cost: int) -> bool:
+    if int(get(gid, uid)) >= cost:
         return True
     return False
 
 
 # 减少积分
-async def minus(gid: str, uid: str, credit: int) -> bool:
-    if await check(gid, uid, credit):
+def minus(gid: str, uid: str, credit: int) -> bool:
+    if check(gid, uid, credit):
         cursor.execute(f"SELECT credit FROM credit WHERE uid='{uid}' and gid='{gid}';")
         credit_old = cursor.fetchone()[0]
         credit = credit_old - credit

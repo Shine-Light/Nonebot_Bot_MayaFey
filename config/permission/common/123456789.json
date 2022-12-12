@@ -37,7 +37,9 @@
     "GenshinPray": "member",
     "gspanel": "member",
     "auto_baned": "baned",
+    "DailyWife": "member",
     "petpet": "member",
-    "permission": "member", 
-    "curfew": "superuser"
+    "permission": "member",
+    "curfew": "superuser",
+    "guessMember": "member"
 }

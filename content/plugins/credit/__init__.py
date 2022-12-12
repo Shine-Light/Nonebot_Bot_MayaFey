@@ -40,5 +40,5 @@ async def _(bot: Bot, event: GroupMessageEvent):
 num = on_command(cmd="积分", aliases={"我的积分", "积分数", "credit"}, priority=8)
 @num.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    credit = await tools.get(str(event.group_id), str(event.user_id))
+    credit = tools.get(str(event.group_id), str(event.user_id))
     await top.send(message=f"你的积分为:{credit}", at_sender=True)

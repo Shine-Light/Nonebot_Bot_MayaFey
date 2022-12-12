@@ -140,6 +140,10 @@ petpet_res_path = img_path / "petpet"
 what2eat_path = config_path / "what2eat"
 # 宵禁配置目录
 curfew_path = config_path / "curfew"
+# 猜群友配置目录
+guessMember_path = config_path / "guessMember"
+# 猜群友缓存文件
+guessMember_cache_path = config_path / "guessMember" / "temp.jpg"
 
 # 俄罗斯轮盘游戏配置
 russian_path = config_path / "russian"

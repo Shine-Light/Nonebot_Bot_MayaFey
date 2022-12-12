@@ -120,10 +120,10 @@ class GenshinPray(object):
         :param nickname:昵称
         """
         if count == 1:
-            if not (await minus(gid, uid, GenshinPray.get_one_cost(gid))):
+            if not minus(gid, uid, GenshinPray.get_one_cost(gid)):
                 return Result(ResultCode(-2), {})
         elif count == 10:
-            if not (await minus(gid, uid, GenshinPray.get_ten_cost(gid))):
+            if not minus(gid, uid, GenshinPray.get_ten_cost(gid)):
                 return Result(ResultCode(-2), {})
         pray = Pray(
             command,

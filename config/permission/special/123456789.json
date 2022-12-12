@@ -60,5 +60,6 @@
     "greeting_on": "superuser",
     "greeting_off": "superuser",
     "add_greeting": "superuser",
-    "remove_greeting": "superuser"
+    "remove_greeting": "superuser",
+    "guessSetting": "superuser"
 }
