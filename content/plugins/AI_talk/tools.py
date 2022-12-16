@@ -32,25 +32,6 @@ tianx_error_code = {
     280: "缺少必要的参数",
     290: "超过最大输入字节限制"
 }
-turing_error_code = {
-    5000: "无解析结果",
-    6000: "暂不支持该功能",
-    4000: "请求参数格式错误",
-    4001: "加密方式错误",
-    4002: "无功能权限",
-    4003: "该apikey没有可用请求次数",
-    4005: "无功能权限",
-    4007: "apikey不合法",
-    4100: "userid获取失败",
-    4200: "上传格式错误",
-    4300: "批量操作超过限制",
-    4400: "没有上传合法userid",
-    4500: "userid申请个数超过限制",
-    4600: "输入内容为空",
-    4602: "输入文本内容超长(上限150)",
-    7002: "上传信息失败",
-    8008: "服务器错误"
-}
 moli_error_code = {
     "C1001": "当日调用次数已用完"
 }
@@ -61,11 +42,6 @@ def get_tianx_config() -> dict:
     mode = config.ai_talk_tianx_mode
     priv = config.ai_talk_tianx_priv
     return {"key": key, "mode": mode, "priv": priv}
-
-
-def get_turing_config() -> dict:
-    key = config.ai_talk_turing_key
-    return {"key": key}
 
 
 def get_moli_config() -> dict:
@@ -86,15 +62,6 @@ def get_api_url(msg: str, uid: str, nickname: str, gid: str = "12345678") -> dic
             f"&question={msg}&mode={tianx_config['mode']}&uniqueid={user_hash}"
             f"&priv={tianx_config['priv']}&restype={restype}"
                 }
-    elif api_type == "turing":
-        turing_config = get_turing_config()
-        restype = 0
-        perception = {"inputText": msg}
-        user_hash = hash(uid)
-        user_info = {"apiKey": turing_config["key"], "userId": user_hash,
-                     "groupId": gid, "userIdName": nickname}
-        args = {"reqType": restype, "perception": perception, "userInfo": user_info}
-        return {"method": "POST", "url": "http://openapi.turingapi.com/openapi/api/v2", "args": args}
     elif api_type == "moli":
         moli_config = get_moli_config()
         key = moli_config["key"]
@@ -135,16 +102,10 @@ def request_url(api_url: dict) -> dict:
 
 
 def error_parse(code: int) -> str:
-    if api_type == "tianx":
-        try:
-            return tianx_error_code[code]
-        except:
-            return "未知错误"
-    elif api_type == "turing":
-        try:
-            return turing_error_code[code]
-        except:
-            return "未知错误"
+    try:
+        return tianx_error_code[code]
+    except:
+        return "未知错误"
 
 
 def parse_res(data: dict) -> dict:
@@ -176,14 +137,6 @@ def parse_res(data: dict) -> dict:
             }
         else:
             logger.warning(f"天行API错误,{error_parse(data['code'])}")
-    elif api_type == "turing":
-        if data["intent"]["code"] == 10005:
-            return {
-                "type": "turing",
-                "values": data["results"]
-            }
-        else:
-            logger.warning(f"图灵API错误,{error_parse(data['code'])}")
     elif api_type == "moli":
         moli_content_url = "https://files.molicloud.com/"
         if data["code"] == "00000":
