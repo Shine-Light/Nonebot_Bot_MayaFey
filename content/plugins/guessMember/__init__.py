@@ -63,16 +63,28 @@ guess = on_command(cmd="猜", aliases={"我猜", "我猜是"}, priority=8, block
 @guess.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
+    uid = str(event.user_id)
     if not guessMember.gameExist(gid):
         await guess.finish("游戏还没开呢")
     if not guessMember.is_active(gid):
         await guess.finish(f"{get_bot_name()}已经忘了上一局了,再开一局把!")
+    if not guessMember.operator_check(gid, uid):
+        await guess.finish("其他人不要来捣乱啦")
     msg: Message = event.original_message
     if len(msg) == 1:
         await guess.finish("猜猜你是谁?猜不到呀!")
     elif len(msg) > 2:
-        await guess.finish("你是打算把所有人都试一遍吗?")
-
+        while True:
+            if len(msg) > 2 and msg[2].data['text'].strip() == "":
+                msg.pop(2)
+                continue
+            elif len(msg) > 2:
+                await guess.finish("你是打算把所有人都试一遍吗?")
+                break
+            else:
+                break
+    if msg[1].type != "at":
+        await guess.finish("猜猜你是谁?猜不到呀!")
     msg: MessageSegment = msg[1]
     target_id = str(msg.data['qq'])
     if guessMember.is_target(gid, target_id):
@@ -85,8 +97,11 @@ guessStop = on_command(cmd="不猜了", aliases={"终止猜群友", "结束猜�
 @guessStop.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
+    uid = str(event.user_id)
     if guessMember.gameExist(gid):
         await guessStop.finish("没有开始怎么结束?")
+    elif not guessMember.operator_check(gid, uid):
+        await guess.finish("其他人不要来捣乱啦")
     else:
         await guessStop.finish(guessMember.gameStop(gid))
 

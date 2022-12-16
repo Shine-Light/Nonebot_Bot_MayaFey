@@ -92,6 +92,11 @@ class guessMember(object):
         """
         return self.gameList[gid].get_clue()
 
+    def operator_check(self, gid, uid):
+        if self.gameList[gid].uid != uid:
+            return False
+        return True
+
     def get_cost(self, gid: str):
         gameConfig = Config(gid)
         return gameConfig.cost
