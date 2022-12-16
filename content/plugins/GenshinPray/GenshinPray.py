@@ -18,6 +18,15 @@ from content.plugins.credit.tools import minus
 from .tools import Pray, Result, ResultCode, Assign, Query, Setting
 
 fstr = "%Y-%m-%d %H:%M:%S"
+elements = {
+    "火": "fire",
+    "水": "water",
+    "雷": "thunder",
+    "风": "wind",
+    "冰": "ice",
+    "草": "grass",
+    "岩": "stone",
+}
 try:
     config = get_driver().config
     host = config.mysql_host_genshin
@@ -229,19 +238,23 @@ class GenshinPray(object):
                 pondInfo = role['pondInfo']
                 star5 = {
                     "name": pondInfo['star5UpList'][0]['goodsName'],
-                    "ele": pondInfo['star5UpList'][0]['goodsSubType']
+                    "ele": pondInfo['star5UpList'][0]['goodsSubType'],
+                    "ele_en": GenshinPray.element_en(pondInfo['star5UpList'][0]['goodsSubType'])
                 }
                 star41 = {
                     "name": pondInfo['star4UpList'][0]['goodsName'],
-                    "ele": pondInfo['star4UpList'][0]['goodsSubType']
+                    "ele": pondInfo['star4UpList'][0]['goodsSubType'],
+                    "ele_en": GenshinPray.element_en(pondInfo['star4UpList'][0]['goodsSubType'])
                 }
                 star42 = {
                     "name": pondInfo['star4UpList'][1]['goodsName'],
-                    "ele": pondInfo['star4UpList'][1]['goodsSubType']
+                    "ele": pondInfo['star4UpList'][1]['goodsSubType'],
+                    "ele_en": GenshinPray.element_en(pondInfo['star4UpList'][1]['goodsSubType'])
                 }
                 star43 = {
                     "name": pondInfo['star4UpList'][2]['goodsName'],
-                    "ele": pondInfo['star4UpList'][2]['goodsSubType']
+                    "ele": pondInfo['star4UpList'][2]['goodsSubType'],
+                    "ele_en": GenshinPray.element_en(pondInfo['star4UpList'][2]['goodsSubType'])
                 }
                 img = await template_to_pic(
                     str(Path(__file__).parent / "template" / "role_up"),
@@ -524,3 +537,7 @@ class GenshinPray(object):
         result = setting.SetSkinRate()
 
         return result
+
+    @staticmethod
+    def element_en(element: str):
+        return elements[element]

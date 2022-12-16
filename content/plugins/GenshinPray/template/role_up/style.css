@@ -30,3 +30,31 @@
     top: 3px;
     left: 3px;
 }
+
+.thunder {
+    color: rgb(105, 87, 194)!important;
+}
+
+.fire {
+    color: rgb(236, 73, 35)!important;
+}
+
+.wind {
+    color: rgb(53, 150, 151)!important;
+}
+
+.stone {
+    color: rgb(204, 144, 70)!important;
+}
+
+.water {
+    color: rgb(0, 117, 255)!important;
+}
+
+.grass {
+    color: rgb(78, 202, 46)!important;
+}
+
+.ice {
+    color: rgb(157, 235, 241)!important;
+}
