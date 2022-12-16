@@ -4,6 +4,7 @@
 @Date: 2022/12/8 22:05
 """
 from nonebot import on_command, get_driver
+from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg
@@ -11,9 +12,21 @@ from nonebot.typing import T_State
 
 from utils import users
 from utils.permission import special_per, get_special_per
+from utils.other import translate, add_target
 from .data_source import guessMember
 from .config import Config
 from utils.other import get_bot_name
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name=translate("e2c", "guessMember"),
+    description="猜群友",
+    usage="/猜群友\n"
+          "/猜 @某人\n"
+          "/结束猜群友\n"
+          "/猜群友配置\n"
+          "/猜群友设置 {配置项} {配置值} (超级用户)" + add_target(60)
+)
 
 settings = {
     Config.set_cost: {"消耗积分", "消耗"},
