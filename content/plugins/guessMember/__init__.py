@@ -75,8 +75,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await guess.finish("猜猜你是谁?猜不到呀!")
     elif len(msg) > 2:
         while True:
-            if len(msg) > 2 and msg[2].data['text'].strip() == "":
-                msg.pop(2)
+            if len(msg) > 2 and msg[-1].type == "text" and msg[-1].data['text'].strip() == "":
+                msg.pop(-1)
                 continue
             elif len(msg) > 2:
                 await guess.finish("你是打算把所有人都试一遍吗?")
