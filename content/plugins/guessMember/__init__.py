@@ -52,7 +52,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await newGuess.finish(credit_check)
     if guessMember.gameExist(gid):
         await newGuess.finish(f"人太多{get_bot_name()}会忙不过来的!")
-    target_data = guessMember.choice_target(uid, gid, await bot.get_group_member_list(group_id=event.group_id))
+    target_data = guessMember.choice_target(uid, gid, await bot.call_api(api="get_group_member_list", group_id=event.group_id, no_cache=True))
     if not target_data:
         await newGuess.finish(Message("没有符合条件的群友了[CQ:face,id=174]"))
     guessMember.gameStart(gid, uid, bot, target_data)
