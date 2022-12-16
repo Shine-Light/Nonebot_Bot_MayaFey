@@ -10,6 +10,7 @@ import datetime
 
 from nonebot.adapters.onebot.v11 import Bot, MessageSegment, Message
 from utils.users import get_role
+from utils.permission import role_cn
 from utils.path import guessMember_cache_path
 from .config import Config
 from .tools import mosaic, blur, cut
@@ -47,7 +48,7 @@ class Target(object):
         self.join_time = datetime.datetime.fromtimestamp(data['join_time'])
         self.last_sent_time = datetime.datetime.fromtimestamp(data['last_sent_time'])
         self.level = int(data['level'])
-        self.role = get_role(self.gid, self.uid)
+        self.role = role_cn(get_role(self.gid, self.uid))
         self.title = data['title']
 
 
