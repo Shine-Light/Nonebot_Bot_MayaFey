@@ -3,9 +3,9 @@ import shlex
 from typing import List, Optional
 
 from nonebot.rule import Rule
-from nonebot import get_driver
 from nonebot.typing import T_State
 from nonebot.params import Depends
+from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import MessageSegment, MessageEvent, unescape
 
 from .config import memes_config
@@ -16,9 +16,7 @@ REGEX_DICT = "REGEX_DICT"
 REGEX_GROUP = "REGEX_GROUP"
 REGEX_ARG = "REGEX_ARG"
 
-command_start = memes_config.memes_command_start or "|".join(
-    get_driver().config.command_start
-)
+command_start = "|".join(memes_config.memes_command_start)
 
 
 def regex(pattern: str) -> Rule:
@@ -63,10 +61,12 @@ def regex(pattern: str) -> Rule:
     return Rule(checker)
 
 
-def Args(num: Optional[int] = None):
-    async def dependency(state: T_State):
+def Args(num: Optional[int] = None, prompt: bool = False):
+    async def dependency(matcher: Matcher, state: T_State):
         args: List[str] = state[ARGS_KEY]
         if num is not None and len(args) != num:
+            if prompt and args:
+                await matcher.finish(f"该表情需要{num}段文字")
             return
         return args
 

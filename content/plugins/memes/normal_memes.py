@@ -1,9 +1,13 @@
-from typing import List, Tuple
+import math
+import random
+from PIL import Image
 from datetime import datetime
-from typing_extensions import Literal
 from PIL.Image import Image as IMG
+from typing import List, Tuple, Literal
+from PIL.Image import Transform, Resampling
 
 from nonebot_plugin_imageutils import BuildImage, Text2Image
+from nonebot_plugin_imageutils.gradient import ColorStop, LinearGradient
 
 from .depends import *
 from .download import load_image
@@ -60,11 +64,30 @@ def goodnews(text: str = Arg()):
             text,
             allow_wrap=True,
             lines_align="center",
-            max_fontsize=50,
+            max_fontsize=60,
             min_fontsize=30,
             fill=(238, 0, 0),
             stroke_ratio=1 / 15,
             stroke_fill=(255, 255, 153),
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_png()
+
+
+def badnews(text: str = Arg()):
+    frame = load_image("badnews/0.png")
+    try:
+        frame.draw_text(
+            (50, 100, frame.width - 50, frame.height - 100),
+            text,
+            allow_wrap=True,
+            lines_align="center",
+            max_fontsize=60,
+            min_fontsize=30,
+            fill=(0, 0, 0),
+            stroke_ratio=1 / 15,
+            stroke_fill="white",
         )
     except ValueError:
         return OVER_LENGTH_MSG
@@ -110,7 +133,7 @@ def murmur(text: str = Arg()):
             (10, 255, 430, 300),
             text,
             max_fontsize=40,
-            min_fontsize=20,
+            min_fontsize=15,
         )
     except ValueError:
         return OVER_LENGTH_MSG
@@ -125,7 +148,7 @@ def shutup(text: str = Arg()):
             text,
             allow_wrap=True,
             max_fontsize=40,
-            min_fontsize=20,
+            min_fontsize=15,
         )
     except ValueError:
         return OVER_LENGTH_MSG
@@ -140,7 +163,7 @@ def slap(text: str = Arg()):
             text,
             allow_wrap=True,
             max_fontsize=110,
-            min_fontsize=65,
+            min_fontsize=50,
         )
     except ValueError:
         return OVER_LENGTH_MSG
@@ -257,11 +280,11 @@ def wujing(left: str = RegexArg("left"), right: str = RegexArg("right"), arg=NoA
     return frame.save_jpg()
 
 
-def slogan(texts: List[str] = Args(6)):
+def slogan(texts: List[str] = Args(6, prompt=True)):
     frame = load_image("slogan/0.jpg")
 
     def draw(pos: Tuple[float, float, float, float], text: str):
-        frame.draw_text(pos, text, max_fontsize=40, min_fontsize=20, allow_wrap=True)
+        frame.draw_text(pos, text, max_fontsize=40, min_fontsize=15, allow_wrap=True)
 
     try:
         draw((10, 0, 294, 50), texts[0])
@@ -295,7 +318,7 @@ def raisesign(text: str = Arg()):
             (10, 10, 350, 250),
             text,
             max_fontsize=80,
-            min_fontsize=40,
+            min_fontsize=30,
             allow_wrap=True,
             lines_align="center",
             spacing=10,
@@ -309,7 +332,7 @@ def raisesign(text: str = Arg()):
     return frame.save_jpg()
 
 
-def psyduck(texts: List[str] = Args(2)):
+def psyduck(texts: List[str] = Args(2, prompt=True)):
     left_img = BuildImage.new("RGBA", (155, 100))
     right_img = BuildImage.new("RGBA", (155, 100))
 
@@ -372,7 +395,7 @@ def scratchoff(text: str = Arg()):
             text,
             allow_wrap=True,
             max_fontsize=80,
-            min_fontsize=40,
+            min_fontsize=30,
             fill="white",
             lines_align="center",
         )
@@ -381,3 +404,431 @@ def scratchoff(text: str = Arg()):
     mask = load_image("scratchoff/1.png")
     frame.paste(mask, alpha=True)
     return frame.save_jpg()
+
+
+def ascension(text: str = Arg()):
+    frame = load_image("ascension/0.png")
+    text = f"你原本应该要去地狱的，但因为你生前{text}，我们就当作你已经服完刑期了"
+    try:
+        frame.draw_text(
+            (40, 30, 482, 135),
+            text,
+            allow_wrap=True,
+            max_fontsize=50,
+            min_fontsize=20,
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def run(text: str = Arg()):
+    frame = load_image("run/0.png")
+    text_img = BuildImage.new("RGBA", (122, 53))
+    try:
+        text_img.draw_text(
+            (0, 0, 122, 53),
+            text,
+            allow_wrap=True,
+            max_fontsize=50,
+            min_fontsize=10,
+            lines_align="center",
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    frame.paste(text_img.rotate(7, expand=True), (200, 195), alpha=True)
+    return frame.save_jpg()
+
+
+def meteor(text: str = Arg()):
+    frame = load_image("meteor/0.png")
+    try:
+        frame.draw_text(
+            (220, 230, 920, 315),
+            text,
+            allow_wrap=True,
+            max_fontsize=80,
+            min_fontsize=20,
+            fill="white",
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def wish_fail(text: str = Arg()):
+    frame = load_image("wish_fail/0.png")
+    try:
+        frame.draw_text(
+            (70, 305, 320, 380),
+            text,
+            allow_wrap=True,
+            max_fontsize=80,
+            min_fontsize=20,
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def findchips(texts: List[str] = Args(4, prompt=True)):
+    frame = load_image("findchips/0.jpg")
+
+    def draw(pos: Tuple[float, float, float, float], text: str):
+        frame.draw_text(pos, text, max_fontsize=40, min_fontsize=20, allow_wrap=True)
+
+    try:
+        draw((405, 54, 530, 130), texts[0])
+        draw((570, 62, 667, 160), texts[1])
+        draw((65, 400, 325, 463), texts[2])
+        draw((430, 400, 630, 470), texts[3])
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def bronya_holdsign(text: str = Arg()):
+    frame = load_image("bronya_holdsign/0.jpg")
+    try:
+        frame.draw_text(
+            (190, 675, 640, 930),
+            text,
+            fill=(111, 95, 95),
+            allow_wrap=True,
+            max_fontsize=60,
+            min_fontsize=25,
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_jpg()
+
+
+def pornhub(texts: List[str] = Args(2, prompt=True)):
+    left_img = Text2Image.from_text(texts[0], fontsize=200, fill="white").to_image(
+        bg_color="black", padding=(20, 10)
+    )
+
+    right_img = Text2Image.from_text(
+        texts[1], fontsize=200, fill="black", weight="bold"
+    ).to_image(bg_color=(247, 152, 23), padding=(20, 10))
+    right_img = BuildImage(right_img).circle_corner(20)
+
+    frame = BuildImage.new(
+        "RGBA",
+        (left_img.width + right_img.width, max(left_img.height, right_img.height)),
+        "black",
+    )
+    frame.paste(left_img, (0, frame.height - left_img.height)).paste(
+        right_img, (left_img.width, frame.height - right_img.height), alpha=True
+    )
+    frame = frame.resize_canvas(
+        (frame.width + 100, frame.height + 100), bg_color="black"
+    )
+    return frame.save_jpg()
+
+
+def youtube(texts: List[str] = Args(2, prompt=True)):
+    left_img = Text2Image.from_text(texts[0], fontsize=200, fill="black").to_image(
+        bg_color="white", padding=(30, 20)
+    )
+
+    right_img = Text2Image.from_text(
+        texts[1], fontsize=200, fill="white", weight="bold"
+    ).to_image(bg_color=(230, 33, 23), padding=(50, 20))
+    right_img = BuildImage(right_img).resize_canvas(
+        (max(right_img.width, 400), right_img.height), bg_color=(230, 33, 23)
+    )
+    right_img = right_img.circle_corner(right_img.height // 2)
+
+    frame = BuildImage.new(
+        "RGBA",
+        (left_img.width + right_img.width, max(left_img.height, right_img.height)),
+        "white",
+    )
+    frame.paste(left_img, (0, frame.height - left_img.height))
+    frame = frame.resize_canvas(
+        (frame.width + 100, frame.height + 100), bg_color="white"
+    )
+
+    corner = load_image("youtube/corner.png")
+    ratio = right_img.height / 2 / corner.height
+    corner = corner.resize((int(corner.width * ratio), int(corner.height * ratio)))
+    x0 = left_img.width + 50
+    y0 = frame.height - right_img.height - 50
+    x1 = frame.width - corner.width - 50
+    y1 = frame.height - corner.height - 50
+    frame.paste(corner, (x0, y0 - 1), alpha=True).paste(
+        corner.transpose(Image.FLIP_TOP_BOTTOM), (x0, y1 + 1), alpha=True
+    ).paste(corner.transpose(Image.FLIP_LEFT_RIGHT), (x1, y0 - 1), alpha=True).paste(
+        corner.transpose(Image.FLIP_TOP_BOTTOM).transpose(Image.FLIP_LEFT_RIGHT),
+        (x1, y1 + 1),
+        alpha=True,
+    ).paste(
+        right_img, (x0, y0), alpha=True
+    )
+    return frame.save_jpg()
+
+
+def google(text: str = Arg()):
+    text = " ".join(text.splitlines())
+    colors = ["#4285f4", "#db4437", "#f4b400", "#4285f4", "#0f9d58", "#db4437"]
+    t2m = Text2Image.from_text(text, 200)
+    index = 0
+    for char in t2m.lines[0].chars:
+        char.fill = colors[index % len(colors)]
+        if char.char.strip():
+            index += 1
+    return BuildImage(t2m.to_image(bg_color="white", padding=(50, 50))).save_jpg()
+
+
+def fivethousand_choyen(texts: List[str] = Args(2, prompt=True)):
+    fontsize = 200
+    fontname = "Noto Sans SC"
+    text = texts[0]
+    pos_x = 40
+    pos_y = 220
+    imgs: List[Tuple[IMG, Tuple[int, int]]] = []
+
+    def transform(img: IMG) -> IMG:
+        skew = 0.45
+        dw = round(img.height * skew)
+        return img.transform(
+            (img.width + dw, img.height),
+            Transform.AFFINE,
+            (1, skew, -dw, 0, 1, 0),
+            Resampling.BILINEAR,
+        )
+
+    def shift(t2m: Text2Image) -> Tuple[int, int]:
+        return (
+            pos_x
+            - t2m.lines[0].chars[0].stroke_width
+            - max(char.stroke_width for char in t2m.lines[0].chars),
+            pos_y - t2m.lines[0].ascent,
+        )
+
+    def add_color_text(stroke_width: int, fill: str, pos: Tuple[int, int]):
+        t2m = Text2Image.from_text(
+            text, fontsize, fontname=fontname, stroke_width=stroke_width, fill=fill
+        )
+        dx, dy = shift(t2m)
+        imgs.append((transform(t2m.to_image()), (dx + pos[0], dy + pos[1])))
+
+    def add_gradient_text(
+        stroke_width: int,
+        dir: Tuple[int, int, int, int],
+        color_stops: List[Tuple[float, Tuple[int, int, int]]],
+        pos: Tuple[int, int],
+    ):
+        t2m = Text2Image.from_text(
+            text, fontsize, fontname=fontname, stroke_width=stroke_width, fill="white"
+        )
+        mask = transform(t2m.to_image()).convert("L")
+        dx, dy = shift(t2m)
+        gradient = LinearGradient(
+            (dir[0] - dx, dir[1] - dy, dir[2] - dx, dir[3] - dy),
+            [ColorStop(*color_stop) for color_stop in color_stops],
+        )
+        bg = gradient.create_image(mask.size)
+        bg.putalpha(mask)
+        imgs.append((bg, (dx + pos[0], dy + pos[1])))
+
+    # 黑
+    add_color_text(22, "black", (8, 8))
+    # 银
+    add_gradient_text(
+        20,
+        (0, 38, 0, 234),
+        [
+            (0.0, (0, 15, 36)),
+            (0.1, (255, 255, 255)),
+            (0.18, (55, 58, 59)),
+            (0.25, (55, 58, 59)),
+            (0.5, (200, 200, 200)),
+            (0.75, (55, 58, 59)),
+            (0.85, (25, 20, 31)),
+            (0.91, (240, 240, 240)),
+            (0.95, (166, 175, 194)),
+            (1, (50, 50, 50)),
+        ],
+        (8, 8),
+    )
+    # 黑
+    add_color_text(16, "black", (0, 0))
+    # 金
+    add_gradient_text(
+        10,
+        (0, 40, 0, 200),
+        [
+            (0, (253, 241, 0)),
+            (0.25, (245, 253, 187)),
+            (0.4, (255, 255, 255)),
+            (0.75, (253, 219, 9)),
+            (0.9, (127, 53, 0)),
+            (1, (243, 196, 11)),
+        ],
+        (0, 0),
+    )
+    # 黑
+    add_color_text(6, "black", (4, -6))
+    # 白
+    add_color_text(6, "white", (0, -6))
+    # 红
+    add_gradient_text(
+        4,
+        (0, 50, 0, 200),
+        [
+            (0, (255, 100, 0)),
+            (0.5, (123, 0, 0)),
+            (0.51, (240, 0, 0)),
+            (1, (5, 0, 0)),
+        ],
+        (0, -6),
+    )
+    # 红
+    add_gradient_text(
+        0,
+        (0, 50, 0, 200),
+        [
+            (0, (230, 0, 0)),
+            (0.5, (123, 0, 0)),
+            (0.51, (240, 0, 0)),
+            (1, (5, 0, 0)),
+        ],
+        (0, -6),
+    )
+
+    text = texts[1]
+    fontname = "Noto Serif SC"
+    pos_x = 300
+    pos_y = 480
+    # 黑
+    add_color_text(22, "black", (10, 4))
+    # 银
+    add_gradient_text(
+        19,
+        (0, 320, 0, 506),
+        [
+            (0, (0, 15, 36)),
+            (0.25, (250, 250, 250)),
+            (0.5, (150, 150, 150)),
+            (0.75, (55, 58, 59)),
+            (0.85, (25, 20, 31)),
+            (0.91, (240, 240, 240)),
+            (0.95, (166, 175, 194)),
+            (1, (50, 50, 50)),
+        ],
+        (10, 4),
+    )
+    # 黑
+    add_color_text(17, "#10193A", (0, 0))
+    # 白
+    add_color_text(8, "#D0D0D0", (0, 0))
+    # 绀
+    add_gradient_text(
+        7,
+        (0, 320, 0, 480),
+        [
+            (0, (16, 25, 58)),
+            (0.03, (255, 255, 255)),
+            (0.08, (16, 25, 58)),
+            (0.2, (16, 25, 58)),
+            (1, (16, 25, 58)),
+        ],
+        (0, 0),
+    )
+    # 银
+    add_gradient_text(
+        0,
+        (0, 320, 0, 480),
+        [
+            (0, (245, 246, 248)),
+            (0.15, (255, 255, 255)),
+            (0.35, (195, 213, 220)),
+            (0.5, (160, 190, 201)),
+            (0.51, (160, 190, 201)),
+            (0.52, (196, 215, 222)),
+            (1.0, (255, 255, 255)),
+        ],
+        (0, -6),
+    )
+
+    img_h = 580
+    img_w = max([img.width + pos[0] for img, pos in imgs])
+    frame = BuildImage.new("RGBA", (img_w, img_h), "white")
+    for img, pos in imgs:
+        frame.paste(img, pos, alpha=True)
+    return frame.save_jpg()
+
+
+def douyin(text: str = Arg()):
+    text = " ".join(text.splitlines())
+    fontsize = 200
+    offset = round(fontsize * 0.05)
+    px = 70
+    py = 30
+    bg_color = "#1C0B1B"
+    frame = Text2Image.from_text(
+        text, fontsize, fill="#FF0050", stroke_fill="#FF0050", stroke_width=5
+    ).to_image(bg_color=bg_color, padding=(px + offset * 2, py + offset * 2, px, py))
+    Text2Image.from_text(
+        text, fontsize, fill="#00F5EB", stroke_fill="#00F5EB", stroke_width=5
+    ).draw_on_image(frame, (px, py))
+    Text2Image.from_text(
+        text, fontsize, fill="white", stroke_fill="white", stroke_width=5
+    ).draw_on_image(frame, (px + offset, py + offset))
+    frame = BuildImage(frame)
+
+    width = frame.width - px
+    height = frame.height - py
+    frame_num = 10
+    devide_num = 6
+    seed = 20 * 0.05
+    frames: List[IMG] = []
+    for _ in range(frame_num):
+        new_frame = frame.copy()
+        h_seeds = [
+            math.fabs(math.sin(random.random() * devide_num)) for _ in range(devide_num)
+        ]
+        h_seed_sum = sum(h_seeds)
+        h_seeds = [s / h_seed_sum for s in h_seeds]
+        direction = 1
+        last_yn = 0
+        last_h = 0
+        for i in range(devide_num):
+            yn = last_yn + last_h
+            h = max(round(height * h_seeds[i]), 2)
+            last_yn = yn
+            last_h = h
+            direction = -direction
+            piece = new_frame.copy().crop((px, yn, px + width, yn + h))
+            new_frame.paste(piece, (px + round(i * direction * seed), yn))
+        # 透视变换
+        move_x = 64
+        points = (
+            (move_x, 0),
+            (new_frame.width + move_x, 0),
+            (new_frame.width, new_frame.height),
+            (0, new_frame.height),
+        )
+        new_frame = new_frame.perspective(points)
+        bg = BuildImage.new("RGBA", new_frame.size, bg_color)
+        bg.paste(new_frame, alpha=True)
+        frames.append(bg.image)
+
+    return save_gif(frames, 0.2)
+
+
+def not_call_me(text: str = Arg()):
+    frame = load_image("not_call_me/0.png")
+    try:
+        frame.draw_text(
+            (228, 11, 340, 164),
+            text,
+            allow_wrap=True,
+            max_fontsize=80,
+            min_fontsize=20,
+        )
+    except ValueError:
+        return OVER_LENGTH_MSG
+    return frame.save_png()

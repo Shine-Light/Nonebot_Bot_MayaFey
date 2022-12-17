@@ -1,7 +1,6 @@
 from io import BytesIO
 from PIL import ImageFilter
-from typing import List, Union
-from typing_extensions import Literal
+from typing import List, Union, Literal
 
 from nonebot.params import Depends
 from nonebot.utils import run_sync
@@ -82,10 +81,10 @@ def help_image(user_id: str, memes: List[Meme]) -> BytesIO:
         )
         return frame
 
-    num_per_line = 5
+    num_per_line = 6
     line_imgs: List[BuildImage] = []
     for i in range(0, len(memes), num_per_line):
-        imgs = [thumb_image(meme) for meme in memes[i : i + num_per_line]]
+        imgs = [thumb_image(meme) for meme in memes[i: i + num_per_line]]
         line_w = sum([img.width for img in imgs])
         line_h = max([img.height for img in imgs])
         line_img = BuildImage.new("RGB", (line_w, line_h), "white")
@@ -188,7 +187,7 @@ async def _(
 async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg()):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "block_cmd_gl", gid):
+    if special_per(role, "memes_block_cmd_gl", gid):
         meme_names = msg.extract_plain_text().strip().split()
         if not meme_names:
             matcher.block = False
@@ -213,7 +212,7 @@ async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandAr
 async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg()):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "unblock_cmd_gl", gid):
+    if special_per(role, "memes_unblock_cmd_gl", gid):
         meme_names = msg.extract_plain_text().strip().split()
         if not meme_names:
             matcher.block = False
@@ -259,3 +258,4 @@ def create_matchers():
 
 
 create_matchers()
+
