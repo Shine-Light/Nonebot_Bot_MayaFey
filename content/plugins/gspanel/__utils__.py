@@ -108,7 +108,7 @@ GSPANEL_ALIAS: Set[Union[str, Tuple[str, ...]]] = (
 LOCAL_DIR = (
     (Path(driver.config.resources_dir) / "gspanel")
     if hasattr(driver.config, "resources_dir")
-    else (Path() / "data" / "gspanel")
+    else (Path() / "content" / "plugins" / "gspanel" / "data")
 )
 SCALE_FACTOR = (
     float(driver.config.gspanel_scale) if hasattr(driver.config, "gspanel_scale") else 1.0
