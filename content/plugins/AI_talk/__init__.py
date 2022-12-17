@@ -25,7 +25,6 @@ __plugin_meta__ = PluginMetadata(
 config = get_driver().config
 
 
-# 群聊版本
 AI_talk = on_message(rule=to_me(), priority=12, block=False)
 @AI_talk.handle()
 async def _(bot: Bot, event: Event):
