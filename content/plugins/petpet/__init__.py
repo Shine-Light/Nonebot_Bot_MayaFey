@@ -9,7 +9,6 @@ from nonebot.utils import run_sync
 from nonebot.matcher import Matcher
 from nonebot.typing import T_Handler
 from nonebot.params import CommandArg
-from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
 from nonebot.dependencies import Dependent
 from nonebot import require, on_command, on_message
@@ -18,11 +17,6 @@ from nonebot.adapters.onebot.v11 import (
     MessageSegment,
     MessageEvent,
     GroupMessageEvent,
-)
-from nonebot.adapters.onebot.v11.permission import (
-    GROUP_ADMIN,
-    GROUP_OWNER,
-    PRIVATE_FRIEND,
 )
 
 require("nonebot_plugin_imageutils")
@@ -55,9 +49,6 @@ __plugin_meta__ = PluginMetadata(
         "version": "0.3.13",
     },
 )
-
-PERM_EDIT = GROUP_ADMIN | GROUP_OWNER | PRIVATE_FRIEND | SUPERUSER
-PERM_GLOBAL = SUPERUSER
 
 help_cmd = on_command("头像表情包", aliases={"头像相关表情包", "头像相关表情制作"}, block=False, priority=8)
 petpet_block_cmd = on_command("禁用头像表情", block=False, priority=8)
