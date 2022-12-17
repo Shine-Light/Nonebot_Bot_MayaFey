@@ -6,6 +6,7 @@
 from nonebot import on_command, require, get_bot, get_driver
 from nonebot.exception import FinishedException, ActionFailed
 from nonebot.log import logger
+from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
 from . import tools
 from utils.other import add_target, translate, reboot
@@ -29,16 +30,28 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if await tools.check_update():
             state = await tools.get_state(await tools.get_version_last())
             if state["auto"]:
-                await update.send("正在自动更新,更新期间机器人无法使用,请勿关闭程序")
-                await tools.update(str(event.group_id))
-                await update.send("正在重启...")
-                await reboot()
+                await update.send("更新前记得备份哦,是否确认更新?(Y\\N)")
             else:
-                await update.send(f"本次更新无法自动更新,请手动升级\n备注:{state['note']}")
+                await update.finish(f"本次更新无法自动更新,请手动升级\n备注:{state['note']}")
         else:
             await update.finish("已经是最新版本,无需更新")
     except FinishedException:
-        pass
+        raise FinishedException()
+    except Exception as e:
+        await update.send(f"更新出错: {str(e)}")
+
+
+@update.got("choice")
+async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
+    choice = matcher.get_arg("choice")
+    try:
+        if choice.extract_plain_text() in ["Y", "y", "是", "确认", "更新", "确认更新"]:
+            await update.send("正在自动更新,更新期间机器人无法使用,请勿关闭程序")
+            await tools.update(str(event.group_id))
+            await update.send("正在重启...")
+            await reboot()
+        else:
+            await update.send("取消更新...")
     except Exception as e:
         await update.send(f"更新出错: {str(e)}")
 
