@@ -3,15 +3,17 @@
 @Version: 1.0
 @Date: 2022/3/24 21:10
 """
-from nonebot import on_command
+from nonebot import on_command, require
 from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment
 from .functions import *
 from utils.path import *
-from utils import htmlrender, other
+from utils import other
 from nonebot.plugin import PluginMetadata
 from utils.other import add_target, translate
 
+require("nonebot_plugin_htmlrender")
+import nonebot_plugin_htmlrender as htmlrender
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(

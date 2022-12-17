@@ -6,8 +6,10 @@ from io import BytesIO
 from pathlib import Path
 from typing import List, Union
 
+from nonebot import require
 from nonebot.log import logger
-from utils.htmlrender import get_new_page, html_to_pic
+require("nonebot_plugin_htmlrender")
+import nonebot_plugin_htmlrender as htmlrender
 
 
 dir_path = Path(__file__).parent
@@ -18,7 +20,7 @@ env = jinja2.Environment(loader=jinja2.FileSystemLoader(template_path),
 
 
 async def create_image(html: str):
-    return await html_to_pic(html, viewport={"width": 100, "height": 100},
+    return await htmlrender.html_to_pic(html, viewport={"width": 100, "height": 100},
                              template_path=path_url)
 
 
@@ -38,7 +40,7 @@ async def create_5000choyen_logo(top_text, bottom_text) -> str:
     template = env.get_template('5000choyen.html')
     html = await template.render_async(top_text=top_text, bottom_text=bottom_text)
 
-    async with get_new_page() as page:
+    async with htmlrender.get_new_page() as page:
         await page.goto(path_url)
         await page.set_content(html)
         await page.wait_for_selector('a')
@@ -51,7 +53,7 @@ async def create_douyin_logo(text) -> BytesIO:
     template = env.get_template('douyin.html')
     html = await template.render_async(text=text, frame_num=10)
 
-    async with get_new_page() as page:
+    async with htmlrender.get_new_page() as page:
         await page.goto(path_url)
         await page.set_content(html)
         imgs = await page.query_selector_all('a')

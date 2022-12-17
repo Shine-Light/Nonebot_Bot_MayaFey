@@ -1,7 +1,9 @@
 from typing import List
 from pathlib import Path
 
-from utils.htmlrender import template_to_pic
+from nonebot import require
+require("nonebot_plugin_htmlrender")
+import nonebot_plugin_htmlrender as htmlrender
 
 from .model import Air, Daily
 from .weather_data import Weather
@@ -15,7 +17,7 @@ async def render(weather: Weather) -> bytes:
         if weather.air.now:
             air = add_tag_color(weather.air.now)
 
-    return await template_to_pic(
+    return await htmlrender.template_to_pic(
         template_path=template_path,
         template_name="weather.html",
         templates={

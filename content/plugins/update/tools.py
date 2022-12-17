@@ -4,14 +4,15 @@
 @Date: 2022/4/21 12:57
 """
 import os
-
-
 import requests
 import platform
 
-
-from utils import path, other, htmlrender, json_tools, url
+from nonebot import require
+from utils import path, other, json_tools, url
 from pathlib import Path
+
+require("nonebot_plugin_htmlrender")
+import nonebot_plugin_htmlrender as htmlrender
 
 
 async def get_update_log():

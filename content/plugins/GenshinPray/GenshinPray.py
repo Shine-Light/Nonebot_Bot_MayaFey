@@ -8,14 +8,16 @@ import pymysql
 import datetime
 
 from pathlib import Path
-from nonebot import get_driver
+from nonebot import get_driver, require
 from nonebot.log import logger
 from utils.path import GenshinPray_path, GenshinPray_img_path
 from utils.other import mk
-from utils.htmlrender import template_to_pic, text_to_pic
 from utils import json_tools
 from content.plugins.credit.tools import minus
 from .tools import Pray, Result, ResultCode, Assign, Query, Setting
+
+require("nonebot_plugin_htmlrender")
+import nonebot_plugin_htmlrender as htmlrender
 
 fstr = "%Y-%m-%d %H:%M:%S"
 elements = {
@@ -256,7 +258,7 @@ class GenshinPray(object):
                     "ele": pondInfo['star4UpList'][2]['goodsSubType'],
                     "ele_en": GenshinPray.element_en(pondInfo['star4UpList'][2]['goodsSubType'])
                 }
-                img = await template_to_pic(
+                img = await htmlrender.template_to_pic(
                     str(Path(__file__).parent / "template" / "role_up"),
                     "index.html",
                     {
@@ -317,7 +319,7 @@ class GenshinPray(object):
                 "name": pondInfo['star4UpList'][4]['goodsName'],
                 "ele": pondInfo['star4UpList'][4]['goodsSubType']
             }
-            img = await template_to_pic(
+            img = await htmlrender.template_to_pic(
                 str(Path(__file__).parent / "template" / "arm_up"),
                 "index.html",
                 {
@@ -381,7 +383,7 @@ class GenshinPray(object):
                       f"武器池5星出货率(%): {data['armStar5Rate']}\n" \
                       f"常驻池5星出货率(%): {data['permStar5Rate']}"
 
-            img = await text_to_pic(message)
+            img = await htmlrender.text_to_pic(message)
             result.imgUrl = img
             return result
 
