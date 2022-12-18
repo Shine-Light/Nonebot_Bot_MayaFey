@@ -87,6 +87,7 @@
 ### 游戏功能
 - [X] 俄罗斯轮盘  ([nonebot_plugin_russian](https://github.com/HibiKier/nonebot_plugin_russian)修改而来)  
 - [X] 21点  ([nonebot-plugin-blackjack](https://github.com/yaowan233/nonebot-plugin-blackjack)修改而来)  
+- [X] 猜群友
 ### 被动功能
 - [X] 恶意触发命令检测  
 - [X] 违禁图片检测(百度和腾讯接口)  
