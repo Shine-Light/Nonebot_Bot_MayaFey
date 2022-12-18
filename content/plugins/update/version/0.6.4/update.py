@@ -218,6 +218,7 @@ try:
     download_to_plugin("fortune/utils")
     download_to_plugin("gspanel/__utils__")
     download_to_plugin("gspanel/data_source")
+    download_to_plugin("heweather/render_pic")
     download_to_plugin("menu/__init__")
     download_to_plugin("morning/data_source")
     download_to_plugin("morning/download")
