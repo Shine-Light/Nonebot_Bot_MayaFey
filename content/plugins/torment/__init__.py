@@ -46,7 +46,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
                 })
             # 群聊未设置过
             except KeyError:
-                await torment_set.send(f"还没设置模式和时间哦,{get_bot_name}先帮你设置吧,默认为 '间隔' 模式,时间为 '1' 小时")
+                await torment_set.send(f"还没设置模式和时间哦,{get_bot_name()}先帮你设置吧,默认为 '间隔' 模式,时间为 '1' 小时")
                 js.update({gid: {
                         "state": True,
                         "mode": "interval",
@@ -103,11 +103,11 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
                 minute = int(time.split(":")[1])
                 second = int(time.split(":")[2])
             except:
-                await torment_set.finish(f"{get_bot_name}要的是整数哦")
+                await torment_set.finish(f"{get_bot_name()}要的是整数哦")
             if hour < 0 or minute < 0 or second < 0:
-                await torment_set.finish(f"{get_bot_name}不会时光倒流,请用正数")
+                await torment_set.finish(f"{get_bot_name()}不会时光倒流,请用正数")
             if mode == "interval" and hour == 0 and minute == 0 and second == 0:
-                await torment_set.finish(f"你想累死{get_bot_name}吗?间隔最少1秒啦!")
+                await torment_set.finish(f"你想累死{get_bot_name()}吗?间隔最少1秒啦!")
             try:
                 js.update({gid: {
                     "state": js[gid]["state"],
