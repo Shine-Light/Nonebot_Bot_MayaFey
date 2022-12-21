@@ -233,8 +233,10 @@ async def raw_msg_checker(raw_msg: str, gid: str) -> dict:
                 return {"state": "error", "error": "时间格式不对哦, 格式应为 `时:分:秒`"}
             time = raw_msg.split(" ")[3].strip()
             temp = datetime.datetime.strptime(time, fmt_str_time)
-            if mode == "interval" and int(datetime.datetime.strftime(temp, "%S")) <= 0:
-                return {"state": "error", "error": f"你想累死{get_bot_name}吗?间隔最少1秒啦!"}
+            temp_base = datetime.datetime.strptime("00:00:00", fmt_str_time)
+            delta = temp - temp_base
+            if mode == "interval" and delta.seconds <= 0:
+                return {"state": "error", "error": f"你想累死{get_bot_name()}吗?间隔最少1秒啦!"}
         except:
             return {"state": "error", "error": "时间格式不对哦, 格式应为 `时:分:秒`?间隔最少1秒啦!"}
 
