@@ -21,7 +21,10 @@ async def get_plugin_list() -> list:
 
 
 async def get_plugin_detail(gid: str, plugin: str) -> dict:
-    permission = role_cn(get_plugin_permission(gid, plugin))
+    permission = get_plugin_permission(gid, plugin)
+    if not permission:
+        permission = "多种"
+    permission = role_cn(permission)
     count = await get_count(gid, plugin)
     state = await get_state(plugin, gid)
     unset = await is_unset(plugin)
