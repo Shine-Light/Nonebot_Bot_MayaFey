@@ -56,7 +56,7 @@ async def get_plugins_list(data=Body(None)) -> Dict[str, int]:
         if type(data) == bytes:
             data = json.loads(data.decode("gbk"))
         else:
-            data = ujson.loads(data)
+            data = json.loads(data)
         gid = str(data["gid"])
         plugins = await get_plugin_list()
         plugins_full_list = []
