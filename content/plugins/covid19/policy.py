@@ -3,10 +3,9 @@ import requests
 
 
 def citypolicy_info(id: Union[str, int]) -> Dict:
-
     '''
     input: 城市id
-     
+
      -> 地方疫情相关政策
     '''
 
@@ -16,12 +15,14 @@ def citypolicy_info(id: Union[str, int]) -> Dict:
     assert res_['message'] == 'success'
     return (res_['result']['data'][0])
 
+
 def policy_out(id: Union[str, int]) -> str:
     '''
     出行政策
     '''
     data = citypolicy_info(id)
-    return  f"出行({data['leave_policy_date']})\n{data['leave_policy']}"
+    return f"出行({data['leave_policy_date']})\n{data['leave_policy']}"
+
 
 def policy_in(id: Union[str, int]) -> str:
     '''
@@ -31,11 +32,10 @@ def policy_in(id: Union[str, int]) -> str:
     return f"进入({data['back_policy_date']})\n{data['back_policy']}"
 
 
-def get_policy(out_id: Union[str, int], in_id: Union[str, int]=None) -> List[str]:
-
+def get_policy(out_id: Union[str, int], in_id: Union[str, int] = None) -> List[str]:
     '''
-    input: 
-        out_id 离开城市id 
+    input:
+        out_id 离开城市id
         in_id: 进入城市id
 
 
@@ -43,12 +43,10 @@ def get_policy(out_id: Union[str, int], in_id: Union[str, int]=None) -> List[str
     '''
     if not in_id:
         in_id = out_id
-    return([policy_out(out_id), policy_in(in_id)])
-
+    return ([policy_out(out_id), policy_in(in_id)])
 
 
 def get_city_poi_list(id: Union[str, int]) -> List[str]:
-
     '''
     input: 城市id
 
@@ -56,14 +54,13 @@ def get_city_poi_list(id: Union[str, int]) -> List[str]:
     '''
 
     data = citypolicy_info(id)['poi_list']  # type: List
-    t_ = {'0':'🟢低风险','1':'🟡中风险', '2':'🔴高风险'}
+    t_ = {'0': '🟢低风险', '1': '🟡中风险', '2': '🔴高风险'}
 
-    res_list = [[], [], []] # type: List
+    res_list = [[], [], []]  # type: List
     for i in data:
-        res_list[2-int(i['type'])].append(f"{t_[i['type']]} {i['area'].split(i['city'])[-1]}")
-    
-    for i in range(3):
-        res_list[i] = '\n\n'.join(res_list[i])
+        res_list[2 - int(i['type'])].append(f"{t_[i['type']]} {i['area'].split(i['city'])[-1]}")
+
+    res_list = ['\n\n'.join(res) for res in res_list if res]
 
     return res_list if data else ["全部低风险"]
 

@@ -2,12 +2,12 @@ from nonebot import on_regex, on_command, get_bot, get_driver, on_endswith
 from nonebot import require, logger
 from nonebot.adapters.onebot.v11.bot import Bot
 from nonebot.adapters.onebot.v11.message import Message
-from nonebot.adapters.onebot.v11.event import MessageEvent
+from nonebot.adapters.onebot.v11.event import  MessageEvent
 from nonebot.typing import T_State
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from .data import CITY_ID
+from .data import CITY_ID, PROVINCE
 from .data_load import DataLoader
 from .uilts import send_msg, send_forward_msg_group
 from .policy import get_city_poi_list, get_policy
@@ -78,26 +78,66 @@ async def _(bot: Bot, event: MessageEvent, state: T_State, city: Message = Comma
 @covid19_news.handle()
 async def _(bot: Bot, event: MessageEvent):
     city_name = str(event.get_message())[:-2]
-    city = NewsBot.data.get(city_name)
+    if len(city_name) > 6 and city_name not in CITY_ID:
+        return
 
+    city = NewsBot.data.get_data(city_name)
     if city:
-        await covid19_news.send(message=f"{NewsBot.time}\n{city.main_info}")
+        await covid19_news.send(message=f"{city.main_info}")
     else:
-        await covid19_news.finish(message="查询的城市不存在或存在别名")
+        logger.error(f'"{city_name}" is not found.')
 
 
 @covid19_policy.handle()
 async def _(bot: Bot, event: MessageEvent):
-    city = str(event.get_message())[:-4]
-    if city in CITY_ID:
-        await send_msg(bot, event, get_policy(CITY_ID[city]))
+
+    name = str(event.get_message())[:-4]
+    if name in CITY_ID:
+        await send_msg(bot, event, get_policy(CITY_ID[name]))
+    elif name in PROVINCE:
+        attention = ''
+        for city in PROVINCE[name]:
+            city_n = city['n']
+            logger.info(city_n)
+            if item:=NewsBot.data.get_data(city_n):
+                if item.all_add:
+                    attention += ('\n'+city_n)
+            else:
+                logger.error(f"查询【{city_n}】信息失败")
+
+        msg = '疫情政策查询需详细至市级, 目前该省拥有疫情的城市:' + attention if attention \
+        else "疫情政策查询需详细至市级 (该地区目前没有发生疫情)"
+
+        await send_msg(bot, event, msg)
+
+    else:
+        logger.error(f'"{name}" is not found.')
 
 
 @city_poi_list.handle()
 async def _(bot: Bot, event: MessageEvent):
-    city = str(event.get_message())[:-4]
-    if city in CITY_ID:
-        await send_msg(bot, event, get_city_poi_list(CITY_ID[city]))
+    name = str(event.get_message())[:-4]
+    if name in CITY_ID:
+        await send_msg(bot, event, get_city_poi_list(CITY_ID[name]))
+
+    elif name in PROVINCE:
+        attention = ''
+        for city in PROVINCE[name]:
+            city_n = city['n']
+
+            if item := NewsBot.data.get_data(city_n):
+                if item.all_add:
+                    attention += ('\n' + city_n)
+            else:
+                logger.error(f"查询【{city_n}】信息失败")
+
+        msg = '风险地区查询需详细至市级, 目前该省拥有疫情的城市:' + attention if attention \
+            else '风险地区查询需详细至市级 (该地区目前没有发生疫情)'
+
+        await send_msg(bot, event, msg)
+
+    else:
+        logger.error(f'"{name}" is not found.')
 
 
 @city_travel.handle()
@@ -116,12 +156,14 @@ FOCUS = DL.data
 
 scheduler = require('nonebot_plugin_apscheduler').scheduler
 
+scheduler = require('nonebot_plugin_apscheduler').scheduler
+
 
 @scheduler.scheduled_job('cron', minute='*/30', second='0', misfire_grace_time=60)
 async def update():
     if NewsBot.update_data():
-        logger.info(f"[疫情数据更新]{NewsBot.time}")
-        city_list = []  # 记录推送city, 推送成功后 设置 isUpdated 为 False
+        logger.info(f"[疫情数据更新]")
+        city_list = []  # 记录推送city, 推送成功后 设置 is_updated 为 False
 
         bot = get_bot()
         groups = await bot.get_group_list()
@@ -129,19 +171,21 @@ async def update():
         for gid in FOCUS.keys():
 
             for c in FOCUS.get(gid):
+
                 city = NewsBot.data.get(c)
-                city_list.append(city)
 
                 # 判定是否为更新后信息
-                if city.isUpdated is True:
+                if city and city.is_updated:
+                    city_list.append(city)
                     # send group or private
                     if int(gid) in group_id:
                         await get_bot().send_group_msg(group_id=int(gid), message='关注城市疫情变化\n' + city.main_info)
                     else:
-                        await get_bot().send_private_msg(user_id=int(gid), message='关注城市疫情变化\n' + city.main_info)
+                        await get_bot().send_private_msg(user_id=int(gid),
+                                                         message='关注城市疫情变化\n' + city.main_info)
 
         for city in city_list:
-            city.isUpdated = False
+            city.is_updated = False
 
 
 '''
@@ -157,13 +201,13 @@ try:
                 res = []
                 filter_city = convid_config.get('filter', []) + ['香港', '台湾', '中国']
                 for _, city in list(NewsBot.data.items()):
-                    if city.all_add >= convid_config.get('red-line', 100):
+                    if city.all_add >= convid_config.get('red-line', 1000):
                         if city.name not in filter_city:
                             res.append(f"{city.main_info}")
 
                 if res:
                     bot = get_bot()
-                    message = NewsBot.time + '\n' + '\n\n'.join(res)
+                    message = '\n\n'.join(res)
 
                     group_list = convid_config.get('group')
                     if group_list == 'all':
@@ -177,4 +221,3 @@ try:
             scheduler.add_job(notice, "cron", hour="11", minute="5", id="covid19_notice")
 except Exception as e:
     logger.info(f"疫情config设置有误: {e}")
-
