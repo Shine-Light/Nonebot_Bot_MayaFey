@@ -49,7 +49,8 @@ async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher, state: T_State
     state["src_js"] = {
         "title": title,
         "mode": mode,
-        "time": time
+        "time": time,
+        "switch": True
     }
 
 
@@ -138,6 +139,34 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
     msg = await get_schedule_plaintext(schedule_list)
     await list_of_schedule.send(msg)
+
+
+schedule_on = on_command(cmd="开启定时消息", aliases={"启用定时消息", "开启定时任务"}, priority=8)
+@schedule_on.handle()
+async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+    gid = str(event.group_id)
+    title = args.extract_plain_text().strip()
+    if not title:
+        await schedule_on.send("标题不能为空哦")
+        return
+    if not title_is_exists(gid, title):
+        await schedule_on.send("是不是输错了呢?找不到这个标题耶")
+    await job_on(gid, title)
+    await schedule_on.send("开启成功")
+
+
+schedule_off = on_command(cmd="关闭定时消息", aliases={"关闭定时消息", "停止定时任务"}, priority=8)
+@schedule_off.handle()
+async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+    gid = str(event.group_id)
+    title = args.extract_plain_text().strip()
+    if not title:
+        await schedule_off.send("标题不能为空哦")
+        return
+    if not title_is_exists(gid, title):
+        await schedule_off.send("是不是输错了呢?找不到这个标题耶")
+    await job_off(gid, title)
+    await schedule_off.send("关闭成功")
 
 
 clean = on_command(cmd="清理过期定时信息", aliases={"清理过期定时消息", "清理过期定时任务"}, priority=8)
