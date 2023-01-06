@@ -13,10 +13,12 @@ from nonebot.log import logger
 from content.plugins.plugin_control.functions import get_state
 from utils.path import schedule_path, schedule_groups_path
 from utils.other import mk, get_bot_name
-from utils.json_tools import json_write, json_load
+from utils.json_tools import json_write, json_load, json_update
 
 
-scheduler = require("nonebot_plugin_apscheduler").scheduler
+require("nonebot_plugin_apscheduler")
+from nonebot_plugin_apscheduler import scheduler
+
 driver = get_driver()
 fmt_str_datetime = "%Y-%m-%d %H:%M:%S"
 fmt_str_time = "%H:%M:%S"
@@ -94,35 +96,36 @@ async def add_job(gid: str, title: str):
 
 async def modify_job(gid: str, title: str):
     js = json_load(schedule_path / gid / "config.json")
-    js = js[title]
+    js: dict = js[title]
     mode = js["mode"]
-    if mode == "cron":
-        time = js["time"].split(":")
-        hour, minute, second = time
-        scheduler.reschedule_job(
-            id=f"{gid}_{title}",
-            trigger=mode,
-            hour=hour,
-            minute=minute,
-            second=second
-        )
-    elif mode == "interval":
-        time = js["time"].split(":")
-        hours, minutes, seconds = time
-        scheduler.reschedule_job(
-            id=f"{gid}_{title}",
-            trigger=mode,
-            hours=hours,
-            minutes=minutes,
-            seconds=seconds
-        )
-    else:
-        time = js["time"]
-        scheduler.reschedule_job(
-            id=f"{gid}_{title}",
-            trigger=mode,
-            run_date=time
-        )
+    if js.get("switch"):
+        if mode == "cron":
+            time = js["time"].split(":")
+            hour, minute, second = time
+            scheduler.reschedule_job(
+                job_id=f"{gid}_{title}",
+                trigger=mode,
+                hour=hour,
+                minute=minute,
+                second=second
+            )
+        elif mode == "interval":
+            time = js["time"].split(":")
+            hours, minutes, seconds = time
+            scheduler.reschedule_job(
+                job_id=f"{gid}_{title}",
+                trigger=mode,
+                hours=hours,
+                minutes=minutes,
+                seconds=seconds
+            )
+        else:
+            time = js["time"]
+            scheduler.reschedule_job(
+                job_id=f"{gid}_{title}",
+                trigger=mode,
+                run_date=time
+            )
 
 
 async def delete_job(gid: str, title: str):
@@ -130,6 +133,34 @@ async def delete_job(gid: str, title: str):
     js.pop(title)
     json_write(schedule_path / gid / "config.json", js)
     scheduler.remove_job(f"{gid}_{title}")
+
+
+async def job_on(gid: str, title: str):
+    """
+    开启定时任务
+    gid: 群号
+    title: 任务标题
+    """
+    job_id = f"{gid}_{title}"
+    if not scheduler.get_job(job_id):
+        await add_job(gid, title)
+    js = json_load(schedule_path / gid / "config.json")[title]
+    js.update({"switch": True})
+    json_update(schedule_path / gid / "config.json", title, js)
+
+
+async def job_off(gid: str, title: str):
+    """
+    关闭定时任务
+    gid: 群号
+    title: 任务标题
+    """
+    job_id = f"{gid}_{title}"
+    if scheduler.get_job(job_id):
+        scheduler.remove_job(job_id)
+    js = json_load(schedule_path / gid / "config.json")[title]
+    js.update({"switch": False})
+    json_update(schedule_path / gid / "config.json", title, js)
 
 
 async def schedule_init(gid: str):
