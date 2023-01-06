@@ -27,10 +27,10 @@ __plugin_meta__ = PluginMetadata(
     name=translate("e2c", "menu"),
     description="展示原神游戏内角色展柜数据",
     usage="/原神面板绑定 {uid}\n"
-          "/原神面板"
-          "/原神面板{uid}"
-          "/原神面板 {角色}"
-          "/原神面板@xx\n\n\n" + add_target(60)
+          "/原神面板\n"
+          "/原神面板{uid}\n"
+          "/原神面板 {角色}\n"
+          "/原神面板@xx" + add_target(60)
 )
 
 
