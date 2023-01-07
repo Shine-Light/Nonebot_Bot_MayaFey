@@ -129,6 +129,16 @@ class LuckyMoneyManager(object):
         add(gid, uid, money)
         return money
 
+    def is_got(self, gid: str, uid: str):
+        """
+        用户是否已抢过红包
+        """
+        records = self.get_record(gid)
+        for record in records:
+            if record[0] == uid:
+                return True
+        return False
+
     def removeMoney(self, gid: str):
         """
         红包销毁

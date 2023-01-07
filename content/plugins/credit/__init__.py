@@ -126,6 +126,8 @@ async def _(bot: Bot, event: GroupMessageEvent):
     nickname = (await bot.get_group_member_info(group_id=int(gid), user_id=int(uid), no_cache=True))['nickname']
     if not manager.exist(gid):
         await get_lucky_money.finish("现在没有红包可以抢哦,快去发一个吧!")
+    if manager.is_got(gid, uid):
+        await get_lucky_money.finish("太贪心了啊喂,每人只能抢一份!")
     money = manager.getMoney(gid, uid, nickname)
     await get_lucky_money.send(f"太棒了!你抢到了 {money} 积分", at_sender=True)
     if not manager.get_count_surplus(gid):
