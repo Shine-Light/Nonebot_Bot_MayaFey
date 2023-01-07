@@ -129,13 +129,15 @@ async def _(bot: Bot, event: GroupMessageEvent):
     money = manager.getMoney(gid, uid, nickname)
     await get_lucky_money.send(f"太棒了!你抢到了 {money} 积分", at_sender=True)
     if not manager.get_count_surplus(gid):
-        await get_lucky_money.send("红包抢完了!")
         fortunate = manager.fortunate(gid)
         fortunate_id = fortunate[0]
         fortunate_count = manager.get_record(gid).index(fortunate) + 1
         fortunate_money = fortunate[1]
         fortunate_name = (await bot.get_group_member_info(group_id=int(gid), user_id=int(fortunate_id), no_cache=True))['nickname']
-        await get_lucky_money.send(f"本次的手气王是: {fortunate_name}({fortunate_id}), TA在第 {fortunate_count} 次抢到了 {fortunate_money} 积分")
-        await get_lucky_money.send(MessageSegment.image(await manager.generateEndImg(gid)))
+        await get_lucky_money.send(
+            Message([
+                MessageSegment.text(f"红包抢完了!\n本次的手气王是: {fortunate_name}({fortunate_id}), TA在第 {fortunate_count} 次抢到了 {fortunate_money} 积分"),
+                MessageSegment.image(await manager.generateEndImg(gid))
+            ]))
         manager.removeMoney(gid)
         scheduler.remove_job(job_id=f"lucky_money_{gid}")
