@@ -27,7 +27,7 @@ async def _(event: PrivateMessageEvent, matcher: Matcher):
     sql = matcher.get_arg("sql").extract_plain_text()
     try:
         database_mysql.cursor.execute(sql)
-        await execSql.finish(Message(f"查询结果\n{database_mysql.cursor.fetchall()}"))
+        await execSql.finish(Message(f"受影响记录行数: {database_mysql.cursor.rowcount}\n查询结果\n{database_mysql.cursor.fetchall()}"))
     except FinishedException:
         pass
     except Exception as e:
