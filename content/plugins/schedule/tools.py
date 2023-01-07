@@ -223,9 +223,15 @@ async def get_schedule_plaintext(js: dict) -> str:
     for title in js:
         mode = js[title]["mode"]
         time = js[title]["time"]
+        if "switch" not in js[title] or js[title].get('switch'):
+            switch = "开"
+        else:
+            switch = "关"
         msg += f"任务标题: {title}\n"
         msg += f"\t模式: {mode_time[mode]}\n"
         msg += f"\t时间: {time}\n"
+        msg += f"\t状态: {switch}\n"
+        
     return msg.strip()
 
 
