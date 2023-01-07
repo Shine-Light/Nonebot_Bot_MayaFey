@@ -17,6 +17,8 @@ permission_common_json = shine_light_cdn_base + "permission_common.json"
 unset_txt = shine_light_cdn_base + "unset.txt"
 # 最新版本页面
 version_html = shine_light_cdn_base + "version.html"
+# 头像网址
+avatar_base_url = f"http://q.qlogo.cn/headimg_dl?dst_uin=%s&spec=640&img_type=jpeg"
 
 # 早晚安插件配置文件
 morning_config = "https://cdn.jsdelivr.net/gh/MinatoAquaCrews/nonebot_plugin_morning@beta/nonebot_plugin_morning/resource/config.json"
