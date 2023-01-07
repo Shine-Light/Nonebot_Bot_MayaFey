@@ -1,0 +1,128 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+body {
+    width: 100vw;
+    height: 2314px;
+}
+.main {
+    display: flex;
+    margin: auto;
+    width: 1080px;
+    height: 2314px;
+    background-image: url('../assets/redbag1_base.png');
+    justify-content: center;
+}
+.avatar-center {
+    display: flex;
+    position: absolute;
+    top: 270px;
+    height: 175px;
+    width: 1080px;
+}
+.avatar-center img {
+    margin: auto;
+    align-self: center;
+    border-radius: 50%;
+    height: 95%;
+}
+.title {
+    align-self: center;
+    position: absolute;
+    top: 470px;
+    height: 70px;
+    width: 1080px;
+    text-align: center;
+    font-size: 44px;
+    font-weight: 600;
+    letter-spacing: 1px;
+}
+.bless {
+    align-self: center;
+    position: absolute;
+    top: 560px;
+    height: 55px;
+    width: 1080px;
+    text-align: center;
+    font-size: 38px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    color: #999999;
+}
+.money {
+    align-self: center;
+    position: absolute;
+    top: 625px;
+    height: 170px;
+    width: 1080px;
+    text-align: center;
+    font-size: 168px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: #d39938;
+}
+.count {
+    position: absolute;
+    top: 870px;
+    width: 925px;
+    text-align: left;
+    font-size: 40px;
+    color: #999999;
+}
+.container {
+    position: relative;
+    top: 930px;
+    height: 1140px;
+    width: 1000px;
+    list-style-type: none;
+    justify-content: center;
+}
+.container li {
+    display: flex;
+    margin: auto;
+    width: 925px;
+    height: 220px;
+    background-color: #f4f4f4;
+    margin-top: 20px;
+    border-radius: 20px;
+}
+.avatar {
+    display: block;
+    align-self: center;
+    height: 60%;
+    border-radius: 50%;
+    margin-left: 30px;
+}
+.container li span {
+    align-self: center;
+    margin-left: 20px;
+}
+.text1 {
+    width: 450px;
+}
+.text2 {
+    position: absolute;
+    right: 0;
+    margin-right: 50px;
+    text-align: right;
+    height: 140px;
+}
+.nickname {
+    font-size: 48px;
+}
+.time {
+    color: #999999;
+    margin-top: 15px;
+    font-size: 32px;
+}
+.money_get {
+    position: relative;
+    font-size: 46px;
+    top: 1px;
+}
+.achievement {
+    margin-top: 15px;
+    font-size: 44px;
+    color: #d39938;
+}

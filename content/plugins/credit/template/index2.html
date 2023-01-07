@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="./css/style2.css">
+    <script src="./js/index2.js"></script>
+    <script>
+        // var data = {
+        //     "money": 1000,
+        //     "count": 1,
+        //     "sender_nickname": "Shine_Light",
+        //     "sender_avatar": avatar_base64,
+        //     "datas": [
+        //         {
+        //             "avatar": avatar_base64,
+        //             "record": ["3120815902", 1000, "19:19:52", "Shine_Light"],
+        //             "achievement": "手气最佳"
+        //         },
+        //     ]
+        // }
+        var data = {{data}};
+        money = data['money'];
+        count = data['count'];
+        sender_avatar = data['sender_avatar'];
+        sender_nickname = data['sender_nickname'];
+        datas = [];
+        for (let index = 0; index < data['datas'].length; index++) {
+            datas.push(new Data(data['datas'][index]));
+        }
+        window.onload = init;
+    </script>
+</head>
+<body>
+    <!-- 925 425 -->
+    <div class="main">
+        <div class="avatar-center">
+            <img src="" alt="">
+        </div>
+        <div class="title">
+            发送的拼手气红包
+        </div>
+        <div class="bless">
+            大吉大利
+        </div>
+        <div class="money">
+            
+        </div>
+        <div class="count">
+            个红包，已领完
+        </div>
+        <ul class="container">
+        </ul>
+    </div>
+</body>
+</html>

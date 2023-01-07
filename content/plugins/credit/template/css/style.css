@@ -1,0 +1,49 @@
+* {
+    padding: 0;
+    margin: 0;
+}
+body {
+    width: 100wh;
+}
+.main {
+    position: relative;
+    margin: auto;
+    height: 1338px;
+    width: 898px;
+    background-image: url('../assets/redbag_no_text.png');
+    color: #f8e5bd;
+}
+.center {
+    display: flex;
+    position: absolute;
+    height: 100px;
+    width: 100%;
+    top: 380px;
+}
+.center > span{
+    display: flex;;
+    margin: auto;
+    height: 100%;
+}
+.center > span > span{
+    align-self: center;
+    font-size: 32px;
+    font-weight: 500;
+    margin-left: 20px;
+    letter-spacing: 4px;
+}
+.center img {
+    align-self: center;
+    height: 85%;
+    border-radius: 50%;
+}
+.center-big {
+    position: absolute;
+    margin: auto;
+    width: 100%;
+    top: 535px;
+    text-align: center;
+    font-size: 80px;
+    font-weight: 600;
+    letter-spacing: 2px;
+}
