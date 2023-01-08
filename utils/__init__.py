@@ -17,6 +17,7 @@ from .path import *
 from .other import mk
 from .users import superuser, Van
 from .json_tools import json_load, json_write
+from .config import manager
 
 
 db = database_mysql.connect
@@ -265,6 +266,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await credit.tools.init(bot, event)
         await plugin_control.init(gid)
         await sign.tools.init(bot, event)
+        manager.initAllGroupPlugin(gid)
         await bot_init.send("初始化成功,该项目完全免费,如果你是付费获得的，请立即退款并举报")
     # 初始化异常
     except Exception as e:
