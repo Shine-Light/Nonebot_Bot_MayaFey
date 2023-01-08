@@ -82,6 +82,9 @@ async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
     except:
         await send_lucky_money.send("积分要整数哦")
         await send_lucky_money.reject("要塞多少积分呢?")
+    if money <= 0:
+        await send_lucky_money.send("最少1积分!")
+        await send_lucky_money.reject("要塞多少积分呢?")
     uid = str(event.user_id)
     gid = str(event.group_id)
     if not tools.check(gid, uid, money):
