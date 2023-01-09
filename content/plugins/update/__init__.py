@@ -90,7 +90,7 @@ async def _(bot: Bot, event: PrivateMessageEvent):
 
 timezone = "Asia/Shanghai"
 scheduler = require("nonebot_plugin_apscheduler").scheduler
-@scheduler.scheduled_job("interval", seconds=30, timezone=timezone)
+@scheduler.scheduled_job("interval", minutes=30, timezone=timezone)
 async def run():
     if await tools.check_update():
         logger.info("检测到新版本,向根用户推送更新信息")
