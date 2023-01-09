@@ -14,6 +14,8 @@ from pathlib import Path
 require("nonebot_plugin_htmlrender")
 import nonebot_plugin_htmlrender as htmlrender
 
+ignore_flag = {}
+
 
 async def get_update_log():
     url_log = f"http://cdn.shinelight.xyz/nonebot/version/{await get_version_last()}/log.md"
@@ -25,6 +27,8 @@ async def get_update_log():
 async def check_update() -> bool:
     version = get_version()
     version_last = await get_version_last()
+    if version_last in ignore_flag:
+        return False
     if version_last != version:
         return True
     else:
@@ -33,6 +37,11 @@ async def check_update() -> bool:
 
 async def get_version_last() -> str:
     return requests.get(url.version_html).text
+
+
+def clean_ignore_flag():
+    for key in set(ignore_flag.keys()):
+        ignore_flag.pop(key)
 
 
 def get_version() -> str:
@@ -46,6 +55,7 @@ async def get_state(version: str) -> dict:
 
 
 async def update(gid: str) -> str:
+    clean_ignore_flag()
     js = json_tools.json_load(path.updating_path)
     js['updating'] = True
     js['gid'] = gid
@@ -65,3 +75,7 @@ async def update(gid: str) -> str:
     else:
         os.system(f"python3 {dir_path}")
     return version_old
+
+
+def ignore_update(version: str):
+    ignore_flag.update({version: True})

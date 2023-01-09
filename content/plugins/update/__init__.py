@@ -7,7 +7,7 @@ from nonebot import on_command, require, get_bot, get_driver
 from nonebot.exception import FinishedException, ActionFailed
 from nonebot.log import logger
 from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message, PrivateMessageEvent
 from . import tools
 from utils.other import add_target, translate, reboot
 from nonebot.plugin import PluginMetadata
@@ -45,7 +45,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
     choice = matcher.get_arg("choice")
     try:
-        if choice.extract_plain_text() in ["Y", "y", "是", "确认", "更新", "确认更新"]:
+        if choice.extract_plain_text().upper() in ["Y", "是", "确认", "更新", "确认更新"]:
             await update.send("正在自动更新,更新期间机器人无法使用,请勿关闭程序")
             await tools.update(str(event.group_id))
             await update.send("正在重启...")
@@ -56,7 +56,7 @@ async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
         await update.send(f"更新出错: {str(e)}")
 
 
-check_update = on_command("检查更新", aliases={"check_update"}, priority=8)
+check_update = on_command("检查更新", aliases={"check_update"}, priority=8, block=False)
 @check_update.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     if await tools.check_update():
@@ -69,7 +69,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await check_update.finish("已经是最新版本")
 
 
-update_log = on_command("更新日志", aliases={"update_log", "更新记录"})
+update_log = on_command("更新日志", aliases={"update_log", "更新记录"}, priority=8, block=False)
 @update_log.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     img = await tools.get_update_log()
@@ -77,9 +77,20 @@ async def _(bot: Bot, event: GroupMessageEvent):
                                    MessageSegment.text("完整日志地址:https://mayafey.shinelight.xyz/updatelog/")]))
 
 
+update_ignore = on_command("忽略更新", aliases={"忽略本次更新", "跳过更新", "跳过本次更新"}, priority=8, block=False)
+@update_ignore.handle()
+async def _(bot: Bot, event: PrivateMessageEvent):
+    if await tools.get_version_last() != tools.get_version():
+        version_current = await tools.get_version_last()
+        tools.ignore_update(version_current)
+        await update_ignore.send("已忽略本次更新,将会在下次重启或更新时再次提醒")
+    else:
+        await update_ignore.send("已是最新版本,无需忽略更新")
+
+
 timezone = "Asia/Shanghai"
 scheduler = require("nonebot_plugin_apscheduler").scheduler
-@scheduler.scheduled_job("interval", minutes=30, timezone=timezone)
+@scheduler.scheduled_job("interval", seconds=30, timezone=timezone)
 async def run():
     if await tools.check_update():
         logger.info("检测到新版本,向根用户推送更新信息")
