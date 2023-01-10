@@ -23,7 +23,8 @@ from nonebot_plugin_apscheduler import scheduler  # noqa: E402
 __plugin_meta__ = PluginMetadata(
     name=translate("e2c", "epicfree"),
     description="喜加一",
-    usage="喜加一订阅\n"
+    usage="喜加一\n"
+          "喜加一订阅\n"
           "喜加一订阅删除" + add_target(60)
 )
 
