@@ -68,7 +68,7 @@ class PluginConfig(object):
                         配置名称: 值,
                         配置名称: 值...
                 }}
-                配置路径为 config/插件名/配置路径 可用 {{gid}} 表示群号,非群聊插件无效
+                配置实际路径为 config/插件名/配置文件路径 可用 {{gid}} 表示群号,非group类型插件无效
             configs_general: 插件通用配置,即不会分群
                 {配置名称: 值}
     """
@@ -83,7 +83,7 @@ class PluginConfig(object):
     total_unable: bool = field(default=False)
     version: str = field(default_factory=str)
     author: str = field(default_factory=str)
-    permission_special: str = field(default_factory=dict)
+    permission_special: dict = field(default_factory=dict)
     translate: str = field(default_factory=str)
     configs: Dict[str, Any] = field(default_factory=dict)
     configs_general: Dict[str, Any] = field(default_factory=dict)
@@ -107,8 +107,8 @@ class PluginConfig(object):
                 self.permission_common = self.plugin_meta.extra['permission_common']
             if "unset" in self.plugin_meta.extra:
                 self.unset = self.plugin_meta.extra['unset']
-            if "unable" in self.plugin_meta.extra:
-                self.unable = self.plugin_meta.extra['unable']
+            if "total_unable" in self.plugin_meta.extra:
+                self.total_unable = self.plugin_meta.extra['total_unable']
             if "version" in self.plugin_meta.extra:
                 self.version = self.plugin_meta.extra['version']
             if "author" in self.plugin_meta.extra:
@@ -176,7 +176,7 @@ class PluginConfig(object):
         if self.permission_special:
             for matcher in self.permission_special:
                 if not get_special_per(gid, matcher):
-                    json_update(permission_special_base / f"{gid}.json", matcher, self.permission_special[matcher])
+                    json_update(permission_special_base / f"{gid}.json", matcher, self.permission_special.get(matcher))
         # 配置初始化,不覆盖已有配置,但允许新增配置
         configs = parse_configs(self.configs, self.plugin_name, gid)
         config_default_path = self.__config_path__ / gid / "config.json"
