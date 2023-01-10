@@ -18,8 +18,9 @@ __plugin_meta__ = PluginMetadata(
     name=translate("e2c", "schedule"),
     description="自定义定时事件",
     usage="/新增|修改定时任务 {标题} 定时|间隔|日期 {时间} {内容}(可以先空着)\n"
+          "/开启|关闭定时任务 {标题}\n"
           "/删除定时任务 {标题}\n"
-          "/定时任务列表"
+          "/定时任务列表\n"
           "/清理过期定时任务" + add_target(60)
 )
 

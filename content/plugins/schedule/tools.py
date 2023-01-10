@@ -231,7 +231,7 @@ async def get_schedule_plaintext(js: dict) -> str:
         msg += f"\t模式: {mode_time[mode]}\n"
         msg += f"\t时间: {time}\n"
         msg += f"\t状态: {switch}\n"
-        
+
     return msg.strip()
 
 
