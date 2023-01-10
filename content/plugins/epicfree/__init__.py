@@ -1,67 +1,96 @@
-import sys
+from re import IGNORECASE
+from traceback import format_exc
+from typing import Dict
 
-from nonebot import on_regex, require, get_driver, get_bot
-from nonebot.exception import FinishedException
+from nonebot import get_bot, get_driver, on_regex, require
 from nonebot.log import logger
 from nonebot.typing import T_State
-from nonebot.adapters.onebot.v11 import (Bot, Event, GroupMessageEvent,
-                                         Message, MessageEvent)
+from nonebot.adapters.onebot.v11 import Bot, Event, Message  # type: ignore
+from nonebot.adapters.onebot.v11.event import (  # type: ignore
+    GroupMessageEvent,
+    MessageEvent,
+)
 from nonebot.plugin import PluginMetadata
-from .data_source import getEpicFree, subscribeHelper
-from utils.permission import permission_
-from utils import users
+from .data_source import check_push, get_epic_free, subscribe_helper  # noqa: E402
 
 from utils.other import add_target, translate
 
-try:
-    epicScheduler = get_driver().config.epic_scheduler
-    assert epicScheduler is not None
-except (AttributeError, AssertionError):
-    epicScheduler = "5 8 8 8"
-day_of_week, hour, minute, second = epicScheduler.split(" ")
+require("nonebot_plugin_apscheduler")
+from nonebot_plugin_apscheduler import scheduler  # noqa: E402
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
     name=translate("e2c", "epicfree"),
-    description="Epic喜加一查询",
-    usage="Epic喜加一\n"
-          "喜加一订阅" + add_target(60)
+    description="喜加一",
+    usage="喜加一订阅\n"
+          "喜加一订阅删除" + add_target(60)
 )
 
 
-epicMatcher = on_regex("((E|e)(P|p)(I|i)(C|c))?喜(加一|\+1)", priority=8)
-@epicMatcher.handle()
-async def onceHandle(bot: Bot, event: Event):
-    imfree = await getEpicFree()
-    await epicMatcher.finish(Message(imfree))
-
-
-epicSubMatcher = on_regex("喜(加一|\+1)订阅", priority=7)
-@epicSubMatcher.handle()
-async def subHandle(bot: Bot, event: MessageEvent, state: T_State):
-    gid = str(event.group_id)
-    uid = str(event.user_id)
+epic_matcher = on_regex(r"^(epic)?喜(加|\+|＋)(一|1)$", priority=2, flags=IGNORECASE)
+@epic_matcher.handle()
+async def query_handle(bot: Bot, event: Event):
+    free = await get_epic_free()
     if isinstance(event, GroupMessageEvent):
-        if permission_(users.get_role(gid, uid), "superuser"):
-            state["targetId"] = gid
-            state["subType"] = "群聊"
-            msg = await subscribeHelper("w", state["subType"], state["targetId"])
-            await epicSubMatcher.finish(msg)
+        await bot.send_group_forward_msg(group_id=event.group_id, messages=free)  # type: ignore
+    else:
+        await bot.send_private_forward_msg(user_id=event.user_id, messages=free)  # type: ignore
 
 
-scheduler = require("nonebot_plugin_apscheduler").scheduler
-@scheduler.scheduled_job("cron", day_of_week=day_of_week, hour=hour, minute=minute, second=second)
-async def weeklyEpic():
+sub_matcher = on_regex(r"^喜(加|\+|＋)(一|1)(私聊)?订阅(删除|取消)?$", priority=1)
+@sub_matcher.handle()
+async def sub_handle(bot: Bot, event: MessageEvent, state: T_State):
+    msg = event.get_plaintext()
+    state["action"] = "删除" if any(s in msg for s in ["删除", "取消"]) else "启用"
+    if isinstance(event, GroupMessageEvent):
+        if event.sender.role not in ["admin", "owner"] or "私聊" in msg:
+            # 普通群员只会启用私聊订阅
+            state["sub_type"] = "私聊"
+        else:
+            # 管理员用户询问需要私聊订阅还是群聊订阅
+            pass
+    else:
+        state["sub_type"] = "私聊"
+    # 强制群聊类型,注释该行以取消
+    state["sub_type"] = "群聊"
+
+
+@sub_matcher.got(
+    "sub_type", prompt=Message.template("回复「私聊」{action}私聊订阅，回复其他内容{action}群聊订阅：")
+)
+async def subEpic(bot: Bot, event: MessageEvent, state: T_State):
+    if any("私聊" in i for i in [event.get_plaintext().strip(), state["sub_type"]]):
+        state["target_id"] = event.get_user_id()
+        state["sub_type"] = "私聊"
+    else:
+        state["target_id"] = str(event.group_id)  # type: ignore
+        state["sub_type"] = "群聊"
+    msg = await subscribe_helper(state["action"], state["sub_type"], state["target_id"])
+    await sub_matcher.finish(str(msg))
+
+
+EPIC_SCHEDULER = str(getattr(get_driver().config, "epic_scheduler", "8 8 8"))
+EPIC_SCHEDULER = EPIC_SCHEDULER.split(" ")
+if len(EPIC_SCHEDULER) == 3:
+    hour, minute, second = EPIC_SCHEDULER
+# 兼容旧配置
+else:
+    hour, minute, second = EPIC_SCHEDULER[1:4]
+
+
+@scheduler.scheduled_job("cron", hour=hour, minute=minute, second=second)
+async def epic_subscribe():
     bot = get_bot()
-    whoSubscribe = await subscribeHelper()
-    imfree = await getEpicFree()
+    subscriber = await subscribe_helper()
+    msg_list = await get_epic_free()
+    if not check_push(msg_list):
+        return
     try:
-        for group in whoSubscribe["群聊"]:
-            await bot.send_group_msg(group_id=group, message=Message(imfree))
-        for private in whoSubscribe["私聊"]:
-            await bot.send_private_msg(user_id=private, message=Message(imfree))
-    except FinishedException:
-        pass
+        assert isinstance(subscriber, Dict)
+        for group in subscriber["群聊"]:
+            await bot.send_group_forward_msg(group_id=group, messages=msg_list)
+        for private in subscriber["私聊"]:
+            await bot.send_private_forward_msg(user_id=private, messages=msg_list)
     except Exception as e:
-        logger.error("Epic 限免游戏资讯定时任务出错：" + str(sys.exc_info()[0]) + "\n" + str(e))
+        logger.error(f"Epic 限免游戏资讯定时任务出错 {e.__class__.__name__}\n{format_exc()}")
