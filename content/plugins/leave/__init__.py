@@ -45,7 +45,8 @@ async def _(bot: Bot, event: GroupDecreaseNoticeEvent):
             .replace("{kicker}", nickname_o)\
             .replace("{kicked_id}", uid)\
             .replace("{kicker_id}", str(operator_id))
-
+    elif sub_type == "kick_me":
+        return
     await leave.send(Message(msg))
 
 
