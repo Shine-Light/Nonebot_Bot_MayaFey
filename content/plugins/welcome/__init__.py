@@ -6,9 +6,11 @@
 import ujson as json
 
 from nonebot import on_notice, on_command, get_driver
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, GroupIncreaseNoticeEvent, Event
+from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, GroupIncreaseNoticeEvent, Event, MessageSegment
 from nonebot.rule import Rule
+from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
+from nonebot.matcher import Matcher
 from . import tools
 from utils.path import *
 from utils import database_mysql, users
@@ -61,30 +63,47 @@ async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
 
 welcome_msg_update = on_command(cmd="入群欢迎", priority=7)
 @welcome_msg_update.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher, args=CommandArg()):
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
+    uid = str(event.user_id)
+    role = users.get_role(gid, uid)
     if special_per(role, "welcome_msg_update", gid):
-        content = str(event.get_message()).split(" ", 1)[1]
-        if content:
-            await tools.update(content, gid, "welcome")
-            await welcome_msg_update.send("修改成功")
-        else:
-            await welcome_msg_update.send("指令有误")
+        if args:
+            matcher.set_arg("content", args)
     else:
         await welcome_msg_update.finish(
             f"无权限,权限需在 {get_special_per(str(event.group_id), 'welcome_msg_update')} 及以上")
 
 
+@welcome_msg_update.got(key="content", prompt="要怎么欢迎呢")
+async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
+    gid = str(event.group_id)
+    uid = str(event.user_id)
+    nickname = (await bot.get_group_member_info(group_id=int(gid), user_id=int(uid), no_cache=True)).get("nickname")
+    content = matcher.get_arg("content") + MessageSegment.text(f"\n由 {nickname}({uid}) 编辑")
+    await tools.update(str(content), gid, "welcome")
+    await back_msg_update.send("修改成功")
+
+
 back_msg_update = on_command(cmd="回归欢迎", aliases={"回群欢迎"}, priority=7)
 @back_msg_update.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher, args=CommandArg()):
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
+    uid = str(event.user_id)
+    role = users.get_role(gid, uid)
     if special_per(role, "back_msg_update", gid):
-        content = str(event.get_message()).split(" ", 1)[1]
-        await tools.update(content, gid, "back")
-        await back_msg_update.send("修改成功")
+        if args:
+            matcher.set_arg("content", args)
     else:
         await back_msg_update.finish(
             f"无权限,权限需在 {get_special_per(str(event.group_id), 'back_msg_update')} 及以上")
+
+
+@back_msg_update.got(key="content", prompt="要怎么欢迎呢")
+async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
+    gid = str(event.group_id)
+    uid = str(event.user_id)
+    nickname = (await bot.get_group_member_info(group_id=int(gid), user_id=int(uid), no_cache=True)).get("nickname")
+    content = matcher.get_arg("content") + MessageSegment.text(f"\n由 {nickname}({uid}) 编辑")
+    await tools.update(str(content), gid, "back")
+    await back_msg_update.send("修改成功")
