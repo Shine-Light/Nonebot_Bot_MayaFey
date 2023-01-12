@@ -20,7 +20,8 @@ from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.ims.v20201229 import ims_client, models
 from typing import Union, Optional
-from nonebot import logger,get_driver
+from nonebot import logger, get_driver
+from nonebot.adapters.onebot.v11 import Message
 
 su = nonebot.get_driver().config.superusers
 TencentID = nonebot.get_driver().config.tenid
@@ -149,7 +150,7 @@ def bytes_to_base64(data):
     return base64.b64encode(data).decode("utf-8")
 
 
-def At(data: str):
+def At(data: Union[str, dict, Message]):
     """
     检测at了谁，返回[qq, qq, qq,...]
     包含全体成员直接返回['all']
@@ -159,13 +160,19 @@ def At(data: str):
     """
     try:
         qq_list = []
-        data = json.loads(data)
-        for msg in data["original_message"]:
-            if msg["type"] == "at":
-                if 'all' not in str(msg):
-                    qq_list.append(int(msg["data"]["qq"]))
-                else:
-                    return ['all']
+        if isinstance(data, Message):
+            for msg in data:
+                if msg.type == "at":
+                    qq_list.append(msg.data.get('qq'))
+        if isinstance(data, str):
+            data = json.loads(data)
+        if isinstance(data, dict):
+            for msg in data["original_message"]:
+                if msg["type"] == "at":
+                    if 'all' not in str(msg):
+                        qq_list.append(int(msg["data"]["qq"]))
+                    else:
+                        return ['all']
         return qq_list
     except KeyError:
         return []

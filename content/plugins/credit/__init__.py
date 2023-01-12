@@ -15,6 +15,7 @@ require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
 
 from utils.other import add_target, translate
+from utils.admin_tools import At
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
@@ -22,8 +23,9 @@ __plugin_meta__ = PluginMetadata(
     description="积分查询和排行",
     usage="/积分排行\n"
           "/我的积分\n"
-          "/发红包 {积分数} {份数}"
-          "/抢红包" + add_target(60)
+          "/发红包 {积分数} {份数}\n"
+          "/抢红包\n"
+          "/转账 {积分数} {@xxx}" + add_target(60)
 )
 manager = LuckyMoney.LuckyMoneyManager()
 
@@ -43,7 +45,7 @@ async def timeout(gid: str):
 
 
 # 积分排行榜
-top = on_command(cmd="积分排行", aliases={"积分排名", "积分排行榜", "积分前十", "积分前10"}, priority=8)
+top = on_command(cmd="积分排行", aliases={"积分排名", "积分排行榜", "积分前十", "积分前10"}, priority=8, block=False)
 @top.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     message = await tools.top(str(event.group_id), bot)
@@ -51,14 +53,14 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 
 # 查看自己的积分
-num = on_command(cmd="积分", aliases={"我的积分", "积分数", "credit"}, priority=8)
+num = on_command(cmd="积分", aliases={"我的积分", "积分数", "credit"}, priority=8, block=False)
 @num.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     credit = tools.get(str(event.group_id), str(event.user_id))
-    await top.send(message=f"你的积分为:{credit}", at_sender=True)
+    await num.send(message=f"你的积分为:{credit}", at_sender=True)
 
 
-send_lucky_money = on_command(cmd="发红包", aliases={"塞红包"}, priority=8)
+send_lucky_money = on_command(cmd="发红包", aliases={"塞红包"}, priority=8, block=False)
 @send_lucky_money.handle()
 async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher, args: Message = CommandArg()):
     if manager.exist(str(event.group_id)):
@@ -121,7 +123,7 @@ async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
     await send_lucky_money.send(MessageSegment.image(await manager.generateSendImg(gid)))
 
 
-get_lucky_money = on_command(cmd="抢红包", priority=8)
+get_lucky_money = on_command(cmd="抢红包", priority=8, block=False)
 @get_lucky_money.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
@@ -146,3 +148,46 @@ async def _(bot: Bot, event: GroupMessageEvent):
             ]))
         manager.removeMoney(gid)
         scheduler.remove_job(job_id=f"lucky_money_{gid}")
+
+
+transfer_credit = on_command(cmd="转账", aliases={"打钱"}, priority=8, block=False)
+@transfer_credit.handle()
+async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher, args: Message = CommandArg()):
+    if len(event.original_message) >= 1 and len(args) >= 1:
+        matcher.set_arg("credit", Message(args[0]))
+        if len(event.original_message) >= 2:
+            matcher.set_arg("at", Message(event.original_message[1:-1]))
+
+
+@transfer_credit.got(key="credit", prompt="转多少呢")
+async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
+    try:
+        credit = int(matcher.get_arg("credit").extract_plain_text())
+        gid = str(event.group_id)
+        uid = str(event.user_id)
+        if not tools.check(gid, uid, credit):
+            await transfer_credit.finish("你的积分不够哦")
+    except ValueError:
+        await transfer_credit.send("积分要整数哦")
+        await transfer_credit.reject("转多少呢")
+
+
+@transfer_credit.got(key="at", prompt="转个谁呢(艾特TA)")
+async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
+    credit = int(matcher.get_arg("credit").extract_plain_text())
+    uid = str(event.user_id)
+    gid = str(event.group_id)
+    at = At(event.original_message)
+    if not at:
+        await transfer_credit.finish("转账给空气吗?")
+    if len(at) != 1:
+        await transfer_credit.send("只能转给一人!")
+        await transfer_credit.reject("转个谁呢(艾特TA)")
+    if at[0] == uid:
+        await transfer_credit.send("不能转给自己!")
+        await transfer_credit.reject("转个谁呢(艾特TA)")
+
+    tools.minus(gid, uid, credit)
+    tools.add(gid, at[0], credit)
+
+    await transfer_credit.send("转账成功!")
