@@ -88,6 +88,7 @@ async def _(event: GroupMessageEvent):
             repeater_last.update({gid: msg})
         elif repeater_last.get(gid):
             repeater_last.pop(gid)
+            count = 1
 
         msg_last.update({gid: {'msg': msg, 'count': count}})
     except FinishedException:
