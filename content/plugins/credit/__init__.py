@@ -167,6 +167,9 @@ async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
         uid = str(event.user_id)
         if not tools.check(gid, uid, credit):
             await transfer_credit.finish("你的积分不够哦")
+        if credit <= 0:
+            await transfer_credit.finish("最少1积分!")
+            await transfer_credit.reject("转多少呢")
     except ValueError:
         await transfer_credit.send("积分要整数哦")
         await transfer_credit.reject("转多少呢")
