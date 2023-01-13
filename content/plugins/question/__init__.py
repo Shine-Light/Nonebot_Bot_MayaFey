@@ -3,16 +3,16 @@
 @Version: 1.0
 @Date: 2022/3/29 12:53
 """
+import re
 import ujson as json
 
-from nonebot.params import CommandArg
-from nonebot import on_regex, on_message, on_command
+from nonebot import on_regex, on_message, on_command, get_driver
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
+from nonebot.params import CommandArg, RegexGroup
 from nonebot.plugin import PluginMetadata
 from utils.path import *
 from utils import json_tools, users, database_mysql
 from utils.permission import special_per, permission_
-
 from utils.other import add_target, translate
 
 
@@ -22,24 +22,32 @@ __plugin_meta__ = PluginMetadata(
     description="问答",
     usage="精准问{问题}答{回答} (超级用户)\n"
           "模糊问{问题}答{回答} (超级用户)\n"
-          "/问答列表"
-          "/问答删除 {问题} (超级用户)" + add_target(60)
+          "正则问{问题}答{回答} (超级用户)\n"
+          "/问答列表\n"
+          "/问答删除 {问题} (超级用户)" + add_target(60),
+    extra={
+        "permission_special": {
+            "question_vague": "superuser",
+            "question_absolute": "superuser",
+            "question_regular": "superuser"
+        }
+    }
 )
 
 
 cursor = database_mysql.cursor
+command_start = "".join(get_driver().config.command_start)
 
 
 # 添加问答(模糊)
-question_vague = on_regex("^模糊问.*?(答)", priority=5)
+question_vague = on_regex(rf"^([{command_start}]?模糊问)(.*)答(.*)", priority=5)
 @question_vague.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "question", gid):
-        msg_meta = str(event.get_message())
-        Question = msg_meta.split("问", 1)[1].split("答", 1)[0]
-        Answer = msg_meta.split("答", 1)[1]
+    if special_per(role, "question_vague", gid):
+        Question = group[1]
+        Answer = group[2]
         question_path = question_base / f"{gid}.json"
         QAs: dict = json_tools.json_load(question_path)
         if not Question:
@@ -47,7 +55,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
         if not Answer:
             await question_vague.finish("添加失败,无回答")
         try:
-            vague = QAs["vague"]
+            vague = QAs.get("vague")
+            if vague is None:
+                vague = {}
             vague.update({Question: Answer})
             QAs.update({"vague": vague})
             with open(question_path, 'w', encoding="utf-8") as file:
@@ -62,23 +72,24 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 
 # 添加问答(精准)
-question_absolute = on_regex("^精准问.*?(答)", priority=5)
+question_absolute = on_regex(rf"^([{command_start}]?精准问)(.*)答(.*)", priority=5)
 @question_absolute.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
     gid = str(event.group_id)
     role = users.get_role(gid, str(event.user_id))
     if special_per(role, "question_absolute", gid):
-        msg_meta = str(event.get_message())
-        Question = msg_meta.split("问", 1)[1].split("答", 1)[0]
-        Answer = msg_meta.split("答", 1)[1]
+        Question = group[1]
+        Answer = group[2]
         question_path = question_base / f"{gid}.json"
         QAs: dict = json_tools.json_load(question_path)
         if not Question:
-            await question_vague.finish("添加失败,无问题")
+            await question_absolute.finish("添加失败,无问题")
         if not Answer:
             await question_absolute.finish("添加失败,无回答内容")
         try:
-            absolute = QAs["absolute"]
+            absolute = QAs.get("absolute")
+            if absolute is None:
+                absolute = {}
             absolute.update({Question: Answer})
             QAs.update({"absolute": absolute})
             with open(question_path, 'w', encoding="utf-8") as file:
@@ -90,6 +101,37 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
     else:
         await question_absolute.send("无权限")
+
+
+# 添加问答(正则)
+question_regular = on_regex(rf"^([{command_start}]?正则问)(.*)答(.*)", priority=5)
+@question_regular.handle()
+async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
+    gid = str(event.group_id)
+    role = users.get_role(gid, str(event.user_id))
+    if special_per(role, "question_regular", gid):
+        Question = group[1]
+        Answer = group[2]
+        question_path = question_base / f"{gid}.json"
+        QAs: dict = json_tools.json_load(question_path)
+        if not Question:
+            await question_regular.finish("添加失败,无问题")
+        if not Answer:
+            await question_regular.finish("添加失败,无回答内容")
+        try:
+            regular = QAs.get("regular")
+            if regular is None:
+                regular = {}
+            regular.update({Question: Answer})
+            QAs.update({"regular": regular})
+            with open(question_path, 'w', encoding="utf-8") as file:
+                file.write(json.dumps(QAs, ensure_ascii=False))
+            await question_regular.send('添加成功')
+        except Exception as e:
+            await question_regular.send('添加失败:' + str(e))
+
+    else:
+        await question_regular.send("无权限")
 
 
 # 问答检测
@@ -104,24 +146,28 @@ async def _(bot: Bot, event: GroupMessageEvent):
     A = ""
     meta_msg = str(event.get_message())
 
-    try:
-        absolute: dict = qas["absolute"]
-    except KeyError:
-        absolute = None
+    # 优先匹配精准,再匹配正则,最后再匹配模糊
+    absolute: dict = qas.get("absolute")
     if absolute:
-        for qa in absolute:
-            if str(qa) == meta_msg:
-                A = absolute[qa]
+        for question in absolute:
+            if str(question) == meta_msg:
+                A = absolute[question]
                 break
 
-    try:
-        vague: dict = qas["vague"]
-    except KeyError:
-        vague = None
-    if vague:
-        for qa in vague:
-            if str(qa) in meta_msg:
-                A = vague[qa]
+    regular: dict = qas.get("regular")
+    if regular and not A:
+        for question in regular:
+            if re.match(question, meta_msg):
+                A = regular[question]
+                break
+
+    vague: dict = qas.get("vague")
+    if vague and not A:
+        for question in vague:
+            if str(question) in meta_msg:
+                A = vague[question]
+                break
+
     if A:
         messages = A
         await ques_in.send(Message(messages))
