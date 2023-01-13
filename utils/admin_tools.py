@@ -20,8 +20,8 @@ from tencentcloud.common.profile.client_profile import ClientProfile
 from tencentcloud.common.profile.http_profile import HttpProfile
 from tencentcloud.ims.v20201229 import ims_client, models
 from typing import Union, Optional
-from nonebot import logger, get_driver
-from nonebot.adapters.onebot.v11 import Message
+from nonebot import logger, get_driver, get_bot
+from nonebot.adapters.onebot.v11 import Message, Bot
 
 su = nonebot.get_driver().config.superusers
 TencentID = nonebot.get_driver().config.tenid
@@ -76,32 +76,30 @@ async def participle_simple_handle() -> set:
     return sum_
 
 
-async def banSb(gid: int, ban_list: list, time: int):
+async def banSb(gid: Union[str, int], ban_list: list, time: int = None):
     """
     构造禁言
     :param gid: 群号
-    :param time: 时间（s)
-    :param ban_list: at列表
+    :param ban_list: qq列表
+    :param time: 时间（s),不填则随机
     :return:禁言操作
     """
-    if 'all' in ban_list:
-        yield nonebot.get_bot().set_group_whole_ban(
-            group_id=gid,
-            enable=True
-        )
-    else:
-        if time is None:
-            time = random.randint(int(config.ban_rand_time_min), int(config.ban_rand_time_max))
+    if time is None:
+        time = random.randint(int(config.ban_rand_time_min), int(config.ban_rand_time_max))
 
-        for qq in ban_list:
-            if int(qq) in su or str(qq) in su:
-                logger.info(f"SUPERUSER无法被禁言")
-            else:
-                yield nonebot.get_bot().set_group_ban(
-                    group_id=gid,
-                    user_id=qq,
-                    duration=int(time),
-                )
+    for qq in ban_list:
+        bot: Bot = get_bot()
+        await bot.set_group_ban(group_id=int(gid), user_id=int(qq), duration=time)
+
+
+async def banWholeGroup(gid: Union[str, int], enable: bool = True):
+    """
+    全员禁言/解禁
+    gid: 群号
+    enable: 是否禁言,默认 True
+    """
+    bot: Bot = get_bot()
+    await bot.set_group_whole_ban(group_id=int(gid), enable=enable)
 
 
 async def image_moderation_async(img: Union[str, bytes]) -> dict:
@@ -163,7 +161,10 @@ def At(data: Union[str, dict, Message]):
         if isinstance(data, Message):
             for msg in data:
                 if msg.type == "at":
-                    qq_list.append(msg.data.get('qq'))
+                    if 'all' not in str(msg):
+                        qq_list.append(int(msg.get("data")("qq")))
+                    else:
+                        return ['all']
         if isinstance(data, str):
             data = json.loads(data)
         if isinstance(data, dict):
@@ -176,47 +177,3 @@ def At(data: Union[str, dict, Message]):
         return qq_list
     except KeyError:
         return []
-
-
-def MsgText(data: str):
-    """
-    返回消息文本段内容(即去除 cq 码后的内容)
-    :param data: event.json()
-    :return: str
-    """
-    try:
-        data = json.loads(data)
-        # 过滤出类型为 text 的【并且过滤内容为空的】
-        msg_text_list = filter(lambda x: x["type"] == "text" and x["data"]["text"].replace(" ", "") != "",
-                               data["message"])
-        # 拼接成字符串并且去除两端空格
-        msg_text = " ".join(map(lambda x: x["data"]["text"].strip(), msg_text_list)).strip()
-        return msg_text
-    except:
-        return ""
-
-
-async def upload(path, dict_content) -> None:
-    """
-    更新json文件
-    :param path: 路径
-    :param dict_content: python对象，字典
-    """
-    with open(path, mode='w', encoding="utf-8") as c:
-        c.write(str(json.dumps(dict_content, ensure_ascii=False)))
-        c.close()
-
-
-async def load(path) -> Optional[dict]:
-    """
-    加载json文件
-    :return: Optional[dict]
-    """
-    try:
-        async with aiofiles.open(path, mode='r', encoding="utf-8") as f:
-            contents_ = await f.read()
-            contents = json.loads(contents_)
-            await f.close()
-            return contents
-    except FileNotFoundError:
-        return None
