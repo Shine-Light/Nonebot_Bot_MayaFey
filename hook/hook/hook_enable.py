@@ -6,7 +6,7 @@
 from nonebot.message import event_preprocessor
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
 from nonebot.exception import IgnoredException
-from utils.json_tools import json_load
+from utils.json_tools import json_load, json_write
 from utils.path import enable_config_path
 
 # 控制变量
@@ -29,12 +29,8 @@ async def enable_check(bot: Bot, event: GroupMessageEvent):
         enable = js[gid]
         if not enable:
             raise IgnoredException(f"群 {gid} 已停用机器人")
-    except IgnoredException:
-        raise IgnoredException(f"群 {gid} 已停用机器人")
-    except Exception:
-        # 只提示一次
-        if gid in a:
-            raise IgnoredException(f"群 {gid} 已停用机器人")
-        await bot.send(event, '未找到该群配置文件,请确认本群是否开启机器人,"/启用|停用机器人"')
-        a.append(gid)
+    except KeyError:
+        # 默认关闭状态
+        js.update({gid: False})
+        json_write(enable_config_path, js)
         raise IgnoredException(f"群 {gid} 未确认是否启用机器人")
