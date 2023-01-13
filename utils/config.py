@@ -337,7 +337,7 @@ class ConfigManager(object):
         gid: 群号
         """
         pluginConfig = self.getPluginConfig(plugin)
-        pluginConfig.init(gid)
+        pluginConfig.init_config(gid)
 
     def pluginConfigs(self):
         """
