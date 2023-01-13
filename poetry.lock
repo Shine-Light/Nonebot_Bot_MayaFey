@@ -1708,14 +1708,14 @@ reference = "aliyun"
 
 [[package]]
 name = "nonebot-plugin-imageutils"
-version = "0.1.13.4"
+version = "0.1.13.5"
 description = "Nonebot2 PIL工具插件"
 category = "main"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "nonebot_plugin_imageutils-0.1.13.4-py3-none-any.whl", hash = "sha256:df72360b1fb28d188188196f8760b57eb596cd25eab76d6d04442c33b68d7bae"},
-    {file = "nonebot_plugin_imageutils-0.1.13.4.tar.gz", hash = "sha256:a5c01dcd3b783e9c508d6e2ea05cba702f9fbdc4db10e4c70f7f75e18ae7dd1b"},
+    {file = "nonebot_plugin_imageutils-0.1.13.5-py3-none-any.whl", hash = "sha256:ce34e77e060928070f0d900c1ff52c6fc3b0831f7e2234d82d062d701ee6788b"},
+    {file = "nonebot_plugin_imageutils-0.1.13.5.tar.gz", hash = "sha256:5f0e98eef3e60d892bf5bcf6d3ca58757fa4c74113c69d1dd55bb6cbfa021291"},
 ]
 
 [package.dependencies]
@@ -3164,4 +3164,4 @@ reference = "aliyun"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "58f8f0d944637e60346f58a1969744bde24b5bea6fc26fe62f967a2633011014"
+content-hash = "7735d3f8acd1af6534173292143f8e8d8abe0405a1cab2a8bc51cbc4893b6ba9"
