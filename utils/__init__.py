@@ -191,7 +191,7 @@ async def init(bot: Bot, event: GroupMessageEvent):
     if not os.path.exists(total_base / month / f"{gid}.json"):
         await mk("file", total_base / month / f"{gid}.json", 'w', content=json.dumps({}))
     if not os.path.exists(question_base / f"{gid}.json"):
-        await mk("file", question_base / f"{gid}.json", 'w', content=json.dumps({"vague": {}, "absolute": {}}))
+        await mk("file", question_base / f"{gid}.json", 'w', content=json.dumps({"vague": {}, "absolute": {}, "regular": {}}))
     if not os.path.exists(permission_special_base / f"{gid}.json"):
         await mk("file", permission_special_base / f"{gid}.json", 'w', url=url.permission_special_json, dec="特殊权限插件列表")
     if not os.path.exists(permission_common_base / f"{gid}.json"):
@@ -266,7 +266,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await credit.tools.init(bot, event)
         await plugin_control.init(gid)
         await sign.tools.init(bot, event)
-        manager.initAllGroupPlugin(gid)
+        manager.initAllPlugin(gid)
         await bot_init.send("初始化成功,该项目完全免费,如果你是付费获得的，请立即退款并举报")
     # 初始化异常
     except Exception as e:

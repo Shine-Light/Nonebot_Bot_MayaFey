@@ -177,6 +177,8 @@ class PluginConfig(object):
             for matcher in self.permission_special:
                 if not get_special_per(gid, matcher):
                     json_update(permission_special_base / f"{gid}.json", matcher, self.permission_special.get(matcher))
+
+    def init_config(self, gid: str):
         # 配置初始化,不覆盖已有配置,但允许新增配置
         configs = parse_configs(self.configs, self.plugin_name, gid)
         config_default_path = self.__config_path__ / gid / "config.json"
@@ -298,11 +300,12 @@ class PluginConfig(object):
 class ConfigManager(object):
     __configs__: Dict[str, PluginConfig] = field(default_factory=dict)
 
-    def initAllGroupPlugin(self, gid):
+    def initAllPlugin(self, gid: str):
         """
-        初始化所有群聊插件配置
+        初始化所有插件配置
         """
         for pluginConfig in self.__configs__.values():
+            pluginConfig.init(gid)
             if pluginConfig.generate_type == GENERATE_TYPE_GROUP:
                 self.initGroupPlugin(pluginConfig.plugin_name, gid)
 
