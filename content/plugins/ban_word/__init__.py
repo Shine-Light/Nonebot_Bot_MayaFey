@@ -377,8 +377,3 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await ban_strict.send("设置成功")
     else:
         await ban_strict.send(f"权限不足,权限需在 {get_special_per(gid, 'ban_strict')} 及以上")
-
-
-scheduler = require("nonebot_plugin_apscheduler").scheduler
-# 每周一更新违禁词库
-scheduler.add_job(auto_upload_f_words, 'cron', day_of_week='mon', hour=0, minute=0, second=0, id='auto_upload_f_words', timezone='Asia/Shanghai')

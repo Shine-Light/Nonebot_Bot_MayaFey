@@ -52,27 +52,3 @@ async def ban_count(uid: str, gid: str):
 async def kick_user(uid: str, gid: str, bot: Bot):
     users.member_leave(gid, uid)
     await bot.call_api("set_group_kick", group_id=gid, user_id=uid, reject_add_request=True)
-
-
-async def auto_upload_f_words():
-    logger.info("自动更新严格违禁词库...")
-    async with httpx.AsyncClient() as client:
-        try:
-            r = (await client.get(url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_s")).text
-        except Exception as err:
-            logger.error(f"自动更新严格违禁词库失败：{err}")
-            return True
-    with open(limit_word_path, "w", encoding='utf-8') as lwp:
-        lwp.write(r)
-        lwp.close()
-    logger.info("正在更新简单违禁词库")
-    async with httpx.AsyncClient() as client:
-        try:
-            r = (await client.get(url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_easy")).text
-        except Exception as err:
-            logger.error(f"自动更新简单违禁词库失败：{err}")
-            return True
-    with open(limit_word_path_easy, "w", encoding='utf-8') as lwp:
-        lwp.write(r)
-        lwp.close()
-    logger.info("更新完成")

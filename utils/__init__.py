@@ -230,19 +230,10 @@ async def init(bot: Bot, event: GroupMessageEvent):
 
     if not os.path.exists(word_path):
         await mk("file", word_path, "w", content='123456789\n')
-    if not os.path.exists(limit_word_path_easy):
-        await mk("file", limit_word_path_easy, "w",
-                 url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_easy",
-                 dec="简单违禁词词库")
     if not os.path.exists(welcome_path_base / f"{gid}.txt"):
         await mk("file", welcome_path_base / f"{gid}.txt", "w", content="欢迎入群")
     if not os.path.exists(back_path_base / f"{gid}.txt"):
         await mk("file", back_path_base / f"{gid}.txt", "w", content="欢迎回归")
-
-    if not os.path.exists(limit_word_path):
-        await mk("file", limit_word_path, "w",
-                 url="https://public-cdn-shanghai.oss-cn-shanghai.aliyuncs.com/nonebot/f_word_s",
-                 dec="严格违禁词词库")
 
     if not os.path.exists(guessMember_path / gid / "config.json"):
         await mk("file", guessMember_path / gid / "config.json", 'w', content=json.dumps({
