@@ -17,8 +17,8 @@ from utils.config import manager
 __plugin_meta__ = PluginMetadata(
     name="sending",
     description="控制机器人发送群聊信息,私聊插件",
-    usage="/发送 {群号}(用all表示所有开启机器人的群)"
-          "/显示发送者"
+    usage="/发送 {群号}(用all表示所有开启机器人的群)\n"
+          "/显示发送者\n"
           "/隐藏发送者",
     extra={
         "generate_type": "general",
