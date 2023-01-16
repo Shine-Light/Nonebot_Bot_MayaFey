@@ -81,11 +81,13 @@ async def _(event: GroupMessageEvent):
         if repeater_last.get(gid) and equals(msg, repeater_last.get(gid)):
             return
 
-        count = msg_last.get(gid).get('count') + 1
+        count = msg_last.get(gid).get('count')
 
-        if count >= count_max and equals(msg, msg_last.get(gid).get('msg')):
-            await repeater.send(msg)
-            repeater_last.update({gid: msg})
+        if equals(msg, msg_last.get(gid).get('msg')):
+            count += 1
+            if count >= count_max:
+                await repeater.send(msg)
+                repeater_last.update({gid: msg})
         elif repeater_last.get(gid):
             repeater_last.pop(gid)
             count = 1
