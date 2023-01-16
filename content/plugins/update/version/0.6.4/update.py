@@ -150,7 +150,10 @@ try:
     #         file.close()
 
     def remove_dir(path):
-        shutil.rmtree(dir_base + path)
+        try:
+            shutil.rmtree(dir_base + path)
+        except:
+            pass
 
     # 翻译文件更新
     with open(dir_base + "config/" + "translate.json", "w+", encoding="utf-8") as file:

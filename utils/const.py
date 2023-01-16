@@ -3,7 +3,7 @@
 @Version: 1.0
 @Date: 2023/1/4 18:08
 """
-GENERATE_TYPE_GROUP = "group"  # ÅäÖÃ·ÖÈº¹ÜÀí
-GENERATE_TYPE_SINGLE = "single"  # ÅäÖÃ²»·ÖÈº
-GENERATE_TYPE_GENERAL = "general"  # Ö»Éú³ÉÍ¨ÓÃÅäÖÃ
-GENERATE_TYPE_NONE = "none"  # ²»Éú³ÉÅäÖÃ
+GENERATE_TYPE_GROUP = "group"  # é…ç½®åˆ†ç¾¤ç®¡ç†
+GENERATE_TYPE_SINGLE = "single"  # é…ç½®ä¸åˆ†ç¾¤
+GENERATE_TYPE_GENERAL = "general"  # åªç”Ÿæˆé€šç”¨é…ç½®
+GENERATE_TYPE_NONE = "none"  # ä¸ç”Ÿæˆé…ç½®

@@ -55,26 +55,30 @@ async def get_state(version: str) -> dict:
 
 
 async def update(gid: str) -> str:
-    clean_ignore_flag()
-    js = json_tools.json_load(path.updating_path)
-    js['updating'] = True
-    js['gid'] = gid
-    json_tools.json_write(path.updating_path, js)
-    version_old = get_version()
-    version = str(await get_version_last())
-    update_url = f"http://cdn.shinelight.xyz/nonebot/version/{version}/update.py"
-    update_py_path = path.update_path / "version" / version
-    if not Path.exists(update_py_path):
-        await other.mk("dir", update_py_path, mode=None)
-    await other.mk("file", update_py_path / "update.py", "w", url=update_url, dec="更新程序")
-    dir_path = '"' + os.path.dirname(os.path.abspath(__file__))
-    dir_path = dir_path.replace("\\", "/")
-    dir_path += f'/version/{version}/update.py"'
-    if platform.system() == "Windows":
-        os.system(f"python {dir_path}")
-    else:
-        os.system(f"python3 {dir_path}")
-    return version_old
+    try:
+        clean_ignore_flag()
+        js = json_tools.json_load(path.updating_path)
+        js['updating'] = True
+        js['gid'] = gid
+        json_tools.json_write(path.updating_path, js)
+        version_old = get_version()
+        version = str(await get_version_last())
+        update_url = f"http://cdn.shinelight.xyz/nonebot/version/{version}/update.py"
+        update_py_path = path.update_path / "version" / version
+        if not Path.exists(update_py_path):
+            await other.mk("dir", update_py_path, mode=None)
+        await other.mk("file", update_py_path / "update.py", "w", url=update_url, dec="更新程序")
+        dir_path = '"' + os.path.dirname(os.path.abspath(__file__))
+        dir_path = dir_path.replace("\\", "/")
+        dir_path += f'/version/{version}/update.py"'
+        if platform.system() == "Windows":
+            os.system(f"python {dir_path}")
+        else:
+            os.system(f"python3 {dir_path}")
+        return version_old
+    except Exception as e:
+        json_tools.json_update(path.updating_path, "updating", False)
+        raise e
 
 
 def ignore_update(version: str):

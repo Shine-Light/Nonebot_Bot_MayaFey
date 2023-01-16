@@ -57,7 +57,6 @@
 ### 生活功能
 - [X] 腾讯翻译  ([nonebot_plugin_translator](https://github.com/Lancercmd/nonebot_plugin_translator)修改而来) 
 - [X] 百度翻译  ([nonebot_plugin_baidutranslate](https://github.com/NumberSir/nonebot_plugin_baidutranslate)修改而来)  
-- [X] 疫情  ([nonebot-plugin-covid19-news](https://github.com/Zeta-qixi/nonebot-plugin-covid19-news)修改而来)  
 - [X] 天气  ([nonebot-plugin-heweather](https://github.com/kexue-z/nonebot-plugin-heweather)修改而来)  
 - [X] Epic喜加一  ([nonebot_plugin_epicfree](https://github.com/monsterxcn/nonebot_plugin_epicfree)修改而来)  
 - [X] 吃什么  ([nonebot_plugin_what2eat](https://github.com/MinatoAquaCrews/nonebot_plugin_what2eat)修改而来)  
@@ -66,8 +65,8 @@
 - [X] 机器人更新 
 - [X] 重启  
 - [X] 机器人开关  
-- [X] 群管  ([nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
-- [X] 违禁词  ([nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
+- [X] 群管
+- [X] 违禁词
 - [X] 插件控制  
 - [X] 插件统计 
 - [X] 增删问答   
@@ -79,6 +78,7 @@
 ### 私聊管理功能
 - [X] SQL查询  
 - [X] 机器人好友请求管理
+- [X] 控制机器人发送群聊信息
 ### 权限系统
 - [X] 权限检测(被动)  
 - [X] 查看权限  
