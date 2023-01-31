@@ -40,7 +40,7 @@ command_start = "".join(get_driver().config.command_start)
 
 
 # 添加问答(模糊)
-question_vague = on_regex(rf"^([{command_start}]?模糊问)(.*)答(.*)", priority=13, block=False)
+question_vague = on_regex(rf"^([{command_start}]?模糊问)(.*)答([\s\S])*", priority=13, block=False)
 @question_vague.handle()
 async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
     gid = str(event.group_id)
@@ -72,7 +72,7 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
 
 
 # 添加问答(精准)
-question_absolute = on_regex(rf"^([{command_start}]?精准问)(.*)答(.*)", priority=13, block=False)
+question_absolute = on_regex(rf"^([{command_start}]?精准问)(.*)答([\s\S])*", priority=13, block=False)
 @question_absolute.handle()
 async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
     gid = str(event.group_id)
@@ -104,7 +104,7 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
 
 
 # 添加问答(正则)
-question_regular = on_regex(rf"^([{command_start}]?正则问)(.*)答(.*)", priority=13, block=False)
+question_regular = on_regex(rf"^([{command_start}]?正则问)(.*)答([\s\S])*", priority=13, block=False)
 @question_regular.handle()
 async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
     gid = str(event.group_id)
@@ -157,7 +157,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     regular: dict = qas.get("regular")
     if regular and not A:
         for question in regular:
-            if re.match(question, meta_msg):
+            if re.findall(question, meta_msg):
                 A = regular[question]
                 break
 
