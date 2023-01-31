@@ -59,9 +59,7 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
             if vague is None:
                 vague = {}
             vague.update({Question: Answer})
-            QAs.update({"vague": vague})
-            with open(question_path, 'w', encoding="utf-8") as file:
-                file.write(json.dumps(QAs, ensure_ascii=False))
+            json_tools.json_update(question_path, "vague", json.dumps(vague))
             await question_vague.send('添加成功')
 
         except Exception as e:
@@ -91,7 +89,7 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
             if absolute is None:
                 absolute = {}
             absolute.update({Question: Answer})
-            QAs.update({"absolute": absolute})
+            json_tools.json_update(question_path, "absolute", json.dumps(absolute))
             with open(question_path, 'w', encoding="utf-8") as file:
                 file.write(json.dumps(QAs, ensure_ascii=False))
             await question_absolute.send('添加成功')
@@ -123,7 +121,7 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
             if regular is None:
                 regular = {}
             regular.update({Question: Answer})
-            QAs.update({"regular": regular})
+            json_tools.json_update(question_path, "regular", json.dumps(regular))
             with open(question_path, 'w', encoding="utf-8") as file:
                 file.write(json.dumps(QAs, ensure_ascii=False))
             await question_regular.send('添加成功')
