@@ -90,8 +90,6 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
                 absolute = {}
             absolute.update({Question: Answer})
             json_tools.json_update(question_path, "absolute", json.dumps(absolute))
-            with open(question_path, 'w', encoding="utf-8") as file:
-                file.write(json.dumps(QAs, ensure_ascii=False))
             await question_absolute.send('添加成功')
 
         except Exception as e:
@@ -122,8 +120,6 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
                 regular = {}
             regular.update({Question: Answer})
             json_tools.json_update(question_path, "regular", json.dumps(regular))
-            with open(question_path, 'w', encoding="utf-8") as file:
-                file.write(json.dumps(QAs, ensure_ascii=False))
             await question_regular.send('添加成功')
         except Exception as e:
             await question_regular.send('添加失败:' + str(e))
