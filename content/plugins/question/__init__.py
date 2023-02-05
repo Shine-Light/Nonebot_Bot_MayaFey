@@ -59,7 +59,7 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
             if vague is None:
                 vague = {}
             vague.update({Question: Answer})
-            json_tools.json_update(question_path, "vague", json.dumps(vague))
+            json_tools.json_update(question_path, "vague", vague)
             await question_vague.send('添加成功')
 
         except Exception as e:
@@ -89,7 +89,7 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
             if absolute is None:
                 absolute = {}
             absolute.update({Question: Answer})
-            json_tools.json_update(question_path, "absolute", json.dumps(absolute))
+            json_tools.json_update(question_path, "absolute", absolute)
             await question_absolute.send('添加成功')
 
         except Exception as e:
@@ -119,7 +119,7 @@ async def _(bot: Bot, event: GroupMessageEvent, group: tuple = RegexGroup()):
             if regular is None:
                 regular = {}
             regular.update({Question: Answer})
-            json_tools.json_update(question_path, "regular", json.dumps(regular))
+            json_tools.json_update(question_path, "regular", regular)
             await question_regular.send('添加成功')
         except Exception as e:
             await question_regular.send('添加失败:' + str(e))
