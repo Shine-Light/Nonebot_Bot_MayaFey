@@ -3,6 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/23 12:47
 """
+import sys
 
 from nonebot import get_driver, require
 from nonebot.log import logger
@@ -10,14 +11,21 @@ from utils.path import sql_base
 import pymysql
 
 
-host = get_driver().config.mysql_host
-port = get_driver().config.mysql_port
-user = str(get_driver().config.mysql_user)
-password = str(get_driver().config.mysql_password)
-database = str(get_driver().config.mysql_db)
+try:
+    host = get_driver().config.mysql_host
+    port = get_driver().config.mysql_port
+    user = str(get_driver().config.mysql_user)
+    password = str(get_driver().config.mysql_password)
+    database = str(get_driver().config.mysql_db)
 
-connect = pymysql.connect(host=host, user=user, passwd=password, autocommit=True)
-cursor = connect.cursor()
+    connect = pymysql.connect(host=host, user=user, passwd=password, autocommit=True)
+    cursor = connect.cursor()
+except AttributeError as e:
+    logger.error("程序终止,无法获取数据库配置:" + str(e))
+    sys.exit(0)
+except Exception as e:
+    logger.error("程序终止,数据库连接错误:" + str(e))
+    sys.exit(0)
 
 
 def execute_sql(path):
