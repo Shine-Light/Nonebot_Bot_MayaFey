@@ -2,21 +2,20 @@
 
 [[package]]
 name = "aiocache"
-version = "0.11.1"
+version = "0.12.0"
 description = "multi backend asyncio cache"
 category = "main"
 optional = false
 python-versions = "*"
 files = [
-    {file = "aiocache-0.11.1-py2.py3-none-any.whl", hash = "sha256:e55c7caaa5753794fd301c3a2e592737fa1d036db9f8d04ae154facdfb48a157"},
-    {file = "aiocache-0.11.1.tar.gz", hash = "sha256:f2ebe0b05cec45782e7b5ea0bb74640f157dd4bb1028b4565364dda9fe33be7f"},
+    {file = "aiocache-0.12.0-py2.py3-none-any.whl", hash = "sha256:41602dd672ca02014c90f01720d891e22c77e6fe0197a0c927dd0c817a949859"},
+    {file = "aiocache-0.12.0.tar.gz", hash = "sha256:79ff8ee45cb2074a320c2d41a55dfaae4e00eca6106643f249aa0f4e5366cc3f"},
 ]
 
 [package.extras]
-dev = ["asynctest (>=0.11.0)", "black", "codecov", "coverage", "flake8", "ipdb", "marshmallow", "pystache", "pytest", "pytest-asyncio", "pytest-mock", "sphinx", "sphinx-autobuild", "sphinx-rtd-theme"]
 memcached = ["aiomcache (>=0.5.2)"]
 msgpack = ["msgpack (>=0.5.5)"]
-redis = ["aioredis (>=0.3.3)", "aioredis (>=1.0.0)"]
+redis = ["redis (>=4.2.0)"]
 
 [package.source]
 type = "legacy"
@@ -2790,4 +2789,4 @@ reference = "aliyun"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "adafcd1353fb55343ab51187350af2231f450b417eea4fbbca537e602f27b91c"
+content-hash = "2bec4a59ffa5acc42885e1117e21e679f3bd57e29f07c2054c1e57e1a84ad643"
