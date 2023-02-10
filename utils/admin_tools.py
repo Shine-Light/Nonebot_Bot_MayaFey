@@ -167,7 +167,7 @@ def At(data: Union[str, dict, Message]):
                         return ['all']
         elif isinstance(data, str):
             data = json.loads(data)
-        elif isinstance(data, dict):
+        if isinstance(data, dict):
             for msg in data["original_message"]:
                 if msg["type"] == "at":
                     if 'all' not in str(msg):
