@@ -96,3 +96,16 @@ async def _(bot: Bot):
 
         if js['switch']:
             await start_task(bot, gid)
+
+@driver.on_bot_disconnect
+async def _(bot: Bot):
+    for gid in os.listdir(curfew_path):
+        try:
+            if not (await get_state("curfew", gid)):
+                return
+            js = json_load(curfew_path / gid / "config.json")
+        except:
+            continue
+
+        if js['switch']:
+            await stop_all_task(gid)
