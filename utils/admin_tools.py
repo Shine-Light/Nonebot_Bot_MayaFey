@@ -162,16 +162,16 @@ def At(data: Union[str, dict, Message]):
             for msg in data:
                 if msg.type == "at":
                     if 'all' not in str(msg):
-                        qq_list.append(int(msg["data"]["qq"]))
+                        qq_list.append(int(msg.get("data")["qq"]))
                     else:
                         return ['all']
-        if isinstance(data, str):
+        elif isinstance(data, str):
             data = json.loads(data)
-        if isinstance(data, dict):
+        elif isinstance(data, dict):
             for msg in data["original_message"]:
                 if msg["type"] == "at":
                     if 'all' not in str(msg):
-                        qq_list.append(int(msg["data"]["qq"]))
+                        qq_list.append(int(msg.get("data")["qq"]))
                     else:
                         return ['all']
         return qq_list
