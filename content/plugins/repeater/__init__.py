@@ -73,7 +73,7 @@ async def _(event: GroupMessageEvent):
 
         # 不重复命令
         for pre in pres:
-            if pre == msg[:len(pre)]:
+            if pre == msg.extract_plain_text()[:len(pre)]:
                 msg_last.update({gid: {"msg": msg, "count": 1}})
                 return
 
