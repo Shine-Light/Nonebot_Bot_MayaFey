@@ -13,6 +13,12 @@ logger.add("./logs/error.log",
            diagnose=False,
            level="ERROR",
            format=default_format)
+           
+logger.add("./logs/info.log",
+           rotation="1 day",
+           diagnose=False,
+           level="INFO",
+           format=default_format)
 
 # You can pass some keyword args config to init function
 nonebot.init()
