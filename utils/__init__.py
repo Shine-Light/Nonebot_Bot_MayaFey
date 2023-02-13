@@ -261,5 +261,4 @@ async def _(bot: Bot, event: GroupMessageEvent):
         await bot_init.send("初始化成功,该项目完全免费,如果你是付费获得的，请立即退款并举报")
     # 初始化异常
     except Exception as e:
-        print(str(e))
         await bot_init.send("初始化出错:" + str(e))
