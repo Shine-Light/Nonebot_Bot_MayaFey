@@ -5,17 +5,16 @@
 """
 from nonebot.internal.matcher import Matcher
 from nonebot.message import run_preprocessor
-from utils.path import *
+from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
-from utils import json_tools, database_mysql, users
+from utils.path import *
+from utils import json_tools, users
 from nonebot.exception import IgnoredException
-from utils.permission import permission_
+from utils.permission import permission_, matcherPers, special_per, get_special_per
+from utils.users import get_role
 
 
-cursor = database_mysql.cursor
-db = database_mysql.connect
-
-
+# Plugin级别权限控制
 @run_preprocessor
 async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
     # 只检查群聊的权限
@@ -28,8 +27,8 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
             return
         if "启用" in msg or "停用" in msg:
             return
-        # 非命令信息优先级
-        if matcher.priority not in range(1, 12):
+        # 非命令响应器
+        if not matcher.rule.checkers:
             return
         plugin_name = matcher.plugin_name
         role: str = users.get_role(gid, uid)
@@ -45,3 +44,22 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
     else:
         pass
 
+
+# Matcher级别权限控制
+@run_preprocessor
+async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
+    gid = str(event.group_id)
+    if not matcherPers.isMatcherExist(matcher):
+        return
+    per_name = matcherPers.getName(matcher)
+    if not special_per(
+        get_role(gid, str(event.user_id)),
+        per_name,
+        gid
+    ):
+        await bot.send_group_msg(
+            group_id=event.group_id,
+            message=f"[{matcher.__matcher_name__}] 无权限,权限需在 {get_special_per(gid, per_name)} 及以上"
+        )
+        logger.debug(f"Matcher权限检测 权限不足")
+        raise IgnoredException("权限不足")
