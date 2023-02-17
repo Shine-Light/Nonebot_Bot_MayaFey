@@ -1,23 +1,23 @@
 """
 @Author: Shine_Light
 @Version: 1.0
-@Date: 2022/3/6 17:15
+@Date: 2023/2/17 18:53
 """
-from nonebot import on_command, require, get_driver
-from nonebot.adapters.onebot.v11 import GroupMessageEvent
+from nonebot import on_command, get_driver
+from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot, Message
+from nonebot.params import CommandArg
 from nonebot.message import event_preprocessor
 from nonebot.exception import IgnoredException
 from nonebot.plugin import PluginMetadata
-
-
-from .tools import *
-from utils import json_tools, database_mysql, users
-from utils.path import *
-from utils.permission import special_per, permission_, get_special_per
-from utils.other import add_target, translate
+from nonebot.log import logger
+from . import tools
+from utils import users
+from utils.permission import matcherPers, permission_
+from utils.other import add_target
 from content.plugins.plugin_control.functions import get_state
 
 
+pres: set = get_driver().config.command_start
 ban_count_allow = get_driver().config.ban_count_allow
 custom_ban_msg = f'''
 说明: 违禁词有两套系统,一套自定义系统,一套内置系统
@@ -34,265 +34,171 @@ custom_ban_msg = f'''
 强制添加违禁词:/违禁词 ++ {{内容}}
 '''.strip()
 
-
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "ban_word"),
+    name="ban_word",
     description="自动检测违禁词并撤回",
-    usage=custom_ban_msg + add_target(60)
+    usage=custom_ban_msg + add_target(60),
+    extra={
+        "generate_type": "none",
+        "permission_common": "member",
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "违禁词检测",
+        "permission_special": {
+            "ban_word:clearWord": "superuser",
+            "ban_word:addWord": "superuser",
+            "ban_word:addWordForce": "superuser",
+            "ban_word:removeWord": "superuser",
+            "ban_word:easyLevel": "superuser",
+            "ban_word:strictLevel": "superuser",
+            "ban_word:noneLevel": "superuser",
+        }
+    }
 )
 
-
-cursor = database_mysql.cursor
-time_now = ""
-config_url = config_path
 word_list_message = "以下是违禁词列表,侮辱性或其他敏感词汇已内置,无须再添加:\n"
-preBanWord = limit_word_path
-preBanWord_easy = limit_word_path_easy
 
 
-# 增删查
-baned = on_command(cmd="违禁词", priority=8)
-@baned.handle()
+listWord = on_command(cmd="违禁词列表", priority=10, block=False)
+@listWord.handle()
 async def _(event: GroupMessageEvent, bot: Bot):
-    uid = str(event.group_id)
-    group_id = str(event.group_id)
-    await init(group_id)
+    msg: str = ""
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "baned", gid):
-        word_list_url = word_list_urls / group_id / "words.txt"
-
-        # 简单信息处理
-        msg_meta: str = str(event.get_message())
-        place: list = msg_meta.split(" ", 2)
-
-        # 命令小于2段
-        if len(place) < 2:
-            await baned.finish(message="命令有误")
-
-        # 命令2段代码
-        elif len(place) == 2:
-            # 获取模式
-            mode: str = place[1]
-            # 列表模式
-            if mode == "列表":
-                msgs: str = ""
-                # 遍历列表
-                with open(word_list_url, "r", encoding="utf-8") as wordlist:
-                    # 列表为空
-                    if wordlist.read() == "":
-                        await baned.finish(message="未设置违禁词")
-                # 遍历词汇
-                for word in open(word_list_url, "r", encoding="utf-8"):
-                    # 去除词汇换行
-                    msg = word.replace("\n", "")
-                    msgs += f"{msg},"
-                await baned.finish(message=word_list_message + msgs[:-1] + add_target(30))
-
-            elif mode == "帮助":
-                await baned.finish(message=custom_ban_msg)
-
-            elif mode == "清空":
-                # 成员无权限清空
-                role = users.get_role(group_id, uid)
-                if permission_(role, "superuser"):
-                    await baned.finish(message="无权限" + add_target(30))
-                file = open(word_list_url, "w+", encoding="utf-8")
-                file.close()
-                await baned.finish(message="已清空")
-
-            # 没有指定的模式
-            else:
-                await baned.finish(message="命令有误")
-
-        # 命令3段代码
-        elif len(place) == 3:
-            # 成员无权限添加/删除
-            role = users.get_role(group_id, uid)
-            if permission_(role, "superuser"):
-                await baned.finish(message="无权限" + add_target(30))
-
-            # 获取模式和内容
-            mode: str = place[1]
-            content: str = place[2]
-            # 获取关键词
-            words_in: list = content.split("|")
-
-            # 追加模式
-            if mode == "+":
-                having_pre: list = []
-                having_preEasy: list = []
-                having_custom: list = []
-                msg = "添加成功"
-                for keyword in words_in:
-                    writing: bool = True
-                    # 已存在内置字典的词汇不添加
-                    if "\n" + keyword + "\n" in open(preBanWord, "r", encoding="utf-8").read():
-                        having_pre.append(keyword)
-                        writing = False
-                    if "\n" + keyword + "\n" in open(preBanWord_easy, "r", encoding="utf-8").read():
-                        having_preEasy.append(keyword)
-                        writing = False
-                    # 已添加的词汇不再添加(第一行)
-                    if keyword + "\n" in open(word_list_url, encoding="utf-8").read():
-                        # 判断元素是否为空格后的最后一个元素
-                        if keyword + "\n" == open(word_list_url, "r", encoding="utf-8").readline():
-                            having_custom.append(keyword)
-                            writing = False
-                    # 已添加的词汇不再添加(其他行)
-                    if "\n" + keyword + "\n" in open(word_list_url, encoding="utf-8").read():
-                        having_custom.append(keyword)
-                        writing = False
-
-                    # 若关键词不存在
-                    if writing:
-                        # 写入关键词
-                        with open(word_list_url, "a", encoding="utf-8") as words:
-                            words.write(keyword + "\n")
-
-                if len(having_custom) == 0 and len(having_pre) == 0 and len(having_preEasy) == 0:
-                    await baned.finish(message=msg + add_target(30))
-
-                # 批量添加失败信息
-                else:
-                    msg_pre = "以下词汇添加失败\n"
-                    msg_total = ""
-                    msg1 = ""
-                    msg2 = ""
-                    msg3 = ""
-                    if len(having_pre) > 0:
-                        for pre in having_pre:
-                            msg1 += pre + ","
-                        msg1 = "这些词汇存在于内置严格字典:" + "\n" + msg1
-                        msg_total += msg1
-                    if len(having_preEasy) > 0:
-                        for pre in having_preEasy:
-                            msg2 += pre + ","
-                        msg2 = "这些词汇存在于内置简单字典:" + "\n" + msg2
-                        msg_total += msg2
-                    if len(having_custom) > 0:
-                        for pre in having_custom:
-                            msg3 += pre + ","
-                        msg3 = "这些词汇存在于自定义字典:" + "\n" + msg3
-                        msg_total += msg3
-                    await baned.finish(message=msg_pre + msg_total + add_target(60))
-
-            # 强制增加模式
-            if mode == "++":
-                having_custom: list = []
-                msg = "添加成功"
-                for keyword in words_in:
-                    writing: bool = True
-                    # 已添加的词汇不再添加(第一行)
-                    if keyword + "\n" in open(word_list_url, encoding="utf-8").read():
-                        # 判断元素是否为空格后的最后一个元素
-                        if keyword + "\n" == open(word_list_url, "r", encoding="utf-8").readline():
-                            having_custom.append(keyword)
-                            writing = False
-                    # 已添加的词汇不再添加(其他行)
-                    if "\n" + keyword + "\n" in open(word_list_url, encoding="utf-8").read():
-                        having_custom.append(keyword)
-                        writing = False
-
-                    # 若关键词不存在
-                    if writing:
-                        # 写入关键词
-                        with open(word_list_url, "a", encoding="utf-8") as words:
-                            words.write(keyword + "\n")
-
-                # 全部添加成功
-                if len(having_custom) == 0:
-                    await baned.finish(message=msg)
-
-                # 批量添加失败信息
-                else:
-                    msg_pre = "以下词汇添加失败:\n"
-                    msg_total = ""
-                    msg1 = ""
-                    if len(having_custom) > 0:
-                        for pre in having_custom:
-                            msg1 += pre + ","
-                        msg1 = "这些词汇存在于自定义字典:" + msg1[:-1] + "\n"
-                        msg_total += msg1
-                    await baned.finish(message=msg_pre + msg_total + add_target(60))
-
-            # 删减模式
-            if mode == "-":
-                NoExist: list = []
-                for keyword in words_in:
-                    deleteing: bool = True
-                    # 词汇不存在
-                    if keyword + "\n" not in open(word_list_url, "r", encoding="utf-8").read():
-                        NoExist.append(keyword)
-                        deleteing = False
-
-                    # 若词汇存在,则开始删除
-                    if deleteing:
-                        line = 1
-                        for c in open(word_list_url, "r", encoding="utf-8"):
-                            if c == keyword + "\n":
-                                break
-                            else:
-                                line += 1
-                        word_out: str = ""
-                        with open(word_list_url, "r", encoding="utf-8") as file:
-                            words: list = file.readlines()
-                            index = line - 1
-                            words.pop(index)
-                            for word in words:
-                                word_out += word
-                            file.close()
-                        file = open(word_list_url, "w", encoding="utf-8")
-                        file.write(word_out)
-                        file.close()
-
-                if len(NoExist) == 0:
-                    await baned.finish(message="删除成功")
-                else:
-                    msg = "以下词汇不存在:\n"
-                    for keyword in NoExist:
-                        msg += keyword + ","
-                    msg = msg[:-1]
-                    await baned.finish(message=msg)
-
+    await tools.init(gid)
+    words = tools.get_word_list(gid)
+    if not words:
+        await listWord.finish("未设置违禁词")
     else:
-        await baned.send(f"权限不足,权限需在 {get_special_per(gid, 'baned')} 及以上")
+        for word in words:
+            msg += f"{word},"
+        await listWord.send(word_list_message + msg[:-1] + add_target(60))
 
 
-# 违禁词检测
+clearWord = on_command(cmd="违禁词清空", aliases={"清空违禁词"}, priority=9, block=False)
+@clearWord.handle()
+async def _(event: GroupMessageEvent, bot: Bot):
+    tools.clear_words(str(event.group_id))
+    await clearWord.send("已清空")
+matcherPers.addMatcher("ban_word:clearWord", clearWord)
+
+
+addWord = on_command(cmd="违禁词+", aliases={"添加违禁词", "违禁词添加"}, priority=8, block=False)
+@addWord.handle()
+async def _(event: GroupMessageEvent, bot: Bot, args: Message = CommandArg()):
+    gid = str(event.group_id)
+    words = args.extract_plain_text().strip()
+    if not words:
+        await addWord.finish("违禁词呢?")
+    words = tools.removeDuplicate(words.split("|"))
+    exists_words = tools.wordsExist(gid, words)
+    if exists_words:
+        msg = "以下关键词添加失败:\n"
+        having_pre = exists_words.get("having_pre")
+        having_preEasy = exists_words.get("having_preEasy")
+        having_custom = exists_words.get("having_custom")
+        if having_pre:
+            words = (words & having_pre) ^ words
+            msg += f"\t以下关键字已存在于内置严格词典\n\t{','.join(having_pre).strip(',')}\n"
+        if having_preEasy:
+            words = (words & having_preEasy) ^ words
+            msg += f"\t以下关键字已存在于内置简单词典\n\t{','.join(having_preEasy).strip(',')}\n"
+        if having_custom:
+            words = (words & having_custom) ^ words
+            msg += f"\t以下关键字已存在于自定义词典\n\t{','.join(having_custom).strip(',')}\n"
+    else:
+        msg = "设置成功"
+    tools.add_words(gid, words)
+    await addWord.send(msg.strip("\n"))
+matcherPers.addMatcher("ban_word:addWord", addWord)
+
+
+addWordForce = on_command(cmd="违禁词++", aliases={"强制添加违禁词", "违禁词强制添加"}, priority=8, block=False)
+@addWordForce.handle()
+async def _(event: GroupMessageEvent, bot: Bot, args: Message = CommandArg()):
+    gid = str(event.group_id)
+    words = args.extract_plain_text().strip()
+    if not words:
+        await addWordForce.finish("违禁词呢?")
+    words = tools.removeDuplicate(words.split("|"))
+    exists_words = tools.wordsExist(gid, words)
+    msg = "设置成功"
+    if exists_words:
+        having_custom = exists_words.get("having_custom")
+        if having_custom:
+            words = (words & having_custom) ^ words
+            msg = "以下关键词添加失败:\n"
+            msg += f"\t以下关键字已存在于自定义词典\n\t{','.join(having_custom).strip(',')}\n"
+    tools.add_words(gid, words)
+    await addWordForce.send(msg.strip("\n"))
+matcherPers.addMatcher("ban_word:addWordForce", addWordForce)
+
+
+removeWord = on_command(cmd="违禁词-", aliases={"删除违禁词", "违禁词删除"}, priority=8, block=False)
+@removeWord.handle()
+async def _(event: GroupMessageEvent, bot: Bot, args: Message = CommandArg()):
+    gid = str(event.group_id)
+    words = args.extract_plain_text().strip()
+    if not words:
+        await addWordForce.finish("违禁词呢?")
+    words = tools.removeDuplicate(words.split("|"))
+    tools.remove_words(gid, words)
+    await removeWord.send("删除成功!")
+matcherPers.addMatcher("ban_word:removeWord", removeWord)
+
+
+easyLevel = on_command(cmd="简单违禁词", priority=8, block=False)
+@easyLevel.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    tools.set_level(str(event.group_id), "easy")
+    await easyLevel.send("设置成功")
+matcherPers.addMatcher("ban_word:easyLevel", easyLevel)
+
+
+strictLevel = on_command(cmd="严格违禁词", priority=8, block=False)
+@strictLevel.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    tools.set_level(str(event.group_id), "strict")
+    await strictLevel.send("设置成功")
+matcherPers.addMatcher("ban_word:strictLevel", strictLevel)
+
+
+noneLevel = on_command(cmd="关闭内置违禁词", aliases={"取消内置违禁词", "禁用内置违禁词"}, priority=8, block=False)
+@noneLevel.handle()
+async def _(bot: Bot, event: GroupMessageEvent):
+    tools.set_level(str(event.group_id), "none")
+    await noneLevel.send("设置成功")
+matcherPers.addMatcher("ban_word:noneLevel", noneLevel)
+
 @event_preprocessor
 async def _(event: GroupMessageEvent, bot: Bot):
-    group_id = str(event.group_id)
+    gid = str(event.group_id)
     if "启用" in event.get_plaintext() or "停用" in event.get_plaintext():
         return
     if "初始化" in event.get_plaintext():
         return
-    if not (await get_state("ban_word", group_id)):
+    if not (await get_state("ban_word", gid)):
         return
-    await init(group_id)
-    # 是否为增删指令
-    msg_meta: str = event.get_message().extract_plain_text()
-    msgs = msg_meta.split(" ", 2)
-    if len(msgs) >= 2:
-        if (msgs[1] == "++" or msgs[1] == "+" or msgs[1] == "-") and event.sender.role != "member":
+    # 不识别命令
+    for pre in pres:
+        if pre == event.get_message().extract_plain_text()[:len(pre)]:
             return
+    await tools.init(gid)
     # 初始化设置
-    uid = event.get_user_id()
-    word_list_url = word_list_urls / group_id / "words.txt"
-    msg_meta = event.get_message().extract_plain_text()
+    uid = str(event.get_user_id())
+    msg = event.get_message().extract_plain_text()
     message_id = event.message_id
-    role: str = users.get_role(group_id, uid)
-    ban_words: list = open(word_list_url, "r", encoding="utf-8").read().split("\n")
-    preBanWords: list = open(preBanWord, "r", encoding="utf-8").read().split("\n")
-    preBanWords_easy: list = open(preBanWord_easy, "r", encoding="utf-8").read().split("\n")
-    level = json.loads(open(level_path, 'r', encoding='utf-8').read())[group_id]
+    role: str = users.get_role(gid, uid)
+    customWords: set = tools.get_word_list(gid)
+    preBanWords: set = tools.get_word_pre()
+    preBanWords_easy: set = tools.get_word_preEasy()
+    level = tools.get_level(gid)
     # 检测是否触发关键词(自定义违禁词)
-    for word in ban_words:
-        if word and word in msg_meta:
+    for word in customWords:
+        if word and word in msg:
             if not permission_(role, "superuser"):
-                await ban_count(uid, str(group_id))
-                count = users.get_ban_count(uid, group_id)
+                await tools.ban_count(uid, gid)
+                count = users.get_ban_count(uid, gid)
                 if count == 1:
                     times = "30min"
                 elif count == 2:
@@ -303,77 +209,52 @@ async def _(event: GroupMessageEvent, bot: Bot):
                 if count >= ban_count_allow:
                     try:
                         await bot.delete_msg(message_id=message_id)
-                        await kick_user(uid, group_id, bot)
+                        await tools.kick_user(uid, gid, bot)
                     except:
-                        await bot.send(event=event, message="检测到违禁词,无管理员权限,无法进行处罚")
+                        await bot.send(event=event, message="检测到违禁词,可能无管理员权限,无法进行处罚")
+                        logger.info("触发违禁词:" + word)
                         raise IgnoredException("触发违禁词")
                     await bot.send(event=event, message=f"检测到违禁词,次数已达{ban_count_allow}次,踢出并拉黑")
+                    logger.info("触发违禁词:" + word)
                     raise IgnoredException("触发违禁词")
                 else:
                     try:
                         await bot.delete_msg(message_id=message_id)
-                        await ban_user(uid, group_id, bot)
+                        await tools.ban_user(uid, gid, bot)
                     except:
-                        await bot.send(event=event, message="无管理员权限,无法进行处罚")
+                        await bot.send(event=event, message="检测到违禁词,可能无管理员权限,无法进行处罚")
+                        logger.info("触发违禁词:" + word)
                         raise IgnoredException("触发违禁词")
-                    await bot.send(event=event, message=f"检测到违禁词,第{count}次违规,禁言{times},请注意自己的言行", at_sender=True)
+                    await bot.send(event=event, message=f"检测到违禁词,第{count}次违规,禁言{times},请注意自己的言行",
+                                   at_sender=True)
                     raise IgnoredException("触发违禁词")
             # 管理员不做限制
             else:
-                logger.info("超级用户及以上触发违禁词:" + word)
+                logger.info(f"超级用户及以上({uid})触发自定义违禁词:" + word)
                 break
     # 违禁词检测(内置违禁词)
     if level == "strict":
         for word in preBanWords:
-            if word and word in msg_meta:
+            if word and word in msg:
                 if role in ["member", "baned"]:
                     await bot.delete_msg(message_id=message_id)
-                    await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
+                    await bot.call_api("set_group_ban", group_id=int(gid), user_id=int(uid), duration=300)
                     await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
                     logger.info("触发违禁词:" + word)
-                    break
+                    raise IgnoredException("触发违禁词")
                 else:
-                    logger.info("超级用户及以上触发违禁词:" + word)
+                    logger.info(f"超级用户及以上({uid})触发内置严格违禁词:" + word)
                     break
 
     elif level == "easy":
         for word in preBanWords_easy:
-            if word and word in msg_meta:
+            if word and word in msg:
                 if role in ["member", "baned"]:
                     await bot.delete_msg(message_id=message_id)
-                    await bot.call_api("set_group_ban", group_id=group_id, user_id=uid, duration=300)
+                    await bot.call_api("set_group_ban", group_id=int(gid), user_id=int(uid), duration=300)
                     await bot.send(event=event, message=f"检测到违禁词,禁言5min,请注意自己的言行", at_sender=True)
                     logger.info("触发违禁词:" + word)
-                    break
+                    raise IgnoredException("触发违禁词")
                 else:
-                    logger.info("超级用户及以上触发违禁词:" + word)
+                    logger.info(f"超级用户及以上({uid})触发内置简单违禁词:" + word)
                     break
-
-ban_easy = on_command("简单违禁词", priority=5)
-@ban_easy.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
-    gid = str(event.group_id)
-    await init(gid)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "ban_easy", gid):
-        level: dict = json_tools.json_load(level_path)
-        level.update({gid: "easy"})
-        json_tools.json_write(level_path, level)
-        await ban_easy.send("设置成功")
-    else:
-        await ban_easy.send(f"权限不足,权限需在 {get_special_per(gid, 'ban_easy')} 及以上")
-
-
-ban_strict = on_command("严格违禁词", priority=5)
-@ban_strict.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
-    gid = str(event.group_id)
-    await init(gid)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "ban_strict", gid):
-        level: dict = json_tools.json_load(level_path)
-        level.update({gid: "strict"})
-        json_tools.json_write(level_path, level)
-        await ban_strict.send("设置成功")
-    else:
-        await ban_strict.send(f"权限不足,权限需在 {get_special_per(gid, 'ban_strict')} 及以上")

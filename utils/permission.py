@@ -107,6 +107,7 @@ def special_per(role: str, name: str, gid: str) -> bool:
         return permission_(role, specials[name])
     except KeyError:
         logger.error(f"找不到特殊权限: {name}, 跳过权限检测")
+        return True
 
 
 def get_special_per(gid: str, name: str) -> str:
