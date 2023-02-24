@@ -144,6 +144,8 @@ curfew_path = config_path / "curfew"
 guessMember_path = config_path / "guessMember"
 # 猜群友缓存文件
 guessMember_cache_path = config_path / "guessMember" / "temp.jpg"
+# 权限文件
+permissions_path = permission_base / "permissions.json"
 
 # 俄罗斯轮盘游戏配置
 russian_path = config_path / "russian"

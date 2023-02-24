@@ -6,7 +6,7 @@
 import datetime
 
 from utils import database_mysql
-from utils.permission import get_role, get_lev
+from utils.permission import get_lev
 from nonebot import logger, get_driver, require
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot.permission import Permission

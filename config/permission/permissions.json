@@ -1,0 +1,9 @@
+{
+  "Van": {"name": "根用户", "level": 999},
+  "owner": {"name": "群主", "level": 80},
+  "admin": {"name": "管理员", "level": 60},
+  "test": {"name": "测试", "level": 50},
+  "superuser": {"name": "超级用户", "level": 40},
+  "member": {"name": "成员", "level": 20},
+  "baned": {"name": "黑名单", "level": 0}
+}

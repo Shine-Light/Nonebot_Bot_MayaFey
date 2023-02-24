@@ -7,8 +7,21 @@ from dataclasses import dataclass, field
 from typing import Dict
 from nonebot.matcher import Matcher
 from nonebot.log import logger
-from utils.path import *
+from utils.path import permissions_path, permission_special_base, permission_common_base
 from utils import json_tools
+
+try:
+    permissions = json_tools.json_load(permissions_path)
+except FileNotFoundError:
+    logger.warning("找不到权限配置文件,只有默认配置")
+    permissions = {
+      "Van": {"name": "根用户", "level": 999},
+      "owner": {"name": "群主", "level": 80},
+      "admin": {"name": "管理员", "level": 60},
+      "superuser": {"name": "超级用户", "level": 40},
+      "member": {"name": "成员", "level": 20},
+      "baned": {"name": "黑名单", "level": 0}
+    }
 
 
 def permission_(role: str, role_: str) -> bool:
@@ -24,74 +37,28 @@ def permission_(role: str, role_: str) -> bool:
 
 # 根据role获取等级
 def get_lev(role: str) -> int:
-    if role == 'Van':
-        return 6
-    elif role == 'owner':
-        return 5
-    elif role == 'admin':
-        return 4
-    elif role == 'superuser':
-        return 3
-    elif role == 'member':
-        return 2
-    elif role == 'baned':
-        return 1
+    if permissions.get(role) and permissions.get(role).get("level"):
+        return permissions.get(role).get("level")
     else:
+        logger.error(f"无法获取权限 {role},请检查权限配置")
         return -1
-
-
-# 根据等级获取role
-def get_role(lev: int) -> str:
-    if lev == 6:
-        return "Van"
-    elif lev == 5:
-        return "owner"
-    elif lev == 4:
-        return "admin"
-    elif lev == 3:
-        return "superuser"
-    elif lev == 2:
-        return "member"
-    elif lev == 1:
-        return "baned"
-    else:
-        return 'None'
 
 
 # role中文
 def role_cn(role: str) -> str:
-    if role == '根用户':
-        return "Van"
-    elif role == 'owner':
-        return "群主"
-    elif role == 'admin':
-        return "管理员"
-    elif role == 'superuser':
-        return "超级用户"
-    elif role == 'member':
-        return "成员"
-    elif role == 'baned':
-        return "黑名单"
+    if permissions.get(role) and permissions.get(role).get("name"):
+        return permissions.get(role).get("name")
     else:
         return role
 
 
 # role英文
-def role_en(role: str) -> str:
-    if role == 'Van':
-        return "根用户"
-    elif role == '群主':
-        return "owner"
-    elif role == '管理员':
-        return "admin"
-    elif role == '超级用户':
-        return "superuser"
-    elif role == '成员':
-        return "member"
-    elif role == '黑名单':
-        return "baned"
+def role_en(name: str) -> str:
+    for p in permissions:
+        if permissions.get(p).get("name") == name:
+            return p
     else:
-        return role
+        return name
 
 
 def special_per(role: str, name: str, gid: str) -> bool:
