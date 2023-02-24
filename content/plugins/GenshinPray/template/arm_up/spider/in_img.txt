@@ -1,3 +1,4 @@
+https://uploadstatic.mihoyo.com/ys-obc/2023/01/12/75833613/6f9e46c1aea970cb701ed3140f17ba94_6825980686029132730.png?x-oss-process=image/quality,q_75/resize,s_120
 https://uploadstatic.mihoyo.com/ys-obc/2022/12/03/75833613/d4db359f573a2236dd4859fd5405e981_2940302295631141950.png?x-oss-process=image/quality,q_75/resize,s_120
 https://uploadstatic.mihoyo.com/ys-obc/2022/12/03/75833613/c9cd14ef84a833b9b46a4a4b1c18c877_7487205367345361877.png?x-oss-process=image/quality,q_75/resize,s_120
 https://uploadstatic.mihoyo.com/ys-obc/2022/10/30/75833613/d7bf0d1fc452b0485a8e34f351647914_359689588087564593.png?x-oss-process=image/quality,q_75/resize,s_120
@@ -125,7 +126,7 @@ https://uploadstatic.mihoyo.com/ys-obc/2020/03/19/75833613/3624d7d0a0ef89d91cb11
 https://uploadstatic.mihoyo.com/ys-obc/2020/03/20/75833613/24bdaea5978d2634d74dad47442d6122_9127538621522062301.png?x-oss-process=image/quality,q_75/resize,s_120
 https://uploadstatic.mihoyo.com/ys-obc/2020/03/20/75833613/c154d6129fabcfd551b6f33b88d06d37_8283966138624579260.png?x-oss-process=image/quality,q_75/resize,s_120
 https://uploadstatic.mihoyo.com/ys-obc/2020/03/20/75833613/471586149ecedabc50df80a71c1a4e13_7638998658566853121.png?x-oss-process=image/quality,q_75/resize,s_120
-https://uploadstatic.mihoyo.com/ys-obc/2020/03/21/75833613/fb3ff7f236246073f2f508f1f774a9ab_3182158376215763089.png?x-oss-process=image/quality,q_75/resize,s_120
+https://uploadstatic.mihoyo.com/ys-obc/2023/02/07/75833613/f77873f400669f7fd9a47b4560f7203f_1645557680589576974.png?x-oss-process=image/quality,q_75/resize,s_120
 https://uploadstatic.mihoyo.com/ys-obc/2020/03/20/75833613/8ec0ab79c3a2e30828331e0d53428fec_5600004519324126064.png?x-oss-process=image/quality,q_75/resize,s_120
 https://uploadstatic.mihoyo.com/ys-obc/2020/03/24/75833613/e5e54473e2037e6820fbcfc2033be1f8_6519699561249741656.png?x-oss-process=image/quality,q_75/resize,s_120
 https://uploadstatic.mihoyo.com/ys-obc/2020/06/21/75833613/c5f23afc286a3eef8e5ea2e889ca67ff_8576229311507323215.png?x-oss-process=image/quality,q_75/resize,s_120
