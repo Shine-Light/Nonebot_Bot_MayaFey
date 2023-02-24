@@ -38,7 +38,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     except FinishedException:
         raise FinishedException()
     except Exception as e:
-        await update.send(f"更新出错: {str(e)}")
+        await update.finish(f"更新出错: {str(e)}")
 
 
 @update.got("choice")
@@ -53,7 +53,7 @@ async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
         else:
             await update.send("取消更新...")
     except Exception as e:
-        await update.send(f"更新出错: {str(e)}")
+        await update.finish(f"更新出错: {str(e)}")
 
 
 check_update = on_command("检查更新", aliases={"check_update"}, priority=8, block=False)
