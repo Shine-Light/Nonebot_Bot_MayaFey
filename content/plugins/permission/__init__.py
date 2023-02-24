@@ -35,13 +35,15 @@ per = on_command(cmd="权限设置", aliases={"perset", "设置权限"}, priorit
 @per.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
-    role_sender = users.get_role(gid, str(event.user_id))
     sb = admin_tools.At(event.json())
     if not sb:
         msg = str(event.get_message()).split(" ")
         if len(msg) != 3:
             await per.finish("指令错误")
-        sb.append(msg[1])
+        try:
+            sb.append(int(msg[1]))
+        except ValueError:
+            pass
 
     msg_split = str(event.get_message()).split(" ", 2)
     if len(msg_split) != 3:
@@ -53,15 +55,18 @@ async def _(bot: Bot, event: GroupMessageEvent):
         uid = str(uid)
         cursor.execute(f"SELECT uid,role FROM users WHERE uid='{uid}' AND gid='{gid}';")
         re = cursor.fetchone()
-        target_role = re[1]
         user = await bot.get_group_member_info(group_id=int(gid), user_id=int(uid))
         nickname = user['nickname']
         if re:
+            target_role = re[1]
             if uid_sender == uid:
                 await per.finish("不可设置自己的权限")
 
             if permission_(role, sender_role):
                 await per.finish("只能设置级别小于自己的权限")
+
+            if permission_(target_role, sender_role):
+                await per.finish("只能设置级别小于你的用户的权限")
 
             if role_en(role) in special_permissions:
                 await per.finish(f"{role} 为特殊权限,不可设置")
