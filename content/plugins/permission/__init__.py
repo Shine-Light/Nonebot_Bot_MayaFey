@@ -93,11 +93,9 @@ my_per = on_command(cmd="我的权限", priority=8)
 @my_per.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
-    role_sender = users.get_role(gid, str(event.user_id))
-    if special_per(role_sender, "my_per", gid):
-        uid = str(event.user_id)
-        role = users.get_role(gid, uid)
-        role = role_cn(role)
-        level = get_lev(role)
-        await my_per.send(f"你的权限为:{role}\n"
-                          f"你的级别为:{level}", at_sender=True)
+    uid = str(event.user_id)
+    role = users.get_role(gid, uid)
+    level = get_lev(role)
+    role = role_cn(role)
+    await my_per.send(f"你的权限为:{role}\n"
+                      f"你的级别为:{level}", at_sender=True)
