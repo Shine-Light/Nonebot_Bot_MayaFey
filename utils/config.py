@@ -9,7 +9,7 @@ from typing import Dict, Any, Union
 from pathlib import Path
 from nonebot.plugin import PluginMetadata, Plugin
 from nonebot.log import logger
-from .json_tools import json_load, json_update
+from .json_tools import json_load, json_update, json_write
 from .path import config_path as global_config_path
 from .other import mk_sync, translate_update, translate
 from .const import GENERATE_TYPE_GROUP, GENERATE_TYPE_GENERAL, GENERATE_TYPE_NONE, GENERATE_TYPE_SINGLE
@@ -144,12 +144,15 @@ class PluginConfig(object):
         # 不配置类型
         if self.generate_type == GENERATE_TYPE_NONE:
             return
-        # 通用配置初始化
+        # 通用配置初始化,不覆盖已有配置,但允许新增配置
         if self.generate_type in [GENERATE_TYPE_GENERAL, GENERATE_TYPE_GROUP, GENERATE_TYPE_SINGLE]:
             if not self.__config_path__.exists():
                 mk_sync("dir", self.__config_path__)
             if not self.__config_general_path__.exists():
                 mk_sync("file", self.__config_general_path__, "w", content=json.dumps(self.configs_general))
+            for key in self.configs_general:
+                if key not in json_load(self.__config_general_path__):
+                    json_update(self.__config_general_path__, key, self.configs_general[key])
         # 不分群配置可以即刻初始化,不覆盖已有配置,但允许新增配置
         if self.generate_type == GENERATE_TYPE_SINGLE:
             configs = parse_configs(self.configs, self.plugin_name)
@@ -270,6 +273,20 @@ class PluginConfig(object):
         except FileNotFoundError:
             logger.error(f"[{self.plugin_name}] 找不到 {config_path} 文件")
 
+    def add_config(self, gid: str = None, config_path: str = None):
+        """
+        新增配置文件,若文件已存在则跳过
+        gid: 群号,用{{gid}}表示群号时需要,生成类型不为群聊时无效
+        config_path: 配置路径,可用{{gid}}表示群号
+        """
+        if gid and self.generate_type == GENERATE_TYPE_GROUP:
+            config_path = config_path.replace("{{gid}}", gid)
+        if (global_config_path / self.plugin_name / config_path).exists():
+            logger.warning(f"[{self.plugin_name}] {config_path} 配置文件已存在,不再创建")
+        else:
+            json_write(global_config_path / self.plugin_name / config_path, {})
+            logger.debug(f"[{self.plugin_name}] 创建配置文件 {config_path}")
+
     def get_config_general(self, config_name: str) -> Any:
         """
         获取通用配置,没有该配置时返回None
@@ -344,5 +361,6 @@ class ConfigManager(object):
         获取已加载的插件的配置
         """
         return self.__configs__
+
 
 manager = ConfigManager()
