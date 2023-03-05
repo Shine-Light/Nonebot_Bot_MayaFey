@@ -20,6 +20,7 @@ plugins: list = []
 # 不可设置插件列表
 unset: list = open(unset_path, 'r', encoding="utf-8").read().split(",")
 
+
 async def init(gid: str):
     config_url_ = control_path / gid
 
