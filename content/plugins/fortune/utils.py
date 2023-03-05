@@ -1,11 +1,10 @@
 from PIL import Image, ImageDraw, ImageFont
-from typing import Optional, Tuple, Union, Dict, List
+from typing import Optional, Tuple, List
 from pathlib import Path
 import random
-
-import ujson as json
-
-from utils.path import res_path, fortune_out_path, fortune_copywriting_path, fortune_config_path
+import json
+from .config import themes_flag_config
+from utils.path import fortune_copywriting_path, img_path, font_path, fortune_out_path
 
 
 def get_copywriting() -> Tuple[str, str]:
@@ -13,12 +12,11 @@ def get_copywriting() -> Tuple[str, str]:
         Read the copywriting.json, choice a luck with a random content
     '''
     _p: Path = fortune_copywriting_path
-    content: List[Dict[str, Union[str, int, List[str]]]] = {}
 
     with open(_p, "r", encoding="utf-8") as f:
         content = json.load(f).get("copywriting")
 
-    luck: Dict[str, Union[str, int, List[str]]] = random.choice(content)
+    luck = random.choice(content)
 
     title: str = luck.get("good-luck")
     text: str = random.choice(luck.get("content"))
@@ -26,33 +24,34 @@ def get_copywriting() -> Tuple[str, str]:
     return title, text
 
 
-def randomBasemap(_theme: str, _spec_path: Optional[str]) -> str:
-    try_time = 0
-    if isinstance(_spec_path, str):
-        p: Path = res_path / "img" / _spec_path
+def random_basemap(theme: str, spec_path: Optional[str] = None) -> Path:
+    if isinstance(spec_path, str):
+        p: Path = img_path / spec_path
         return p
+
+    if theme == "random":
+        __p: Path = img_path
+
+        # Each dir is a theme.
+        themes: List[str] = [f.name for f in __p.iterdir() if f.is_dir() and theme_flag_check(f.name)]
+        picked: str = random.choice(themes)
+
+        _p: Path = __p / picked
+
+        # Each file is a posix path of images directory
+        images_dir: List[Path] = [i for i in _p.iterdir() if i.is_file()]
+        p: Path = random.choice(images_dir)
     else:
-        if _theme == "random":
-            __p: Path = res_path / "img"
-            # Each dir is a theme, remember add _flag after the names of themes
-            themes: List[str] = [f.name for f in __p.iterdir() if f.is_dir() and theme_flag_check(f.name + "_flag")]
-            picked = random.choice(themes)
+        _p: Path = img_path / theme
+        images_dir: List[Path] = [i for i in _p.iterdir() if i.is_file()]
+        p: Path = random.choice(images_dir)
 
-            _p: Path = __p / picked
-            # Each file is a posix path of images
-            images: List[Path] = [i for i in _p.iterdir() if i.is_file()]
-            p: Path = random.choice(images)
-        else:
-            _p: Path = res_path / "img" / _theme
-            images: List[Path] = [i for i in _p.iterdir() if i.is_file()]
-            p: Path = random.choice(images)
-
-        return p
+    return p
 
 
-def drawing(_theme: str, _spec_path: Optional[str], gid: str, uid: str) -> Path:
+def drawing(gid: str, uid: str, theme: str, spec_path: Optional[str] = None) -> Path:
     # 1. Random choice a base image
-    imgPath = randomBasemap(_theme, _spec_path)
+    imgPath: Path = random_basemap(theme, spec_path)
     img: Image.Image = Image.open(imgPath)
     draw = ImageDraw.Draw(img)
 
@@ -62,10 +61,10 @@ def drawing(_theme: str, _spec_path: Optional[str], gid: str, uid: str) -> Path:
     # 3. Draw
     font_size = 45
     color = "#F5F5F5"
-    image_font_center = (140, 99)
+    image_font_center = [140, 99]
     fontPath = {
-        "title": f"{res_path}/font/Mamelon.otf",
-        "text": f"{res_path}/font/sakura.ttf",
+        "title": f"{font_path}/Mamelon.otf",
+        "text": f"{font_path}/sakura.ttf",
     }
     ttfront = ImageFont.truetype(fontPath["title"], font_size)
     font_length = ttfront.getsize(title)
@@ -78,102 +77,78 @@ def drawing(_theme: str, _spec_path: Optional[str], gid: str, uid: str) -> Path:
         fill=color,
         font=ttfront,
     )
+
     # Text rendering
     font_size = 25
     color = "#323232"
     image_font_center = [140, 297]
     ttfront = ImageFont.truetype(fontPath["text"], font_size)
-    result = decrement(text)
+    slices, result = decrement(text)
 
-    textVertical = []
-    for i in range(0, result[0]):
-        font_height = len(result[i + 1]) * (font_size + 4)
-        textVertical = vertical(result[i + 1])
-        x = int(
+    for i in range(slices):
+        font_height: int = len(result[i]) * (font_size + 4)
+        textVertical: str = "\n".join(result[i])
+        x: int = int(
             image_font_center[0]
-            + (result[0] - 2) * font_size / 2
-            + (result[0] - 1) * 4
+            + (slices - 2) * font_size / 2
+            + (slices - 1) * 4
             - i * (font_size + 4)
         )
-        y = int(image_font_center[1] - font_height / 2)
+        y: int = int(image_font_center[1] - font_height / 2)
         draw.text((x, y), textVertical, fill=color, font=ttfront)
+
     # Save
-    outPath = exportFilePath(imgPath, gid, uid)
+    outDir: Path = fortune_out_path
+    if not outDir.exists():
+        outDir.mkdir(exist_ok=True, parents=True)
+
+    outPath = outDir / f"{gid}_{uid}.png"
+
     img.save(outPath)
     return outPath
 
 
-def exportFilePath(originalFilePath: Path, gid: str, uid: str) -> Path:
-    dirPath: Path = fortune_out_path
-    if not dirPath.exists():
-        dirPath.mkdir(exist_ok=True, parents=True)
-
-    outPath: Path = fortune_out_path / f"{uid}_{gid}.png"
-    return outPath
-
-
-def decrement(text: str) -> List[str]:
-    length = len(text)
-    result = []
+def decrement(text: str) -> Tuple[int, List[str]]:
+    '''
+        Split the text, return the number of columns and text list
+        TODO: Now, it ONLY fit with 2 columns of text
+    '''
+    length: int = len(text)
+    result: List[str] = []
     cardinality = 9
     if length > 4 * cardinality:
         raise Exception
 
-    numberOfSlices = 1
+    col_num: int = 1
     while length > cardinality:
-        numberOfSlices += 1
+        col_num += 1
         length -= cardinality
-
-    result.append(numberOfSlices)
 
     # Optimize for two columns
     space = " "
-    length = len(text)
-    if numberOfSlices == 2:
+    length = len(text)  # Value of length is changed!
+
+    if col_num == 2:
         if length % 2 == 0:
             # even
             fillIn = space * int(9 - length / 2)
-            return [
-                numberOfSlices,
-                text[: int(length / 2)] + fillIn,
-                fillIn + text[int(length / 2):],
-            ]
+            return col_num, [text[: int(length / 2)] + fillIn, fillIn + text[int(length / 2):]]
         else:
             # odd number
             fillIn = space * int(9 - (length + 1) / 2)
-            return [
-                numberOfSlices,
-                text[: int((length + 1) / 2)] + fillIn,
-                fillIn + space + text[int((length + 1) / 2):],
-            ]
+            return col_num, [text[: int((length + 1) / 2)] + fillIn, fillIn + space + text[int((length + 1) / 2):]]
 
-    for i in range(0, numberOfSlices):
-        if i == numberOfSlices - 1 or numberOfSlices == 1:
+    for i in range(col_num):
+        if i == col_num - 1 or col_num == 1:
             result.append(text[i * cardinality:])
         else:
             result.append(text[i * cardinality: (i + 1) * cardinality])
 
-    return result
+    return col_num, result
 
 
-def vertical(_str: List[str]) -> str:
-    _list = []
-    for s in _str:
-        _list.append(s)
-    return "\n".join(_list)
-
-
-def theme_flag_check(_theme: str) -> bool:
+def theme_flag_check(theme: str) -> bool:
     '''
-        Read the config json, return the status of a theme
+        check wether a theme is enabled in themes_flag_config
     '''
-    flag_config_path: Path = fortune_config_path
-    with flag_config_path.open("r", encoding="utf-8") as f:
-        data: Dict[str, bool] = json.load(f)
-
-    return data.get(_theme, False)
-
-
-__all__ = [
-    drawing, theme_flag_check
-]
+    return themes_flag_config.dict().get(theme + "_flag", False)

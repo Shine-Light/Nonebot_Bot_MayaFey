@@ -1,134 +1,132 @@
 from typing import Optional, Union, Tuple, List, Dict
 from pathlib import Path
+from datetime import datetime, date
 import random
-
-import ujson as json
-
-from .config import MainThemeList
+import json
+from .config import FortuneThemesDict, DateTimeEncoder
 from .utils import drawing, theme_flag_check
 from utils.path import fortune_path, fortune_out_path
 
 
 class FortuneManager:
-    def __init__(self):
-        self._user_data: Dict[str, Dict[str, Dict[str, Union[str, bool]]]] = {}
-        self._setting: Dict[str, Union[str, Dict[str, List[str]]]] = {}
-        self._data_file: Path = fortune_path / "fortune_data.json"
-        self._setting_file: Path = fortune_path / "fortune_setting.json"
 
-    def _multi_divine_check(self, gid: str, uid: str) -> bool:
+    def __init__(self):
+        self._user_data: Dict[str, Dict[str, Dict[str, Union[str, int, date]]]] = dict()
+        self._group_rules: Dict[str, str] = dict()
+        self._specific_rules: Dict[str, List[str]] = dict()
+        self._user_data_file: Path = fortune_path / "fortune_data.json"
+        self._group_rules_file: Path = fortune_path / "group_rules.json"
+        self._specific_rules_file: Path = fortune_path / "specific_rules.json"
+
+    def _multi_divine_check(self, gid: str, uid: str, nowtime: date) -> bool:
         '''
-            检测是否重复抽签
+            检测是否重复抽签：判断此时与上次签到时间是否为同一天（年、月、日均相同）
         '''
         self._load_data()
 
-        return self._user_data[gid][uid]["is_divined"]
-
-    def limit_setting_check(self, limit: str) -> Union[bool, str]:
-        '''
-            检测是否有该特定规则
-            检查指定规则的签底所对应主题是否开启或路径是否存在
-        '''
-        self._load_setting()
-
-        if not self._setting["specific_rule"].get(limit):
+        # Means this is a new user
+        if isinstance(self._user_data[gid][uid]["last_sign_date"], int):
             return False
 
-        spec_path = random.choice(self._setting["specific_rule"][limit])
-        for theme in MainThemeList:
+        last_sign_date: datetime = datetime.strptime(
+            self._user_data[gid][uid]["last_sign_date"], "%Y-%m-%d")
+
+        return last_sign_date.date() == nowtime
+
+    def specific_check(self, charac: str) -> Union[str, None]:
+        '''
+            检测是否有该签底规则
+            检查指定规则的签底所对应主题是否开启或路径是否存在
+        '''
+        self._load_specific_rules()
+
+        if not self._specific_rules.get(charac, False):
+            return None
+
+        spec_path: str = random.choice(self._specific_rules[charac])
+        for theme in FortuneThemesDict:
             if theme in spec_path:
-                return spec_path if theme_flag_check[theme] else False
+                return spec_path if theme_flag_check(theme) else None
 
-        return False
+        return None
 
-    def divine(self, _theme: Optional[str], _spec_path: Optional[str], gid: str, uid: str, nickname: str) -> Tuple[
-        Union[Path, bool], bool]:
+    def divine(self, gid: str, uid: str, _theme: Optional[str] = None, spec_path: Optional[str] = None) -> Tuple[bool, Union[Path, None]]:
         '''
-            今日运势抽签
-            主题在群设置主题divination__setting()已确认合法
+            今日运势抽签，主题已确认合法
         '''
-        self._init_user_data(gid, uid, nickname)
+        now_time: date = date.today()
 
-        self._load_setting()
+        self._init_user_data(gid, uid)
+        self._load_group_rules()
+
         if not isinstance(_theme, str):
-            theme = self._setting["group_rule"][gid]
+            theme: str = self._group_rules[gid]
         else:
-            theme = _theme
+            theme: str = _theme
 
-        if not self._multi_divine_check(gid, uid):
+        if not self._multi_divine_check(gid, uid, now_time):
             try:
-                image_file = drawing(theme, _spec_path, gid, uid)
+                img_path = drawing(gid, uid, theme, spec_path)
             except Exception:
-                return False, True
+                return True, None
 
-            self._end_data_handle(gid, uid)
-            return image_file, True
+            # Record the sign-in time
+            self._end_data_handle(gid, uid, now_time)
+            return True, img_path
         else:
-            image_file = fortune_out_path / f"{uid}_{gid}.png"
-            return image_file, False
+            img_path: Path = fortune_out_path
+            return False, img_path / f"{gid}_{uid}.png"
 
-    def reset_fortune(self) -> None:
+    def clean_out_pics(self) -> None:
         '''
-            重置今日运势并清空图片
+            清空图片
         '''
-        self._load_data()
-        for gid in self._user_data:
-            for uid in list(self._user_data[gid]):
-                if self._user_data[gid][uid]["is_divined"] == False:
-                    self._user_data[gid].pop(uid)
-                else:
-                    self._user_data[gid][uid]["is_divined"] = False
-
-        self._save_data()
-
         dirPath: Path = fortune_out_path
         for pic in dirPath.iterdir():
             pic.unlink()
 
-    def _init_user_data(self, gid: str, uid: str, nickname: str) -> None:
+    def _init_user_data(self, gid: str, uid: str) -> None:
         '''
-            初始化用户信息
+            初始化用户信息：
+            1. 群聊不在群组规则内，初始化
+            2. 群聊不在抽签数据内，初始化
+            3. 用户不在抽签数据内，初始化
         '''
         self._load_data()
-        self._load_setting()
+        self._load_group_rules()
 
-        if "group_rule" not in self._setting:
-            self._setting["group_rule"] = {}
-        if "specific_rule" not in self._setting:
-            self._setting["specific_rule"] = {}
-        if gid not in self._setting["group_rule"]:
-            self._setting["group_rule"][gid] = "random"
+        if gid not in self._group_rules:
+            self._group_rules.update({gid: "random"})
+
         if gid not in self._user_data:
             self._user_data[gid] = {}
+
         if uid not in self._user_data[gid]:
             self._user_data[gid][uid] = {
-                "uid": uid,
-                "gid": gid,
-                "nickname": nickname,
-                "is_divined": False
+                "last_sign_date": 0 # Last sign-in date. YY-MM-DD
             }
 
         self._save_data()
-        self._save_setting()
+        self._save_group_rules()
 
-    def get_main_theme_list(self) -> str:
+    def get_available_themes(self) -> str:
         '''
             获取可设置的抽签主题
         '''
-        msg = "可选抽签主题"
-        for theme in MainThemeList:
-            if theme != "random" and theme_flag_check[theme] is True:
-                msg += f"\n{MainThemeList[theme][0]}"
+        msg: str = "可选抽签主题"
+        for theme in FortuneThemesDict:
+            if theme != "random" and theme_flag_check(theme):
+                msg += f"\n{FortuneThemesDict[theme][0]}"
 
         return msg
 
-    def _end_data_handle(self, gid: str, uid: str) -> None:
+    def _end_data_handle(self, gid: str, uid: str, nowtime: date) -> None:
         '''
             占卜结束数据保存
         '''
         self._load_data()
 
-        self._user_data[gid][uid]["is_divined"] = True
+        self._user_data[gid][uid]["last_sign_date"] = nowtime
         self._save_data()
 
     def theme_enable_check(self, _theme: str) -> bool:
@@ -141,59 +139,62 @@ class FortuneManager:
         '''
             分群管理抽签设置
         '''
-        self._load_setting()
+        self._load_group_rules()
 
         if self.theme_enable_check(theme):
-            self._setting["group_rule"][gid] = theme
-            self._save_setting()
+            self._group_rules[gid] = theme
+            self._save_group_rules()
             return True
 
         return False
 
-    def get_setting(self, gid: str) -> str:
+    def get_group_theme(self, gid: str) -> str:
         '''
-            获取当前群抽签主题，若没有数据则置随机
+            获取当前群抽签主题，若没有数据则初始化为随机
         '''
-        self._load_setting()
+        self._load_group_rules()
 
-        if gid not in self._setting["group_rule"]:
-            self._setting["group_rule"][gid] = "random"
-            self._save_setting()
+        if gid not in self._group_rules:
+            self._group_rules.update({gid: "random"})
+            self._save_group_rules()
 
-        return self._setting["group_rule"][gid]
+        return self._group_rules[gid]
 
     # ------------------------------ Utils ------------------------------ #
-    def _load_setting(self) -> None:
-        '''
-            读取各群抽签设置
-        '''
-        with open(self._setting_file, 'r', encoding='utf-8') as f:
-            self._setting = json.load(f)
-
-    def _save_setting(self) -> None:
-        '''
-            保存各群抽签设置
-        '''
-        with open(self._setting_file, 'w', encoding='utf-8') as f:
-            json.dump(self._setting, f, ensure_ascii=False, indent=4)
-
     def _load_data(self) -> None:
         '''
             读取抽签数据
         '''
-        with open(self._data_file, 'r', encoding='utf-8') as f:
+        with open(self._user_data_file, "r", encoding="utf-8") as f:
             self._user_data = json.load(f)
 
     def _save_data(self) -> None:
         '''
             保存抽签数据
         '''
-        with open(self._data_file, 'w', encoding='utf-8') as f:
-            json.dump(self._user_data, f, ensure_ascii=False, indent=4)
+        with open(self._user_data_file, "w", encoding="utf-8") as f:
+            json.dump(self._user_data, f, ensure_ascii=False, indent=4, cls=DateTimeEncoder)
+
+    def _load_group_rules(self) -> None:
+        '''
+            读取各群抽签主题设置
+        '''
+        with open(self._group_rules_file, "r", encoding="utf-8") as f:
+            self._group_rules = json.load(f)
+
+    def _save_group_rules(self) -> None:
+        '''
+            保存各群抽签主题设置
+        '''
+        with open(self._group_rules_file, "w", encoding="utf-8") as f:
+            json.dump(self._group_rules, f, ensure_ascii=False, indent=4)
+
+    def _load_specific_rules(self) -> None:
+        '''
+            读取签底指定规则 READ ONLY
+        '''
+        with open(self._specific_rules_file, "r", encoding="utf-8") as f:
+            self._specific_rules = json.load(f)
 
 
 fortune_manager = FortuneManager()
-
-__all__ = [
-    fortune_manager
-]
