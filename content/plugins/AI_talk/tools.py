@@ -68,9 +68,9 @@ def get_api_url(msg: str, uid: str, nickname: str, gid: str = "12345678") -> dic
         secret = moli_config["secret"]
         content = msg
         if gid == "12346578":
-            chat_type = 2
-        else:
             chat_type = 1
+        else:
+            chat_type = 2
         chat_from = uid
         fromName = nickname
         to = gid
