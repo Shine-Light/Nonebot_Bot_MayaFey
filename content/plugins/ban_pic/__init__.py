@@ -47,17 +47,14 @@ async def check_pic(bot: Bot, event: GroupMessageEvent):
                             logger.info('检测到违规图片,撤回')
                         except ActionFailed:
                             logger.info('检测到违规图片,但权限不足,撤回失败')
-                        baning = banSb(gid, ban_list=[uid], time=300)
-                        async for baned in baning:
-                            if baned:
-                                try:
-                                    await baned
-                                except ActionFailed:
-                                    logger.info('检测到违规图片,但权限不足,禁言失败')
-                                else:
-                                    await bot.send(event=event, message=f"发送了违规图片,类型{result.illegal_type},现对你进行处罚,有异议请联系管理员",
-                                                   at_sender=True)
-                                    logger.info(f"检测到违规图片,禁言操作成功,用户: {uid[0]}")
+                        try:
+                            await banSb(gid, ban_list=[uid], time=300)
+                        except ActionFailed:
+                            logger.info('检测到违规图片,但权限不足,禁言失败')
+                        else:
+                            await bot.send(event=event, message=f"发送了违规图片,类型{result.illegal_type},现对你进行处罚,有异议请联系管理员",
+                                           at_sender=True)
+                            logger.info(f"检测到违规图片,禁言操作成功,用户: {uid[0]}")
                         raise IgnoredException("违规图片")
                 else:
                     image_ = url
