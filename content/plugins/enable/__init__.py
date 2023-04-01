@@ -15,10 +15,18 @@ from utils.other import add_target, translate
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "enable"),
+    name="enable",
     description="机器人开关",
     usage="/启用机器人 (根用户)\n"
-          "/停用机器人 (根用户)" + add_target(60)
+          "/停用机器人 (根用户)" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "Van",
+        "unset": True,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "机器人开关",
+    }
 )
 
 

@@ -7,19 +7,27 @@ from nonebot import on_notice, on_command
 from nonebot.adapters.onebot.v11 import GroupDecreaseNoticeEvent, GroupMessageEvent, Message
 from nonebot.plugin import PluginMetadata
 from utils import users
-from utils.other import add_target, translate
+from utils.other import add_target
 from utils.permission import special_per, get_special_per
 from .tools import *
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "leave"),
+    name="leave",
     description="离群提示",
     usage="/离群提示 {内容} (超级用户)\n"
           "/踢出提示 {内容} (超级用户)\n"
           "注:在内容中可以使用转义字符\n"
-          "{leaved}表示退群的人,{kicked}表示被踢的人,{kicker}表示操作者" + add_target(60)
+          "{leaved}表示退群的人,{kicked}表示被踢的人,{kicker}表示操作者" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": True,
+        "author": "Shine_Light",
+        "translate": "离群提示",
+    }
 )
 
 

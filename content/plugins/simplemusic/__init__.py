@@ -9,19 +9,24 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 from nonebot.adapters.onebot.v11 import Message
 from .data_source import Func, Source, sources
-from utils.other import translate, add_target
+from utils.other import add_target
 
 
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "simplemusic"),
+    name="simplemusic",
     description="点歌，支持qq、网易云等来源",
     usage="点歌/qq点歌/网易点歌/酷我点歌/酷狗点歌/咪咕点歌/b站点歌 + 关键词" + add_target(60),
     extra={
+        "generate_type": "group",
+        "permission_common": "member",
         "unique_name": "simplemusic",
         "example": "点歌 万古生香",
         "author": "meetwq <meetwq@gmail.com>",
         "version": "0.1.3",
-    },
+        "unset": False,
+        "total_unable": False,
+        "translate": "点歌台",
+    }
 )
 
 

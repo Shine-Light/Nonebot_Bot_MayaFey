@@ -12,14 +12,22 @@ from nonebot.plugin import PluginMetadata
 from utils import json_tools, other
 from utils.path import *
 
-from utils.other import add_target, translate
+from utils.other import add_target
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "total"),
+    name="total",
     description="插件调用统计",
-    usage="/插件统计 (超级用户)" + add_target(60)
+    usage="/插件统计 (超级用户)" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "superuser",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "猜群友",
+    }
 )
 fts = "%Y-%m"
 

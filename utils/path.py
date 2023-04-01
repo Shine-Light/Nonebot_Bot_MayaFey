@@ -127,7 +127,7 @@ GenshinPray_path = config_path / "GenshinPray"
 # 原神祈福图片目录
 GenshinPray_img_path = img_path / "GenshinPray"
 # 好友请求信息记录
-friends_request_info = config_path / "friends_request" / "requests.json"
+friends_request_info = config_path / "friends" / "requests.json"
 # 退群拉黑配置目录
 auto_baned_path = config_path / "auto_baned"
 # 随机老婆配置目录

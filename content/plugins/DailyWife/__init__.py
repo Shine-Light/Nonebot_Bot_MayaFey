@@ -12,14 +12,13 @@ from nonebot.plugin import PluginMetadata
 from nonebot.rule import Rule
 from nonebot.matcher import Matcher
 from nonebot.params import CommandArg, T_State
-from utils.other import translate, add_target
-from utils import users
-from utils.permission import get_special_per, special_per
+from utils.other import add_target
+from utils.matcherManager import matcherManager
 from .data import DailyWife, Config, Record
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "DailyWife"),
+    name="DailyWife",
     description="随机抽取群友做老婆",
     usage="/抽老婆\n"
           "/我的老婆\n"
@@ -32,7 +31,18 @@ __plugin_meta__ = PluginMetadata(
           "\t机器人 开|关 可以抽到机器人\n" 
           "\t自己 开|关 可以抽到自己\n" 
           "\t潜水成员不参与 开|关 不会抽到潜水的人\n" 
-          "\t潜水时间阈值 整数 超过时间阈值视为潜水\n" + add_target(60)
+          "\t潜水时间阈值 整数 超过时间阈值视为潜水\n" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "permission_special": {
+            "DailyWife:dailyWife_setting": "superuser"
+        },
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "群友老婆",
+    }
 )
 
 nicknames = get_driver().config.nickname
@@ -199,27 +209,22 @@ async def _(bot: Bot, event: GroupMessageEvent):
 dailyWife_setting = on_command("抽老婆设置", aliases={"随机老婆设置"}, block=False, priority=8)
 @dailyWife_setting.handle()
 async def _(bot: Bot, event: GroupMessageEvent, state: T_State, matcher: Matcher, args: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "dailyWife_setting", gid):
-        config = Config(str(event.group_id))
-        await config.init()
-        args = args.extract_plain_text().split(" ")
-        try:
-            args.remove("")
-        except:
-            pass
+    config = Config(str(event.group_id))
+    await config.init()
+    args = args.extract_plain_text().split(" ")
+    try:
+        args.remove("")
+    except:
+        pass
 
-        if len(args) >= 1:
-            matcher.set_arg("option", Message(MessageSegment.text(args[0])))
+    if len(args) >= 1:
+        matcher.set_arg("option", Message(MessageSegment.text(args[0])))
 
-            if len(args) == 2:
-                matcher.set_arg("choice", Message(MessageSegment.text(args[1])))
+        if len(args) == 2:
+            matcher.set_arg("choice", Message(MessageSegment.text(args[1])))
 
-        state['config'] = config
-    else:
-        await dailyWife_setting.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'dailyWife_setting')} 及以上")
+    state['config'] = config
+matcherManager.addMatcher("DailyWife:dailyWife_setting", dailyWife_setting)
 
 
 @dailyWife_setting.got("option", prompt="要设置什么呢?")

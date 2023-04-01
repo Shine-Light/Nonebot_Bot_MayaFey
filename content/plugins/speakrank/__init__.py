@@ -13,7 +13,7 @@ from nonebot.plugin import PluginMetadata
 from utils.path import group_message_data_path
 from utils.admin_tools import At
 from utils.json_tools import json_load, json_write
-from utils.other import add_target, translate
+from utils.other import add_target
 
 
 # 插件元数据定义
@@ -27,8 +27,13 @@ __plugin_meta__ = PluginMetadata(
           "/发言数\n"
           "/今日发言数" + add_target(60),
     extra={
-        "permission_common": "member"
-        }
+        "generate_type": "group",
+        "permission_common": "baned",
+        "unset": False,
+        "total_unable": False,
+        "author": "yzyyz1387",
+        "translate": "发言排行榜",
+    }
 )
 
 speakrank_record = on_message(priority=12, block=False)

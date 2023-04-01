@@ -17,8 +17,6 @@ plugin_url = plugins_path
 dirs = os.listdir(plugin_url)
 # 插件列表
 plugins: list = []
-# 不可设置插件列表
-unset: list = open(unset_path, 'r', encoding="utf-8").read().split(",")
 
 
 async def init(gid: str):
@@ -60,6 +58,8 @@ async def is_unset(plugin: str) -> bool:
     插件是否为不可设置插件
     plugin: 插件名
     """
+    # 不可设置插件列表
+    unset: list = open(unset_path, 'r', encoding="utf-8").read().split(",")
     if plugin in unset:
         return True
     else:

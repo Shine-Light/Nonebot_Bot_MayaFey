@@ -8,16 +8,24 @@ from typing import Any, Dict
 from nonebot import require, on_command, logger
 from nonebot.adapters.onebot.v11 import Bot, MessageSegment, Message, Event
 from nonebot.plugin import PluginMetadata
-from utils.other import add_target, translate
+from utils.other import add_target
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 from nonebot_plugin_apscheduler import scheduler
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "withdraw"),
+    name="withdraw",
     description="定时撤回",
-    usage="被动,无命令" + add_target(60)
+    usage="被动,无命令" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "baned",
+        "unset": True,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "定时撤回",
+    }
 )
 
 

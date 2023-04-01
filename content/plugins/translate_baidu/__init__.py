@@ -5,18 +5,26 @@ from typing import Tuple, Any
 from nonebot.plugin import PluginMetadata
 from nonebot import on_regex
 from nonebot.params import RegexGroup
-from utils.other import add_target, translate
+from utils.other import add_target
 
 global_config = nonebot.get_driver().config
 plugin_config = Config(**global_config.dict())
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "translate_baidu"),
+    name="translate_baidu",
     description="翻译(百度接口版本)",
     usage=f"x翻x {{内容}}\n"
           f"x译x {{内容}}\n"
-          f"其中x可以为: {', '.join(LANGUAGES.keys())}" + add_target(60)
+          f"其中x可以为: {', '.join(LANGUAGES.keys())}" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "NumberSir",
+        "translate": "百度翻译",
+    }
 )
 
 

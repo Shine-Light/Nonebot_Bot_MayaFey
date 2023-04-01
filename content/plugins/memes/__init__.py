@@ -30,21 +30,31 @@ from .depends import regex
 from .data_source import memes
 from .download import load_thumb
 from .manager import meme_manager, ActionResult, MemeMode
-from utils.permission import special_per, get_special_per
-from utils.other import translate, add_target
-from utils import users
+from utils.other import add_target
+from utils.matcherManager import matcherManager
 
 
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "memes"),
+    name="memes",
     description="生成各种表情包",
     usage="触发方式：指令 + 文字 (部分表情包需要多段文字)\n发送“/表情包制作”查看表情包列表" + add_target(60),
     extra={
         "unique_name": "memes",
         "example": "鲁迅说 我没说过这句话\n举牌 aya大佬带带我",
+        "generate_type": "group",
+        "permission_common": "member",
+        "permission_special": {
+            "memes:memes_block_cmd": "superuser",
+            "memes:memes_unblock_cmd": "superuser",
+            "memes:memes_block_cmd_gl": "superuser",
+            "memes:memes_unblock_cmd_gl": "superuser",
+        },
+        "unset": False,
+        "total_unable": False,
         "author": "meetwq <meetwq@gmail.com>",
         "version": "0.3.5",
-    },
+        "translate": "表情包制作",
+    }
 )
 
 
@@ -56,6 +66,10 @@ memes_block_cmd = on_command("禁用表情", block=False, priority=8)
 memes_unblock_cmd = on_command("启用表情", block=False, priority=8)
 memes_block_cmd_gl = on_command("全局禁用表情", block=False, priority=8)
 memes_unblock_cmd_gl = on_command("全局启用表情", block=False, priority=8)
+matcherManager.addMatcher("memes:memes_block_cmd", memes_unblock_cmd_gl)
+matcherManager.addMatcher("memes:memes_unblock_cmd", memes_unblock_cmd)
+matcherManager.addMatcher("memes:memes_block_cmd_gl", memes_block_cmd_gl)
+matcherManager.addMatcher("memes:memes_unblock_cmd_gl", memes_unblock_cmd_gl)
 
 
 @run_sync
@@ -133,61 +147,46 @@ async def _(user_id: str = get_user_id()):
 async def _(
     event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg(), user_id: str = get_user_id()
 ):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "memes_block_cmd", gid):
-        meme_names = msg.extract_plain_text().strip().split()
-        if not meme_names:
-            matcher.block = False
-            await matcher.finish()
-        results = meme_manager.block(user_id, meme_names)
-        messages = []
-        for name, result in results.items():
-            if result == ActionResult.SUCCESS:
-                message = f"表情 {name} 禁用成功"
-            elif result == ActionResult.NOTFOUND:
-                message = f"表情 {name} 不存在！"
-            else:
-                message = f"表情 {name} 禁用失败"
-            messages.append(message)
-        await matcher.finish("\n".join(messages))
-    else:
-        await matcher.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'memes_block_cmd')} 及以上")
+    meme_names = msg.extract_plain_text().strip().split()
+    if not meme_names:
+        matcher.block = False
+        await matcher.finish()
+    results = meme_manager.block(user_id, meme_names)
+    messages = []
+    for name, result in results.items():
+        if result == ActionResult.SUCCESS:
+            message = f"表情 {name} 禁用成功"
+        elif result == ActionResult.NOTFOUND:
+            message = f"表情 {name} 不存在！"
+        else:
+            message = f"表情 {name} 禁用失败"
+        messages.append(message)
+    await matcher.finish("\n".join(messages))
 
 
 @memes_unblock_cmd.handle()
 async def _(
     event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg(), user_id: str = get_user_id()
 ):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "memes_unblock_cmd", gid):
-        meme_names = msg.extract_plain_text().strip().split()
-        if not meme_names:
-            matcher.block = False
-            await matcher.finish()
-        results = meme_manager.unblock(user_id, meme_names)
-        messages = []
-        for name, result in results.items():
-            if result == ActionResult.SUCCESS:
-                message = f"表情 {name} 启用成功"
-            elif result == ActionResult.NOTFOUND:
-                message = f"表情 {name} 不存在！"
-            else:
-                message = f"表情 {name} 启用失败"
-            messages.append(message)
-        await matcher.finish("\n".join(messages))
-    else:
-        await matcher.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'memes_unblock_cmd')} 及以上")
+    meme_names = msg.extract_plain_text().strip().split()
+    if not meme_names:
+        matcher.block = False
+        await matcher.finish()
+    results = meme_manager.unblock(user_id, meme_names)
+    messages = []
+    for name, result in results.items():
+        if result == ActionResult.SUCCESS:
+            message = f"表情 {name} 启用成功"
+        elif result == ActionResult.NOTFOUND:
+            message = f"表情 {name} 不存在！"
+        else:
+            message = f"表情 {name} 启用失败"
+        messages.append(message)
+    await matcher.finish("\n".join(messages))
 
 
 @memes_block_cmd_gl.handle()
 async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "memes_block_cmd_gl", gid):
         meme_names = msg.extract_plain_text().strip().split()
         if not meme_names:
             matcher.block = False
@@ -203,16 +202,10 @@ async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandAr
                 message = f"表情 {name} 设置失败"
             messages.append(message)
         await matcher.finish("\n".join(messages))
-    else:
-        await matcher.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'memes_block_cmd_gl')} 及以上")
 
 
 @memes_unblock_cmd_gl.handle()
 async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "memes_unblock_cmd_gl", gid):
         meme_names = msg.extract_plain_text().strip().split()
         if not meme_names:
             matcher.block = False
@@ -228,9 +221,6 @@ async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandAr
                 message = f"表情 {name} 设置失败"
             messages.append(message)
         await matcher.finish("\n".join(messages))
-    else:
-        await matcher.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'memes_unblock_cmd_gl')} 及以上")
 
 
 def create_matchers():

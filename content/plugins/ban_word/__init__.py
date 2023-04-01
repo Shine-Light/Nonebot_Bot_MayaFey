@@ -42,11 +42,13 @@ __plugin_meta__ = PluginMetadata(
     usage=custom_ban_msg + add_target(60),
     extra={
         "generate_type": "none",
-        "permission_common": "member",
-        "total_unable": False,
+        "permission_common": "baned",
+        "unset": False,
+        "total_unable": True,
         "author": "Shine_Light",
         "translate": "违禁词检测",
         "permission_special": {
+            "ban_word:listWord": "member",
             "ban_word:clearWord": "superuser",
             "ban_word:addWord": "superuser",
             "ban_word:addWordForce": "superuser",
@@ -58,10 +60,9 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
-word_list_message = "以下是违禁词列表,侮辱性或其他敏感词汇已内置,无须再添加:\n"
-
 
 listWord = on_command(cmd="违禁词列表", priority=10, block=False)
+matcherManager.addMatcher("ban_word:listWord", listWord)
 @listWord.handle()
 async def _(event: GroupMessageEvent, bot: Bot):
     msg: str = ""
@@ -71,6 +72,7 @@ async def _(event: GroupMessageEvent, bot: Bot):
     if not words:
         await listWord.finish("未设置违禁词")
     else:
+        word_list_message = "以下是违禁词列表,侮辱性或其他敏感词汇已内置,无须再添加:\n"
         for word in words:
             msg += f"{word},"
         await listWord.send(word_list_message + msg[:-1] + add_target(60))

@@ -27,13 +27,13 @@ from .config import Config
 from .data_source import memes
 from .depends import split_msg, regex
 from .manager import meme_manager, ActionResult, MemeMode
-from utils.permission import special_per, get_special_per
-from utils.other import translate, add_target
+from utils.matcherManager import matcherManager
+from utils.other import add_target
 from utils import users
 
 
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "petpet"),
+    name="petpet",
     description="摸头等头像相关表情制作",
     usage="/指令 @user/qq/自己/图片\n"
           "/头像表情包 查看支持的指令\n"
@@ -43,11 +43,22 @@ __plugin_meta__ = PluginMetadata(
           "/全局启用头像表情 {表情名} (超级用户)\n" + add_target(60),
     config=Config,
     extra={
+        "generate_type": "group",
         "unique_name": "petpet",
         "example": "摸 @小Q\n摸 114514\n摸 自己\n摸 [图片]",
+        "permission_common": "member",
+        "permission_special": {
+            "petpet:petpet_block_cmd": "superuser",
+            "petpet:petpet_unblock_cmd": "superuser",
+            "petpet:petpet_block_cmd_gl": "superuser",
+            "petpet:petpet_unblock_cmd_gl": "superuser",
+        },
+        "unset": False,
+        "total_unable": False,
         "author": "meetwq <meetwq@gmail.com>",
         "version": "0.3.13",
-    },
+        "translate": "头像表情包制作",
+    }
 )
 
 help_cmd = on_command("头像表情包", aliases={"头像相关表情包", "头像相关表情制作"}, block=False, priority=8)
@@ -56,6 +67,10 @@ petpet_unblock_cmd = on_command("启用头像表情", block=False, priority=8)
 petpet_block_cmd_gl = on_command("全局禁用头像表情", block=False, priority=8)
 petpet_unblock_cmd_gl = on_command("全局启用头像表情", block=False, priority=8)
 
+matcherManager.addMatcher("petpet:petpet_block_cmd", petpet_block_cmd)
+matcherManager.addMatcher("petpet:petpet_unblock_cmd", petpet_unblock_cmd)
+matcherManager.addMatcher("petpet:petpet_block_cmd_gl", petpet_block_cmd_gl)
+matcherManager.addMatcher("petpet:petpet_unblock_cmd_gl", petpet_unblock_cmd_gl)
 
 @run_sync
 def help_image(user_id: str, memes: List[Meme]) -> BytesIO:
@@ -116,104 +131,80 @@ async def _(user_id: str = get_user_id()):
 async def _(
     event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg(), user_id: str = get_user_id()
 ):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "petpet_block_cmd", gid):
-        meme_names = msg.extract_plain_text().strip().split()
-        if not meme_names:
-            matcher.block = False
-            await matcher.finish()
-        results = meme_manager.block(user_id, meme_names)
-        messages = []
-        for name, result in results.items():
-            if result == ActionResult.SUCCESS:
-                message = f"表情 {name} 禁用成功"
-            elif result == ActionResult.NOTFOUND:
-                message = f"表情 {name} 不存在！"
-            else:
-                message = f"表情 {name} 禁用失败"
-            messages.append(message)
-        await matcher.finish("\n".join(messages))
-    else:
-        await matcher.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'petpet_block_cmd')} 及以上")
+    meme_names = msg.extract_plain_text().strip().split()
+    if not meme_names:
+        matcher.block = False
+        await matcher.finish()
+    results = meme_manager.block(user_id, meme_names)
+    messages = []
+    for name, result in results.items():
+        if result == ActionResult.SUCCESS:
+            message = f"表情 {name} 禁用成功"
+        elif result == ActionResult.NOTFOUND:
+            message = f"表情 {name} 不存在！"
+        else:
+            message = f"表情 {name} 禁用失败"
+        messages.append(message)
+    await matcher.finish("\n".join(messages))
 
 
 @petpet_unblock_cmd.handle()
 async def _(
     event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg(), user_id: str = get_user_id()
 ):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "petpet_unblock_cmd", gid):
-        meme_names = msg.extract_plain_text().strip().split()
-        if not meme_names:
-            matcher.block = False
-            await matcher.finish()
-        results = meme_manager.unblock(user_id, meme_names)
-        messages = []
-        for name, result in results.items():
-            if result == ActionResult.SUCCESS:
-                message = f"表情 {name} 启用成功"
-            elif result == ActionResult.NOTFOUND:
-                message = f"表情 {name} 不存在！"
-            else:
-                message = f"表情 {name} 启用失败"
-            messages.append(message)
-        await matcher.finish("\n".join(messages))
-    else:
-        await matcher.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'petpet_unblock_cmd')} 及以上")
+    meme_names = msg.extract_plain_text().strip().split()
+    if not meme_names:
+        matcher.block = False
+        await matcher.finish()
+    results = meme_manager.unblock(user_id, meme_names)
+    messages = []
+    for name, result in results.items():
+        if result == ActionResult.SUCCESS:
+            message = f"表情 {name} 启用成功"
+        elif result == ActionResult.NOTFOUND:
+            message = f"表情 {name} 不存在！"
+        else:
+            message = f"表情 {name} 启用失败"
+        messages.append(message)
+    await matcher.finish("\n".join(messages))
 
 
 @petpet_block_cmd_gl.handle()
 async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "petpet_block_cmd_gl", gid):
-        meme_names = msg.extract_plain_text().strip().split()
-        if not meme_names:
-            matcher.block = False
-            await matcher.finish()
-        results = meme_manager.change_mode(MemeMode.WHITE, meme_names)
-        messages = []
-        for name, result in results.items():
-            if result == ActionResult.SUCCESS:
-                message = f"表情 {name} 已设为白名单模式"
-            elif result == ActionResult.NOTFOUND:
-                message = f"表情 {name} 不存在！"
-            else:
-                message = f"表情 {name} 设置失败"
-            messages.append(message)
-        await matcher.finish("\n".join(messages))
-    else:
-        await matcher.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'petpet_block_cmd_gl')} 及以上")
+    meme_names = msg.extract_plain_text().strip().split()
+    if not meme_names:
+        matcher.block = False
+        await matcher.finish()
+    results = meme_manager.change_mode(MemeMode.WHITE, meme_names)
+    messages = []
+    for name, result in results.items():
+        if result == ActionResult.SUCCESS:
+            message = f"表情 {name} 已设为白名单模式"
+        elif result == ActionResult.NOTFOUND:
+            message = f"表情 {name} 不存在！"
+        else:
+            message = f"表情 {name} 设置失败"
+        messages.append(message)
+    await matcher.finish("\n".join(messages))
 
 
 @petpet_unblock_cmd_gl.handle()
 async def _(event: GroupMessageEvent, matcher: Matcher, msg: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "petpet_unblock_cmd_gl", gid):
-        meme_names = msg.extract_plain_text().strip().split()
-        if not meme_names:
-            matcher.block = False
-            await matcher.finish()
-        results = meme_manager.change_mode(MemeMode.BLACK, meme_names)
-        messages = []
-        for name, result in results.items():
-            if result == ActionResult.SUCCESS:
-                message = f"表情 {name} 已设为黑名单模式"
-            elif result == ActionResult.NOTFOUND:
-                message = f"表情 {name} 不存在！"
-            else:
-                message = f"表情 {name} 设置失败"
-            messages.append(message)
-        await matcher.finish("\n".join(messages))
-    else:
-        await matcher.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'petpet_unblock_cmd_gl')} 及以上")
+    meme_names = msg.extract_plain_text().strip().split()
+    if not meme_names:
+        matcher.block = False
+        await matcher.finish()
+    results = meme_manager.change_mode(MemeMode.BLACK, meme_names)
+    messages = []
+    for name, result in results.items():
+        if result == ActionResult.SUCCESS:
+            message = f"表情 {name} 已设为黑名单模式"
+        elif result == ActionResult.NOTFOUND:
+            message = f"表情 {name} 不存在！"
+        else:
+            message = f"表情 {name} 设置失败"
+        messages.append(message)
+    await matcher.finish("\n".join(messages))
 
 
 def create_matchers():

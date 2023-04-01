@@ -17,7 +17,6 @@ from nonebot.typing import T_State
 from nonebot.log import logger
 
 d = {}
-unset: list = open(path.total_unable, "r", encoding="utf-8").read().split(",")
 config = get_driver().config
 try:
     fast_time = int(config.fast_time)
@@ -27,8 +26,15 @@ except:
     fast_time = 10
     fast_count = 5
 
+try:
+    # 不触发插件
+    unset: list = open(path.total_unable, "r", encoding="utf-8").read().split(",")
+except:
+    unset = []
+
 @run_preprocessor
 async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State):
+    global unset
     if matcher.type != "message":
         return
     module_names = matcher.module_name
@@ -46,7 +52,9 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
     # 超级用户及以上不受限制
     if permission_(role, "superuser"):
         return
-    # 不触发插件
+    if len(unset) == 0:
+        # 不触发插件
+        unset = open(path.total_unable, "r", encoding="utf-8").read().split(",")
     if plugin_name in unset:
         return
     # 不是命令信息

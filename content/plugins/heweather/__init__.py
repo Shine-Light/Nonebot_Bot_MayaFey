@@ -9,7 +9,7 @@ from .config import Config
 from .render_pic import render
 from .weather_data import Weather, ConfigError, CityNotFoundError
 
-from utils.other import add_target, translate
+from utils.other import add_target
 
 plugin_config = Config.parse_obj(get_driver().config.dict())
 
@@ -28,9 +28,17 @@ else:
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "heweather"),
+    name="heweather",
     description="查看近几天的天气",
-    usage="{城市名}天气" + add_target(60)
+    usage="{城市名}天气" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "kexue-z",
+        "translate": "天气",
+    }
 )
 
 

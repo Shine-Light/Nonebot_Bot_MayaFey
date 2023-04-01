@@ -4,12 +4,25 @@
 @Date: 2022/7/1 21:42
 """
 import ujson as json
+import nonebot
 
 from typing import Dict
 from utils import users
-import nonebot
 from fastapi import FastAPI, Body
 from .utils import *
+from utils.other import add_target
+
+# 插件元数据定义
+__plugin_meta__ = nonebot.plugin.PluginMetadata(
+    name="api",
+    description="API",
+    usage="被动, 无命令" + add_target(60),
+    extra={
+        "generate_type": "none",
+        "author": "Shine_Light",
+        "translate": "API",
+    }
+)
 
 app: FastAPI = nonebot.get_app()
 

@@ -11,21 +11,32 @@ from nonebot.params import CommandArg
 from nonebot.typing import T_State
 
 from utils import users
-from utils.permission import special_per, get_special_per
-from utils.other import translate, add_target
+from utils.matcherManager import matcherManager
+from utils.other import add_target
 from .data_source import guessMember
 from .config import Config
 from utils.other import get_bot_name
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "guessMember"),
+    name="guessMember",
     description="猜群友",
     usage="/猜群友\n"
           "/猜 @某人\n"
           "/结束猜群友\n"
           "/猜群友配置\n"
-          "/猜群友设置 {配置项} {配置值} (超级用户)" + add_target(60)
+          "/猜群友设置 {配置项} {配置值} (超级用户)" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "permission_special": {
+            "guessMember:guessSetting": "superuser"
+        },
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "猜群友",
+    }
 )
 
 settings = {
@@ -114,24 +125,19 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 
 guessSetting = on_command("猜群友设置", aliases={"猜群员设置"}, block=False, priority=8)
+matcherManager.addMatcher("guessMember:guessSetting", guessSetting)
 @guessSetting.handle()
 async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher, args: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "guessSetting", gid):
-        args = args.extract_plain_text().split(" ")
-        try:
-            args.remove("")
-        except:
-            pass
-        if len(args) == 1:
-            matcher.set_arg("option", Message(args[0]))
-        elif len(args) == 2:
-            matcher.set_arg("option", Message(args[0]))
-            matcher.set_arg("choice", Message(args[1]))
-    else:
-        await guessSetting.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'guessSetting')} 及以上")
+    args = args.extract_plain_text().split(" ")
+    try:
+        args.remove("")
+    except:
+        pass
+    if len(args) == 1:
+        matcher.set_arg("option", Message(args[0]))
+    elif len(args) == 2:
+        matcher.set_arg("option", Message(args[0]))
+        matcher.set_arg("choice", Message(args[1]))
 
 
 @guessSetting.got("option", prompt="要设置什么呢?")

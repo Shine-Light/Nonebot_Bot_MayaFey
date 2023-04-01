@@ -8,8 +8,24 @@ from nonebot.permission import SUPERUSER
 from nonebot.adapters.onebot.v11 import Message, Bot, PrivateMessageEvent
 from nonebot.params import CommandArg
 from nonebot.matcher import Matcher
-
+from nonebot.plugin import PluginMetadata
+from utils.other import add_target
 from .tools import *
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name="friends",
+    description="好友请求处理(私聊)",
+    usage="/查询好友请求\n"
+          "/好友请求细节 {qq}\n"
+          "/接受请求 {qq} {备注}\n"
+          "/拒绝请求 {qq}" + add_target(60),
+    extra={
+        "generate_type": "single",
+        "author": "Shine_Light",
+        "translate": "好友请求处理",
+    }
+)
 
 friends_request_query = on_command(cmd="查询好友请求", aliases={"好友请求列表"}, permission=SUPERUSER, priority=7)
 @friends_request_query.handle()

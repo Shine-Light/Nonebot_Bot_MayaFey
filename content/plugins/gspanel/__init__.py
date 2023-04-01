@@ -11,7 +11,7 @@ from .__utils__ import GSPANEL_ALIAS, fetchInitRes, formatInput, formatTeam, uid
 from .data_source import getPanel, getTeam
 from .data_updater import updateCache
 from nonebot.plugin import PluginMetadata
-from utils.other import add_target, translate
+from utils.other import add_target
 
 driver = get_driver()
 uidStart = ["1", "2", "5", "6", "7", "8", "9"]
@@ -24,13 +24,21 @@ driver.on_bot_connect(updateCache)
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "menu"),
+    name="gapanel",
     description="展示原神游戏内角色展柜数据",
     usage="/原神面板绑定 {uid}\n"
           "/原神面板\n"
           "/原神面板{uid}\n"
           "/原神面板 {角色}\n"
-          "/原神面板@xx" + add_target(60)
+          "/原神面板@xx" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "monsterxcn",
+        "translate": "原神角色展柜",
+    }
 )
 
 

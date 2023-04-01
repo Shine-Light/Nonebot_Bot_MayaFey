@@ -8,9 +8,8 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, Message
 from nonebot.plugin import PluginMetadata
 from nonebot.params import CommandArg
 
-from utils.permission import special_per, get_special_per
-from utils.other import add_target, translate, get_bot_name
-from utils import users
+from utils.matcherManager import matcherManager
+from utils.other import add_target, get_bot_name
 from .GenshinPray import GenshinPray, database
 from .tools import CommandUrl
 
@@ -19,7 +18,7 @@ genshinpray = GenshinPray()
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "GenshinPray"),
+    name="GenshinPray",
     description="模拟原神祈愿,默认每抽消耗 1 积分,可修改",
     usage="/角色祈愿 单|十抽 {蛋池编号}\n"
           "/常驻祈愿 单|十抽\n"
@@ -40,7 +39,23 @@ __plugin_meta__ = PluginMetadata(
           "/清空原神角色池 (超级用户)\n"
           "/清空原神武器池 (超级用户)\n"
           "/设置祈愿服装概率 {概率} (0~100)\n"
-          "不知道角色或武器全称?前往官方wiki查看:https://bbs.mihoyo.com/ys/obc/?bbs_presentation_style=no_header    " + add_target(60)
+          "不知道角色或武器全称?前往官方wiki查看:https://bbs.mihoyo.com/ys/obc/?bbs_presentation_style=no_header" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "permission_special": {
+            "GenshinPray:SetPolePond": "superuser",
+            "GenshinPray:SetArmPond": "superuser",
+            "GenshinPray:ResetArmPond": "superuser",
+            "GenshinPray:ResetRolePond": "superuser",
+            "GenshinPray:SetSkinRate": "superuser",
+            "GenshinPray:SetOneCost": "superuser",
+        },
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "原神祈愿",
+    }
 )
 
 RolePray = on_command(cmd="角色祈愿", aliases={"UP祈愿", "UP角色祈愿", "角色UP祈愿"}, priority=8)
@@ -351,172 +366,147 @@ async def _(bot: Bot, event: GroupMessageEvent):
     await GetLuckRanking.send(result.message)
 
 SetRolePond = on_command(cmd="自定义祈愿角色池", aliases={"自定义原神角色池"}, priority=8)
+matcherManager.addMatcher("GenshinPray:SetPolePond", SetRolePond)
 @SetRolePond.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "SetRolePond", gid):
-        if genshinpray.error:
-            await SetRolePond.finish("该群聊未开启祈愿,或配置错误")
-        error = await genshinpray.init_with_gid(gid)
-        if error:
-            await SetRolePond.finish(f"初始化出错:{error}")
-        args = args.extract_plain_text().split(" ")
-        if len(args) != 5:
-            await SetRolePond.finish("参数不对哦,要三个四星和一个五星角色的全称")
-        try:
-            pondId = int(args[0])
-        except:
-            await SetRolePond.finish("蛋池编号要整数哦")
+    if genshinpray.error:
+        await SetRolePond.finish("该群聊未开启祈愿,或配置错误")
+    error = await genshinpray.init_with_gid(gid)
+    if error:
+        await SetRolePond.finish(f"初始化出错:{error}")
+    args = args.extract_plain_text().split(" ")
+    if len(args) != 5:
+        await SetRolePond.finish("参数不对哦,要三个四星和一个五星角色的全称")
+    try:
+        pondId = int(args[0])
+    except:
+        await SetRolePond.finish("蛋池编号要整数哦")
 
-        result = GenshinPray.SetRolePond(gid, pondId, args[1:])
+    result = GenshinPray.SetRolePond(gid, pondId, args[1:])
 
-        if not result.code.is_success():
-            await SetRolePond.finish(result.code.to_String())
+    if not result.code.is_success():
+        await SetRolePond.finish(result.code.to_String())
 
-        await SetRolePond.send("设置成功!")
-    else:
-        await SetRolePond.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'SetRolePond')} 及以上")
+    await SetRolePond.send("设置成功!")
 
 SetArmPond = on_command(cmd="自定义祈愿武器池", aliases={"自定义原神武器池"}, priority=8)
+matcherManager.addMatcher("GenshinPray:SetArmPond", SetArmPond)
 @SetArmPond.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "SetArmPond", gid):
-        if genshinpray.error:
-            await SetArmPond.finish("该群聊未开启祈愿,或配置错误")
-        error = await genshinpray.init_with_gid(gid)
-        if error:
-            await SetArmPond.finish(f"初始化出错:{error}")
-        args = args.extract_plain_text().split(" ")
-        if len(args) != 7:
-            await SetArmPond.finish("参数不对哦,要五个四星和两个五星武器的全称")
+    if genshinpray.error:
+        await SetArmPond.finish("该群聊未开启祈愿,或配置错误")
+    error = await genshinpray.init_with_gid(gid)
+    if error:
+        await SetArmPond.finish(f"初始化出错:{error}")
+    args = args.extract_plain_text().split(" ")
+    if len(args) != 7:
+        await SetArmPond.finish("参数不对哦,要五个四星和两个五星武器的全称")
 
-        result = GenshinPray.SetArmPond(gid, args)
+    result = GenshinPray.SetArmPond(gid, args)
 
-        if not result.code.is_success():
-            await SetArmPond.finish(result.code.to_String())
+    if not result.code.is_success():
+        await SetArmPond.finish(result.code.to_String())
 
-        await SetArmPond.send("设置成功!")
-    else:
-        await SetRolePond.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'SetArmPond')} 及以上")
+    await SetArmPond.send("设置成功!")
 
 ResetArmPond = on_command(cmd="清空祈愿武器池", aliases={"重置祈愿武器池", "清空原神武器池", "重置原神武器池"}, priority=8)
+matcherManager.addMatcher("GenshinPray:ResetArmPond", ResetArmPond)
 @ResetArmPond.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "ResetArmPond", gid):
-        if genshinpray.error:
-            await ResetArmPond.finish("该群聊未开启祈愿,或配置错误")
-        error = await genshinpray.init_with_gid(gid)
-        if error:
-            await ResetArmPond.finish(f"初始化出错:{error}")
-        result = GenshinPray.ResetArmPond(gid)
+    if genshinpray.error:
+        await ResetArmPond.finish("该群聊未开启祈愿,或配置错误")
+    error = await genshinpray.init_with_gid(gid)
+    if error:
+        await ResetArmPond.finish(f"初始化出错:{error}")
+    result = GenshinPray.ResetArmPond(gid)
 
-        if not result.code.is_success():
-            await ResetArmPond.finish(result.code.to_String())
+    if not result.code.is_success():
+        await ResetArmPond.finish(result.code.to_String())
 
-        await ResetArmPond.send("设置成功!")
-    else:
-        await ResetArmPond.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'SetArmPond')} 及以上")
+    await ResetArmPond.send("设置成功!")
 
 ResetRolePond = on_command(cmd="清空祈愿角色池", aliases={"重置祈愿角色池", "清空原神角色池", "重置原神角色池"}, priority=8)
+matcherManager.addMatcher("GenshinPray:ResetRolePond", ResetRolePond)
 @ResetRolePond.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "ResetRolePond", gid):
-        if genshinpray.error:
-            await ResetRolePond.finish("该群聊未开启祈愿,或配置错误")
-        error = await genshinpray.init_with_gid(gid)
-        if error:
-            await ResetRolePond.finish(f"初始化出错:{error}")
-        result = GenshinPray.ResetArmPond(gid)
+    if genshinpray.error:
+        await ResetRolePond.finish("该群聊未开启祈愿,或配置错误")
+    error = await genshinpray.init_with_gid(gid)
+    if error:
+        await ResetRolePond.finish(f"初始化出错:{error}")
+    result = GenshinPray.ResetArmPond(gid)
 
-        if not result.code.is_success():
-            await ResetRolePond.finish(result.code.to_String())
+    if not result.code.is_success():
+        await ResetRolePond.finish(result.code.to_String())
 
-        await ResetRolePond.send("设置成功!")
-    else:
-        await ResetArmPond.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'ResetRolePond')} 及以上")
+    await ResetRolePond.send("设置成功!")
 
 SetSkinRate = on_command(cmd="设置祈愿皮肤概率", aliases={"设置祈愿服装概率", "设定祈愿服装概率", "设定祈愿皮肤概率"}, priority=8)
+matcherManager.addMatcher("GenshinPray:SetSkinRate", SetSkinRate)
 @SetSkinRate.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "SetSkinRate", gid):
-        if genshinpray.error:
-            await SetSkinRate.finish("该群聊未开启祈愿,或配置错误")
-        error = await genshinpray.init_with_gid(gid)
-        if error:
-            await SetSkinRate.finish(f"初始化出错:{error}")
-        if not args.extract_plain_text().strip():
-            await SetOneCost.finish("概率呢?")
-        try:
-            rare = int(args.extract_plain_text())
-        except:
-            await SetSkinRate.finish("概率必须为整数")
+    if genshinpray.error:
+        await SetSkinRate.finish("该群聊未开启祈愿,或配置错误")
+    error = await genshinpray.init_with_gid(gid)
+    if error:
+        await SetSkinRate.finish(f"初始化出错:{error}")
+    if not args.extract_plain_text().strip():
+        await SetSkinRate.finish("概率呢?")
+    try:
+        rare = int(args.extract_plain_text())
+    except:
+        await SetSkinRate.finish("概率必须为整数")
 
-        if not 0 <= rare <= 100:
-            await SetSkinRate.finish("超出范围,范围为 0~100")
+    if not 0 <= rare <= 100:
+        await SetSkinRate.finish("超出范围,范围为 0~100")
 
-        result = GenshinPray.SetSkinRate(gid, rare=rare)
+    result = GenshinPray.SetSkinRate(gid, rare=rare)
 
-        if not result.code.is_success():
-            await SetSkinRate.finish(result.code.to_String())
+    if not result.code.is_success():
+        await SetSkinRate.finish(result.code.to_String())
 
-        await SetSkinRate.send("设置成功!")
-    else:
-        await ResetArmPond.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'SetSkinRate')} 及以上")
+    await SetSkinRate.send("设置成功!")
 
 SetOneCost = on_command(cmd="设置原神祈愿费用", aliases={"设定原神祈愿费用", "设定祈愿费用", "设置祈愿费用"}, priority=8)
+matcherManager.addMatcher("GenshinPray:SetOneCost", SetOneCost)
 @SetOneCost.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
+    if genshinpray.error:
+        await SetSkinRate.finish("该群聊未开启祈愿,或配置错误")
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "SetOneCost", gid):
-        if genshinpray.error:
-            await SetSkinRate.finish("该群聊未开启祈愿,或配置错误")
-        gid = str(event.group_id)
-        error = await genshinpray.init_with_gid(gid)
-        if error:
-            await SetOneCost.finish(f"初始化出错:{error}")
-        if not args.extract_plain_text().strip():
-            await SetOneCost.finish("费用呢?")
+    error = await genshinpray.init_with_gid(gid)
+    if error:
+        await SetOneCost.finish(f"初始化出错:{error}")
+    if not args.extract_plain_text().strip():
+        await SetOneCost.finish("费用呢?")
 
-        try:
-            cost = int(args.extract_plain_text())
-        except:
-            await SetOneCost.finish("费用必须是整数!")
+    try:
+        cost = int(args.extract_plain_text())
+    except:
+        await SetOneCost.finish("费用必须是整数!")
 
-        if cost < 0:
-            await SetOneCost.finish("不可以倒贴了啦!")
+    if cost < 0:
+        await SetOneCost.finish("不可以倒贴了啦!")
 
-        result = GenshinPray.set_one_cost(gid, cost)
+    result = GenshinPray.set_one_cost(gid, cost)
 
-        if result:
-            if cost >= 100:
-                await SetOneCost.finish("设置成功!不过这价格有点高吧(小声比比)")
-            elif cost == 0:
-                await SetOneCost.finish("设置成功!老板真是财大气粗")
-            await SetOneCost.send("设置成功!")
-    else:
-        await ResetArmPond.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'SetOneCost')} 及以上")
+    if result:
+        if cost >= 100:
+            await SetOneCost.finish("设置成功!不过这价格有点高吧(小声比比)")
+        elif cost == 0:
+            await SetOneCost.finish("设置成功!老板真是财大气粗")
+        await SetOneCost.send("设置成功!")
 
 GetOneCost = on_command(cmd="原神祈愿费用", aliases={"祈愿费用"}, priority=8)
 @GetOneCost.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
     if genshinpray.error:
-        await SetSkinRate.finish("该群聊未开启祈愿,或配置错误")
+        await GetOneCost.finish("该群聊未开启祈愿,或配置错误")
     gid = str(event.group_id)
     error = await genshinpray.init_with_gid(gid)
     if error:

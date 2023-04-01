@@ -4,8 +4,7 @@ from nonebot.params import Message, CommandArg
 from nonebot.plugin import PluginMetadata
 from .game import get_point, add_game, start_game, call_card, stop_card, get_game_ls, duel #, get_rank
 from typing import Dict, List
-from utils import database_mysql
-from utils.other import add_target, translate
+from utils.other import add_target
 
 
 msg_help = '''黑杰克帮助:
@@ -22,14 +21,18 @@ msg_help = '''黑杰克帮助:
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "blackjack"),
+    name="blackjack",
     description="21点又名黑杰克,一种扑克牌玩法",
-    usage=msg_help
+    usage=msg_help,
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "yaowan233",
+        "translate": "21点",
+    }
 )
-
-
-cursor = database_mysql.cursor
-database = database_mysql.connect
 
 
 menu = on_command("黑杰克帮助", aliases={"21点帮助"}, priority=7)

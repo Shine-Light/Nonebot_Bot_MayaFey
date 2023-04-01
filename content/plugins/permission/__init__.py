@@ -8,22 +8,27 @@ from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from nonebot.plugin import PluginMetadata
 from utils import database_mysql
 from utils import users, admin_tools
-from utils.other import add_target, translate
-from utils.permission import special_per, role_en, role_cn, get_special_per, permissions, permission_, get_lev
+from utils.other import add_target
+from utils.permission import role_en, role_cn, permissions, permission_, get_lev
 from utils.matcherManager import matcherManager
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "permission"),
+    name="permission",
     description="设置和查看权限",
     usage="/我的权限\n"
           "/权限设置 @xx {权限等级} (超级用户)" + add_target(60),
     extra={
+        "generate_type": "group",
         "permission_common": "baned",
         "permission_special": {
             "permission:per": "superuser"
-        }
+        },
+        "unset": True,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "权限系统",
     }
 )
 

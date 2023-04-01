@@ -8,9 +8,8 @@ from nonebot.matcher import Matcher
 from .utils import Meals, save_cq_image
 from .data_source import eating_manager
 from nonebot.plugin import PluginMetadata
-from utils.other import translate, add_target, get_bot_name
-from utils.permission import special_per, get_special_per
-from utils import users
+from utils.other import add_target, get_bot_name
+from utils.matcherManager import matcherManager
 
 require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
@@ -29,9 +28,26 @@ __what2eat_notes__ = f'''
 [添加/删除饭点问候 时段 问候语] 添加/删除饭点小助手问候语'''.strip()
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "what2eat"),
+    name="what2eat",
     description="今天吃什么",
-    usage=__what2eat_notes__ + add_target(60)
+    usage=__what2eat_notes__ + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "permission_special": {
+            "what2eat:group_add": "superuser",
+            "what2eat:group_remove": "superuser",
+            "what2eat:basic_add": "superuser",
+            "what2eat:greeting_on": "superuser",
+            "what2eat:greeting_off": "superuser",
+            "what2eat:add_greeting": "superuser",
+            "what2eat:remove_greeting": "superuser",
+        },
+        "unset": False,
+        "total_unable": False,
+        "author": "KafCoppelia",
+        "translate": "吃什么",
+    }
 )
 
 what2eat = on_regex(r"^(今天|[早中午晚][上饭餐午]|早上|夜宵|今晚)吃(什么|啥|点啥)(帮助)?$", priority=8, block=False)
@@ -49,6 +65,14 @@ greeting_off = on_command("关闭饭点小助手", aliases={"禁用饭点小助�
 add_greeting = on_command("添加问候", aliases={"添加问候语"}, priority=8,
                           block=False)
 remove_greeting = on_command("删除饭点问候", aliases={"删除饭点问候语", "移除饭点问候", "移除饭点问候语"}, priority=8, block=False)
+
+matcherManager.addMatcher("what2eat:group_add", group_add)
+matcherManager.addMatcher("what2eat:group_remove", group_remove)
+matcherManager.addMatcher("what2eat:basic_add", basic_add)
+matcherManager.addMatcher("what2eat:greeting_on", greeting_on)
+matcherManager.addMatcher("what2eat:greeting_off", greeting_off)
+matcherManager.addMatcher("what2eat:add_greeting", add_greeting)
+matcherManager.addMatcher("what2eat:remove_greeting", remove_greeting)
 
 
 @what2eat.handle()
@@ -71,70 +95,53 @@ async def _(event: MessageEvent, args: str = RegexMatched()):
 
 @group_add.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "group_add", gid):
-        args_str: List[str] = args.extract_plain_text().strip().split()
-        if not args_str:
-            await group_add.finish("还没输入你要添加的菜品呢~")
-        elif len(args_str) > 1:
-            await group_add.finish("添加菜品参数错误~")
+    args_str: List[str] = args.extract_plain_text().strip().split()
+    if not args_str:
+        await group_add.finish("还没输入你要添加的菜品呢~")
+    elif len(args_str) > 1:
+        await group_add.finish("添加菜品参数错误~")
 
-        # If image included, save it, return the path in string
-        await save_cq_image(args, eating_manager._img_dir)
+    # If image included, save it, return the path in string
+    await save_cq_image(args, eating_manager._img_dir)
 
-        # Record the whole string, including the args after transfering
-        msg: str = eating_manager.add_group_food(event, str(args))
+    # Record the whole string, including the args after transfering
+    msg: str = eating_manager.add_group_food(event, str(args))
 
-        if "[CQ:image" in str(args):
-            await group_add.finish(args.append(MessageSegment.text(" " + msg)))
-        else:
-            await group_add.finish(args.append(MessageSegment.text(msg)))
+    if "[CQ:image" in str(args):
+        await group_add.finish(args.append(MessageSegment.text(" " + msg)))
     else:
-        await group_add.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'group_add')} 及以上")
+        await group_add.finish(args.append(MessageSegment.text(msg)))
+
 
 @basic_add.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "basic_add", gid):
-        args_str: List[str] = args.extract_plain_text().strip().split()
-        if not args_str:
-            await basic_add.finish("还没输入你要添加的菜品呢~")
-        elif len(args_str) > 1:
-            await group_add.finish("添加菜品参数错误~")
+    args_str: List[str] = args.extract_plain_text().strip().split()
+    if not args_str:
+        await basic_add.finish("还没输入你要添加的菜品呢~")
+    elif len(args_str) > 1:
+        await group_add.finish("添加菜品参数错误~")
 
-        # The same as above
-        await save_cq_image(args, eating_manager._img_dir)
-        msg: str = eating_manager.add_basic_food(str(args))
+    # The same as above
+    await save_cq_image(args, eating_manager._img_dir)
+    msg: str = eating_manager.add_basic_food(str(args))
 
-        if "[CQ:image" in str(args):
-            await group_add.finish(args.append(MessageSegment.text(" " + msg)))
-        else:
-            await group_add.finish(args.append(MessageSegment.text(msg)))
+    if "[CQ:image" in str(args):
+        await group_add.finish(args.append(MessageSegment.text(" " + msg)))
     else:
-        await basic_add.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'basic_add')} 及以上")
+        await group_add.finish(args.append(MessageSegment.text(msg)))
 
 
 @group_remove.handle()
 async def _(event: GroupMessageEvent, args: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "group_remove", gid):
-        args: List[str] = args.extract_plain_text().strip().split()
-        if not args:
-            await group_remove.finish("还没输入你要移除的菜品呢~")
-        elif len(args) > 1:
-            await group_remove.finish("移除菜品参数错误~")
+    args: List[str] = args.extract_plain_text().strip().split()
+    if not args:
+        await group_remove.finish("还没输入你要移除的菜品呢~")
+    elif len(args) > 1:
+        await group_remove.finish("移除菜品参数错误~")
 
-        msg: MessageSegment = eating_manager.remove_food(event, args[0])
+    msg: MessageSegment = eating_manager.remove_food(event, args[0])
 
-        await group_remove.finish(MessageSegment.text(msg))
-    else:
-        await group_remove.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'group_remove')} 及以上")
+    await group_remove.finish(MessageSegment.text(msg))
 
 
 @show_group_menu.handle()
@@ -162,25 +169,15 @@ async def _(bot: Bot, matcher: Matcher, event: GroupMessageEvent):
 @greeting_on.handle()
 async def _(event: GroupMessageEvent):
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "greeting_on", gid):
-        eating_manager.update_groups_on(gid, True)
-        await greeting_on.finish("已开启吃饭小助手~")
-    else:
-        await greeting_on.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'greeting_on')} 及以上")
+    eating_manager.update_groups_on(gid, True)
+    await greeting_on.finish("已开启吃饭小助手~")
 
 
 @greeting_off.handle()
 async def _(event: GroupMessageEvent):
     gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "greeting_off", gid):
-        eating_manager.update_groups_on(gid, False)
-        await greeting_off.finish("已关闭吃饭小助手~")
-    else:
-        await greeting_off.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'greeting_off')} 及以上")
+    eating_manager.update_groups_on(gid, False)
+    await greeting_off.finish("已关闭吃饭小助手~")
 
 
 def parse_greeting() -> Coroutine[Any, Any, None]:
@@ -236,34 +233,22 @@ def parse_index() -> None:
 
 @add_greeting.handle()
 async def _(matcher: Matcher, event: GroupMessageEvent, args: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "add_greeting", gid):
-        args = args.extract_plain_text().strip().split()
-        if args and len(args) <= 2:
-            res = eating_manager.which_meals(args[0])
-            if isinstance(res, Meals):
-                matcher.set_arg("meal", args[0])
-                if len(args) == 2:
-                    matcher.set_arg("greeting", args[1])
-    else:
-        await add_greeting.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'add_greeting')} 及以上")
+    args = args.extract_plain_text().strip().split()
+    if args and len(args) <= 2:
+        res = eating_manager.which_meals(args[0])
+        if isinstance(res, Meals):
+            matcher.set_arg("meal", args[0])
+            if len(args) == 2:
+                matcher.set_arg("greeting", args[1])
 
 
 @remove_greeting.handle()
 async def _(matcher: Matcher, event: GroupMessageEvent, args: Message = CommandArg()):
-    gid = str(event.group_id)
-    role = users.get_role(gid, str(event.user_id))
-    if special_per(role, "remove_greeting", gid):
-        args = args.extract_plain_text().strip().split()
-        if args:
-            res = eating_manager.which_meals(args[0])
-            if isinstance(res, Meals):
-                matcher.set_arg("meal", args[0])
-    else:
-        await remove_greeting.finish(
-            f"无权限,权限需在 {get_special_per(gid, 'remove_greeting')} 及以上")
+    args = args.extract_plain_text().strip().split()
+    if args:
+        res = eating_manager.which_meals(args[0])
+        if isinstance(res, Meals):
+            matcher.set_arg("meal", args[0])
 
 
 @add_greeting.got(

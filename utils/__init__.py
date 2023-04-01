@@ -117,15 +117,15 @@ async def Dir_init():
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):
-        await mk("file", translate_path, 'w', url=url.translate_json, dec="翻译文件")
+        await mk("file", translate_path, 'w', content=json.dumps({}))
     if not os.path.exists(total_unable):
-        await mk("file", total_unable, 'w', url=url.unable_txt, dec="不统计插件列表")
+        await mk("file", total_unable, 'w', content="")
     if not os.path.exists(epicFree_path / "status.json"):
         await mk("file", epicFree_path / "status.json", 'w', content=json.dumps({"群聊": [], "私聊": []}))
     if not os.path.exists(updating_path):
         await mk("file", updating_path, 'w', content=json.dumps({"updating": False}))
     if not os.path.exists(unset_path):
-        await mk("file", unset_path, 'w', url=url.unset_txt, dec="不可设置插件列表")
+        await mk("file", unset_path, 'w', content="")
     if not os.path.exists(version_path):
         await mk("file", version_path, 'w', content=requests.get(url.version_html).text)
     if not os.path.exists(morning_config_path):
@@ -193,9 +193,9 @@ async def init(bot: Bot, event: GroupMessageEvent):
     if not os.path.exists(question_base / f"{gid}.json"):
         await mk("file", question_base / f"{gid}.json", 'w', content=json.dumps({"vague": {}, "absolute": {}, "regular": {}}))
     if not os.path.exists(permission_special_base / f"{gid}.json"):
-        await mk("file", permission_special_base / f"{gid}.json", 'w', url=url.permission_special_json, dec="特殊权限插件列表")
+        await mk("file", permission_special_base / f"{gid}.json", 'w', content=json.dumps({}))
     if not os.path.exists(permission_common_base / f"{gid}.json"):
-        await mk("file", permission_common_base / f"{gid}.json", 'w', url=url.permission_common_json, dec="常规权限插件列表")
+        await mk("file", permission_common_base / f"{gid}.json", 'w', content=json.dumps({}))
     if not os.path.exists(demerit_path / gid):
         await mk("dir", demerit_path / gid, mode=None)
     if not os.path.exists(demerit_path / gid / f"data.json"):

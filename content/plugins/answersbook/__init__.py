@@ -5,17 +5,25 @@ from nonebot import on_endswith, on_startswith
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot.matcher import Matcher
 from nonebot.plugin import PluginMetadata
-from utils.other import add_target, translate
+from utils.other import add_target
 
 import ujson as json
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "answersbook"),
+    name="answersbook",
     description="愿一切无解都有解！解除你的迷惑，终结你的纠结！",
     usage="翻看答案{问题}\n"
-          "{问题}翻看答案"  + add_target(60)
+          "{问题}翻看答案" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "A-kirami",
+        "translate": "答案之书",
+    }
 )
 
 

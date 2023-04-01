@@ -4,7 +4,6 @@
 @Date: 2022/11/8 22:19
 """
 import os
-import datetime
 
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
@@ -13,16 +12,24 @@ from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
 from content.plugins.plugin_control.functions import get_state
-from utils.other import add_target, translate, get_bot_name
+from utils.other import add_target, get_bot_name
 from .tools import *
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "curfew"),
+    name="curfew",
     description="在夜间禁言全员(除管理员,群主)",
     usage="/宵禁开始时间 {时间} (22:00)\n"
           "/宵禁结束时间 {时间} (7:00)\n"
-          "/开启|关闭宵禁 (指开启|关闭定时禁言,不是开启|关闭禁言)" + add_target(60)
+          "/开启|关闭宵禁 (指开启|关闭定时禁言,不是开启|关闭禁言)" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "superuser",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "宵禁",
+    }
 )
 
 

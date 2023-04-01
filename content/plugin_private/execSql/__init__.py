@@ -11,6 +11,21 @@ from nonebot.params import CommandArg, Arg
 from nonebot.matcher import Matcher
 from nonebot.exception import FinishedException
 from nonebot.log import logger
+from nonebot.plugin import PluginMetadata
+from utils.other import add_target
+
+
+# 插件元数据定义
+__plugin_meta__ = PluginMetadata(
+    name="execSql",
+    description="sql查询",
+    usage="/sql" + add_target(60),
+    extra={
+        "generate_type": "single",
+        "author": "Shine_Light",
+        "translate": "sql查询",
+    }
+)
 
 
 # /sql 代码

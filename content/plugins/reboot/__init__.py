@@ -7,16 +7,24 @@ from nonebot import on_command
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot.permission import SUPERUSER
 from nonebot.plugin import PluginMetadata
-from utils.other import reboot as reboot_, add_target, translate
+from utils.other import reboot as reboot_, add_target
 from utils.json_tools import json_load, json_write
 from utils.path import reboot_config_path
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "reboot"),
+    name="reboot",
     description="重启机器人",
-    usage="/重启" + add_target(60)
+    usage="/重启" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "Van",
+        "unset": True,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "重启",
+    }
 )
 
 

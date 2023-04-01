@@ -9,17 +9,25 @@ from nonebot.log import logger
 from nonebot.matcher import Matcher
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message, PrivateMessageEvent
 from . import tools
-from utils.other import add_target, translate, reboot
+from utils.other import add_target, reboot
 from nonebot.plugin import PluginMetadata
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "update"),
+    name="update",
     description="机器人更新",
     usage="/检查更新 (超级用户)\n"
           "/更新 (超级用户)\n"
-          "/更新日志 (超级用户)" + add_target(60)
+          "/更新日志 (超级用户)" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "superuser",
+        "unset": True,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "更新",
+    }
 )
 
 

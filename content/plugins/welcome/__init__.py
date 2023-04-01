@@ -14,16 +14,28 @@ from nonebot.matcher import Matcher
 from . import tools
 from utils.path import *
 from utils import database_mysql, users
-from utils.other import add_target, translate
-from utils.permission import special_per, get_special_per
+from utils.other import add_target
+from utils.matcherManager import matcherManager
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "welcome"),
+    name="welcome",
     description="欢迎新人入群和老朋友回归",
     usage="/入群欢迎 {内容} (超级用户)\n"
-          "/回群欢迎 {内容} (超级用户)" + add_target(60)
+          "/回群欢迎 {内容} (超级用户)" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "baned",
+        "permission_special": {
+            "welcome:welcome_msg_update": "superuser",
+            "welcome:back_msg_update": "superuser",
+        },
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "入群欢迎",
+    }
 )
 
 
@@ -62,17 +74,11 @@ async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
 
 
 welcome_msg_update = on_command(cmd="入群欢迎", priority=7)
+matcherManager.addMatcher("welcome:welcome_msg_update", welcome_msg_update)
 @welcome_msg_update.handle()
 async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher, args=CommandArg()):
-    gid = str(event.group_id)
-    uid = str(event.user_id)
-    role = users.get_role(gid, uid)
-    if special_per(role, "welcome_msg_update", gid):
-        if args:
-            matcher.set_arg("content", args)
-    else:
-        await welcome_msg_update.finish(
-            f"无权限,权限需在 {get_special_per(str(event.group_id), 'welcome_msg_update')} 及以上")
+    if args:
+        matcher.set_arg("content", args)
 
 
 @welcome_msg_update.got(key="content", prompt="要怎么欢迎呢")
@@ -86,18 +92,11 @@ async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
 
 
 back_msg_update = on_command(cmd="回归欢迎", aliases={"回群欢迎"}, priority=7)
+matcherManager.addMatcher("welcome:back_msg_update", back_msg_update)
 @back_msg_update.handle()
 async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher, args=CommandArg()):
-    gid = str(event.group_id)
-    uid = str(event.user_id)
-    role = users.get_role(gid, uid)
-    if special_per(role, "back_msg_update", gid):
-        if args:
-            matcher.set_arg("content", args)
-    else:
-        await back_msg_update.finish(
-            f"无权限,权限需在 {get_special_per(str(event.group_id), 'back_msg_update')} 及以上")
-
+    if args:
+        matcher.set_arg("content", args)
 
 @back_msg_update.got(key="content", prompt="要怎么欢迎呢")
 async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):

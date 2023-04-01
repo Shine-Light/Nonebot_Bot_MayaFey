@@ -8,16 +8,25 @@ from nonebot.log import logger
 from nonebot.plugin import PluginMetadata
 from utils import requests_tools
 
-from utils.other import add_target, translate
+from utils.other import add_target
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "nethot"),
+    name="nethot",
     description="获取全网热搜",
     usage="/热搜 百度|B站|贴吧|微博|IT|历史今天 (韩小韩版本)\n"
-          "/热搜 (天行数据版本)" + add_target(60)
+          "/热搜 (天行数据版本)" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "全网热搜",
+    }
 )
+
 
 def hot_han(event: GroupMessageEvent):
     # 韩小韩接口,大陆IP使用

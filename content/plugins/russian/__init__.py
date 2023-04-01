@@ -1,4 +1,4 @@
-from nonebot import on_command, require
+from nonebot import on_command
 from nonebot.adapters.onebot.v11 import (
     GROUP,
     Bot,
@@ -13,7 +13,7 @@ from .utils import is_number, get_message_at
 from .data_source import russian_manager, max_bet_gold
 from utils import database_mysql
 
-from utils.other import add_target, translate
+from utils.other import add_target
 
 
 __plugin_usage__ = """俄罗斯轮盘帮助：
@@ -30,9 +30,17 @@ __plugin_usage__ = """俄罗斯轮盘帮助：
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "russian"),
+    name="russian",
     description="俄罗斯轮盘",
-    usage=__plugin_usage__
+    usage=__plugin_usage__,
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "HibiKier",
+        "translate": "俄罗斯轮盘",
+    }
 )
 
 

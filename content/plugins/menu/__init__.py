@@ -5,21 +5,28 @@
 """
 
 import ujson as json
-import asyncio
 
 from nonebot import on_command, on_notice, on_message, get_driver
 from nonebot.adapters.onebot.v11 import Bot, Event, GroupMessageEvent, NoticeEvent
 from nonebot.rule import Rule, to_me
 from nonebot.plugin import PluginMetadata
-from utils.other import add_target, translate, get_bot_name
+from utils.other import add_target, get_bot_name
 from .. import update
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "menu"),
+    name="menu",
     description="总菜单",
-    usage="/菜单" + add_target(60)
+    usage="/菜单" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "菜单",
+    }
 )
 
 

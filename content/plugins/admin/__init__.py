@@ -31,8 +31,13 @@ __plugin_meta__ = PluginMetadata(
           "/设置头衔 @xx @xx {头衔}\n"
           "/取消头衔 @xx @xx" + add_target(60),
     extra={
-        "permission_common": "superuser"
-        }
+        "generate_type": "group",
+        "permission_common": "superuser",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "群管",
+    }
 )
 
 

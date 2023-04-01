@@ -10,18 +10,26 @@ from nonebot.typing import T_State
 from nonebot.params import CommandArg
 from nonebot.plugin import PluginMetadata
 
-from utils.other import add_target, translate
+from utils.other import add_target
 from .tools import *
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "schedule"),
+    name="schedule",
     description="自定义定时事件",
     usage="/新增|修改定时任务 {标题} 定时|间隔|日期 {时间} {内容}(可以先空着)\n"
           "/开启|关闭定时任务 {标题}\n"
           "/删除定时任务 {标题}\n"
           "/定时任务列表\n"
-          "/清理过期定时任务" + add_target(60)
+          "/清理过期定时任务" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "superuser",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "自定义定时任务",
+    }
 )
 
 

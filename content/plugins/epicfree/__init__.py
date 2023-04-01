@@ -13,7 +13,8 @@ from nonebot.adapters.onebot.v11.event import (  # type: ignore
 from nonebot.plugin import PluginMetadata
 from .data_source import check_push, get_epic_free, subscribe_helper  # noqa: E402
 
-from utils.other import add_target, translate
+from utils.matcherManager import matcherManager
+from utils.other import add_target
 
 require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler  # noqa: E402
@@ -21,15 +22,26 @@ from nonebot_plugin_apscheduler import scheduler  # noqa: E402
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "epicfree"),
+    name="epicfree",
     description="喜加一",
     usage="喜加一\n"
           "喜加一订阅\n"
-          "喜加一订阅删除" + add_target(60)
+          "喜加一订阅删除" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "permission_special": {
+            "epicfree:sub_matcher": "superuser"
+        },
+        "unset": False,
+        "total_unable": False,
+        "author": "monsterxcn",
+        "translate": "Epic喜加一",
+    }
 )
+command_start = get_driver().config.command_start
 
-
-epic_matcher = on_regex(r"^(epic)?喜(加|\+|＋)(一|1)$", priority=2, flags=IGNORECASE)
+epic_matcher = on_regex(rf"^([{''.join(command_start)}])?(epic)?喜(加|\+|＋)(一|1)$", priority=2, flags=IGNORECASE)
 @epic_matcher.handle()
 async def query_handle(bot: Bot, event: Event):
     free = await get_epic_free()
@@ -39,9 +51,10 @@ async def query_handle(bot: Bot, event: Event):
         await bot.send_private_forward_msg(user_id=event.user_id, messages=free)  # type: ignore
 
 
-sub_matcher = on_regex(r"^喜(加|\+|＋)(一|1)(私聊)?订阅(删除|取消)?$", priority=1)
+sub_matcher = on_regex(rf"^([{''.join(command_start)}])?喜(加|\+|＋)(一|1)(私聊)?订阅(删除|取消)?$", priority=1)
+matcherManager.addMatcher("epicfree:sub_matcher", sub_matcher)
 @sub_matcher.handle()
-async def sub_handle(bot: Bot, event: MessageEvent, state: T_State):
+async def sub_handle(bot: Bot, event: GroupMessageEvent, state: T_State):
     msg = event.get_plaintext()
     state["action"] = "删除" if any(s in msg for s in ["删除", "取消"]) else "启用"
     if isinstance(event, GroupMessageEvent):

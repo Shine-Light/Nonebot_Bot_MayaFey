@@ -14,18 +14,26 @@ from nonebot import require
 require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
 
-from utils.other import add_target, translate
+from utils.other import add_target
 from utils.admin_tools import At
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "credit"),
+    name="credit",
     description="积分查询和排行",
     usage="/积分排行\n"
           "/我的积分\n"
           "/发红包 {积分数} {份数}\n"
           "/抢红包\n"
-          "/转账 {积分数} {@xxx}" + add_target(60)
+          "/转账 {积分数} {@xxx}" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "积分",
+    }
 )
 manager = LuckyMoney.LuckyMoneyManager()
 

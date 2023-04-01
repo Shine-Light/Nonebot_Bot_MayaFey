@@ -23,7 +23,6 @@ __plugin_meta__ = PluginMetadata(
         "permission_common": "baned",
         "unset": False,
         "total_unable": True,
-        "version": "0.0.1",
         "author": "Shine_Light",
         "translate": "复读",
         "configs_general": {

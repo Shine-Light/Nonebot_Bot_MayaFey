@@ -9,15 +9,23 @@ from nonebot.params import CommandArg
 from nonebot.exception import FinishedException, ActionFailed
 from nonebot.log import logger
 
-from utils.other import add_target, translate
+from utils.other import add_target
 from nonebot.plugin import PluginMetadata
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "saymoney"),
+    name="saymoney",
     description="支付宝到账XX元",
-    usage="/到账 {金额}" + add_target(60)
+    usage="/到账 {金额}" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "到账语音生成",
+    }
 )
 
 

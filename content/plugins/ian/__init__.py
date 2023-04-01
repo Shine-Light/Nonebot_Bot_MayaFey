@@ -9,15 +9,23 @@ from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent
 from utils import requests_tools
 
-from utils.other import add_target, translate
+from utils.other import add_target
 from nonebot.plugin import PluginMetadata
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "ian"),
+    name="ian",
     description="一句鸡汤或者毒鸡汤",
-    usage="/一言" + add_target(60)
+    usage="/一言" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "一言",
+    }
 )
 
 

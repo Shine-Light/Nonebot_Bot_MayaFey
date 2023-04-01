@@ -14,11 +14,19 @@ from .tools import *
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "torment"),
+    name="torment",
     description="折磨群员,定时随机戳一戳",
     usage="/折磨群友 开启|关闭\n"
           "/折磨群友 定时|间隔 {小时}:{分钟}:{秒数}\n"
-          "/折磨群友 配置|设置" + add_target(60)
+          "/折磨群友 配置|设置" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "superuser",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "折磨群友",
+    }
 )
 
 

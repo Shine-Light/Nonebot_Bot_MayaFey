@@ -12,7 +12,7 @@ from nonebot.log import logger
 from nonebot.adapters.onebot.v11 import Bot, NoticeEvent, GroupDecreaseNoticeEvent, RequestEvent, GroupIncreaseNoticeEvent
 from nonebot.exception import ActionFailed
 from utils import database_mysql, users
-from utils.other import add_target, translate
+from utils.other import add_target
 from utils.json_tools import json_write, json_load
 from utils.path import friends_request_info
 from . import rules
@@ -23,9 +23,17 @@ from content.plugins.sign.tools import init_one as sign_init_one
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "passive"),
+    name="passive",
     description="隐藏插件",
-    usage="被动,无命令" + add_target(60)
+    usage="被动,无命令" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "baned",
+        "unset": True,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "被动事件",
+    }
 )
 
 

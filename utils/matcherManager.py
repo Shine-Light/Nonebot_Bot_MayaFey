@@ -10,30 +10,30 @@ from nonebot.matcher import Matcher
 @dataclass
 class MatcherManager(object):
     """
-    Matcher¹ÜÀí, ÓÃÓÚMatcher¼¶±ğ¿ØÖÆ
+    Matcherç®¡ç†, ç”¨äºMatcherçº§åˆ«æ§åˆ¶
     """
     __matchers__: Dict[str, Matcher] = field(default_factory=dict)
 
     def addMatcher(self, name: str, matcher: Matcher):
         """
-        Ìí¼ÓMatcher
-        name: ÌØÊâÈ¨ÏŞÃû³Æ
-        matcher: Matcher¶ÔÏó
+        æ·»åŠ Matcher
+        name: ç‰¹æ®Šæƒé™åç§°
+        matcher: Matcherå¯¹è±¡
         """
         matcher.__matcher_name__ = name
         self.__matchers__.update({name: matcher})
 
     def removeMatcherByName(self, name: str):
         """
-        ÒÆ³ıMatcher
-        name: ÌØÊâÈ¨ÏŞÃû³Æ
+        ç§»é™¤Matcher
+        name: ç‰¹æ®Šæƒé™åç§°
         """
         self.__matchers__.pop(name)
 
     def removeMatcherByMatcher(self, matcher: Matcher):
         """
-        ÒÆ³ıMatcher
-        matcher: Matcher¶ÔÏó
+        ç§»é™¤Matcher
+        matcher: Matcherå¯¹è±¡
         """
         for name, matcher_ in self.__matchers__.items():
             try:
@@ -44,8 +44,8 @@ class MatcherManager(object):
 
     def isMatcherExist(self, matcher: Matcher):
         """
-        ¼ì²â Matcher¶ÔÏó ÊÇ·ñ´æÔÚ
-        matcher: Matcher¶ÔÏó
+        æ£€æµ‹ Matcherå¯¹è±¡ æ˜¯å¦å­˜åœ¨
+        matcher: Matcherå¯¹è±¡
         """
         for name, matcher_ in self.__matchers__.items():
             try:
@@ -57,8 +57,8 @@ class MatcherManager(object):
 
     def isNameExist(self, name: str):
         """
-        ¼ì²â ÌØÊâÈ¨ÏŞÃû³Æ ÊÇ·ñ´æÔÚ
-        name: ÌØÊâÈ¨ÏŞÃû³Æ
+        æ£€æµ‹ ç‰¹æ®Šæƒé™åç§° æ˜¯å¦å­˜åœ¨
+        name: ç‰¹æ®Šæƒé™åç§°
         """
         if name in self.__matchers__.keys():
             return True
@@ -67,15 +67,15 @@ class MatcherManager(object):
 
     def getMatcher(self, name: str):
         """
-        ¸ù¾İ ÌØÊâÈ¨ÏŞÃû³Æ »ñÈ¡ Matcher¶ÔÏó
-        name: ÌØÊâÈ¨ÏŞÃû³Æ
+        æ ¹æ® ç‰¹æ®Šæƒé™åç§° è·å– Matcherå¯¹è±¡
+        name: ç‰¹æ®Šæƒé™åç§°
         """
         return self.__matchers__.get(name)
 
     def getName(self, matcher: Matcher):
         """
-        ¸ù¾İ Matcher¶ÔÏó »ñÈ¡ ÌØÊâÈ¨ÏŞÃû³Æ
-        matcher: Matcher¶ÔÏó
+        æ ¹æ® Matcherå¯¹è±¡ è·å– ç‰¹æ®Šæƒé™åç§°
+        matcher: Matcherå¯¹è±¡
         """
         for name, matcher_ in self.__matchers__.items():
             try:

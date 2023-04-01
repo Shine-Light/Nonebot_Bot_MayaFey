@@ -1,7 +1,5 @@
 from .card import Card
 from random import shuffle, randint, random
-import sqlite3
-from nonebot.adapters.onebot.v11 import Bot
 from utils import database_mysql
 
 
@@ -230,7 +228,6 @@ async def count_score(game: Deck, player_win: int):
 
 
 def get_user_point(group: int, uid: int) -> int:
-    init()
     sql = f"SELECT credit FROM credit WHERE gid={group} and uid={uid}"
     mysql_cursor.execute(sql)
     point = int(mysql_cursor.fetchone()[0])
@@ -238,36 +235,15 @@ def get_user_point(group: int, uid: int) -> int:
 
 
 def update_point(group: int, uid: int, point: int):
-    init()
     sql = f"""UPDATE credit SET credit={point} WHERE gid={group} AND uid={uid}"""
     mysql_cursor.execute(sql)
 
 
 def get_point(group: int, uid: int) -> int:
-    init()
     sql = f"SELECT credit FROM credit WHERE gid={group} AND uid={uid}"
     mysql_cursor.execute(sql)
     point = int(mysql_cursor.fetchone()[0])
     return point
-
-
-def init():
-    conn = sqlite3.connect("identifier.sqlite")
-    cursor = conn.cursor()
-    sql = """create table if not exists sign_in(
-        id integer primary key autoincrement,
-        sign_in_date datetime,
-        total_sign_in int,
-        points int not null,
-        belonging_group int not null,
-        uid int not null,
-        today_point int
-    )
-    """
-    cursor.execute(sql)
-    conn.commit()
-    cursor.close()
-    conn.close()
 
 
 async def get_game_ls(group: int):

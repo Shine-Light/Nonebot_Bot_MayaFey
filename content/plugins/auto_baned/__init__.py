@@ -8,13 +8,21 @@ from nonebot.adapters.onebot.v11 import GroupDecreaseNoticeEvent, GroupRequestEv
 from nonebot.plugin import on_notice, on_request, require, PluginMetadata
 from nonebot.log import logger
 from .tools import *
-from utils.other import translate, add_target
+from utils.other import add_target
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "auto_baned"),
+    name="auto_baned",
     description=f"在入群后 {delta_time} 分钟内退群将直接纳入黑名单",
-    usage="被动,无命令" + add_target(60)
+    usage="被动,无命令" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "baned",
+        "unset": False,
+        "total_unable": True,
+        "author": "Shine_Light",
+        "translate": "防白嫖",
+    }
 )
 
 baned_record = on_notice(priority=4, block=False)

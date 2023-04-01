@@ -5,7 +5,7 @@ Since: 16 May 2021
 """
 import nonebot
 from .handler import helper
-from utils.other import add_target, translate
+from utils.other import add_target
 
 
 default_start = list(nonebot.get_driver().config.command_start)[0]
@@ -23,7 +23,7 @@ __usage__ = f'''欢迎使用Nonebot2 Help Menu
 
 # New way of self registering (use PluginMetadata)
 __plugin_meta__ = nonebot.plugin.PluginMetadata(
-    name=translate("e2c", "help"),
+    name="help",
     description='Nonebot2轻量级帮助插件',
     usage=f'''欢迎使用Nonebot2 Help Menu
 本插件提供公共帮助菜单能力
@@ -33,5 +33,12 @@ __plugin_meta__ = nonebot.plugin.PluginMetadata(
 展示已加载插件列表: {default_start}帮助 list
 调取目标插件帮助信息: {default_start}帮助 {{插件名}}
 ''' + add_target(60),
-    extra={'version': '0.3.1'}
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "XZhouQD",
+        "translate": "帮助",
+    }
 )

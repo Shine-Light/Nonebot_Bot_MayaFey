@@ -8,7 +8,6 @@ from nonebot.params import CommandArg
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message, MessageSegment
 from .functions import *
 from utils.path import *
-from utils import other
 from nonebot.plugin import PluginMetadata
 from utils.other import add_target, translate
 
@@ -17,10 +16,18 @@ import nonebot_plugin_htmlrender as htmlrender
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=other.translate("e2c", "plugin_control"),
+    name="plugin_control",
     description="插件控制",
     usage="/插件控制 状态 (超级用户)\n"
-          "/插件控制 {插件名} (超级用户)" + add_target(60)
+          "/插件控制 {插件名} (超级用户)" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "superuser",
+        "unset": True,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "插件控制",
+    }
 )
 
 

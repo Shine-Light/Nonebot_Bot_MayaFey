@@ -4,7 +4,6 @@
 @Date: 2022/3/29 12:53
 """
 import re
-import ujson as json
 
 from nonebot import on_regex, on_message, on_command, get_driver
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, Message
@@ -13,12 +12,12 @@ from nonebot.plugin import PluginMetadata
 from utils.path import *
 from utils import json_tools, users, database_mysql
 from utils.permission import special_per, permission_
-from utils.other import add_target, translate
+from utils.other import add_target
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "question"),
+    name="question",
     description="问答",
     usage="精准问{问题}答{回答} (超级用户)\n"
           "模糊问{问题}答{回答} (超级用户)\n"
@@ -26,12 +25,18 @@ __plugin_meta__ = PluginMetadata(
           "/问答列表\n"
           "/问答删除 {问题} (超级用户)" + add_target(60),
     extra={
+        "generate_type": "group",
+        "permission_common": "member",
         "permission_special": {
             "question_vague": "superuser",
             "question_absolute": "superuser",
             "question_regular": "superuser"
-        }
-    }
+        },
+        "unset": False,
+        "total_unable": True,
+        "author": "Shine_Light",
+        "translate": "自定义问答",
+    },
 )
 
 
