@@ -51,16 +51,6 @@ def get_role(gid: str, uid: str) -> str:
         return re[0]
 
 
-def get_role_nogid(uid: str) -> str:
-    cursor.execute(f"SELECT role FROM users WHERE uid='{uid}' AND alive=TRUE")
-    re = cursor.fetchall()
-    levels = []
-    for r in re:
-        levels.append(get_lev(r[0]))
-    role = get_role(max(levels))
-    return role
-
-
 def update_role(gid: str, uid: str, role: str) -> bool:
     try:
         cursor.execute(f"UPDATE users SET role='{role}' WHERE uid='{uid}' AND gid='{gid}';")

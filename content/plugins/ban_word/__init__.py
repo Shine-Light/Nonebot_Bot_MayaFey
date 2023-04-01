@@ -12,7 +12,8 @@ from nonebot.plugin import PluginMetadata
 from nonebot.log import logger
 from . import tools
 from utils import users
-from utils.permission import matcherPers, permission_
+from utils.permission import permission_
+from utils.matcherManager import matcherManager
 from utils.other import add_target
 from content.plugins.plugin_control.functions import get_state
 
@@ -80,7 +81,7 @@ clearWord = on_command(cmd="违禁词清空", aliases={"清空违禁词"}, prior
 async def _(event: GroupMessageEvent, bot: Bot):
     tools.clear_words(str(event.group_id))
     await clearWord.send("已清空")
-matcherPers.addMatcher("ban_word:clearWord", clearWord)
+matcherManager.addMatcher("ban_word:clearWord", clearWord)
 
 
 addWord = on_command(cmd="违禁词+", aliases={"添加违禁词", "违禁词添加"}, priority=8, block=False)
@@ -110,7 +111,7 @@ async def _(event: GroupMessageEvent, bot: Bot, args: Message = CommandArg()):
         msg = "设置成功"
     tools.add_words(gid, words)
     await addWord.send(msg.strip("\n"))
-matcherPers.addMatcher("ban_word:addWord", addWord)
+matcherManager.addMatcher("ban_word:addWord", addWord)
 
 
 addWordForce = on_command(cmd="违禁词++", aliases={"强制添加违禁词", "违禁词强制添加"}, priority=8, block=False)
@@ -131,7 +132,7 @@ async def _(event: GroupMessageEvent, bot: Bot, args: Message = CommandArg()):
             msg += f"\t以下关键字已存在于自定义词典\n\t{','.join(having_custom).strip(',')}\n"
     tools.add_words(gid, words)
     await addWordForce.send(msg.strip("\n"))
-matcherPers.addMatcher("ban_word:addWordForce", addWordForce)
+matcherManager.addMatcher("ban_word:addWordForce", addWordForce)
 
 
 removeWord = on_command(cmd="违禁词-", aliases={"删除违禁词", "违禁词删除"}, priority=8, block=False)
@@ -144,7 +145,7 @@ async def _(event: GroupMessageEvent, bot: Bot, args: Message = CommandArg()):
     words = tools.removeDuplicate(words.split("|"))
     tools.remove_words(gid, words)
     await removeWord.send("删除成功!")
-matcherPers.addMatcher("ban_word:removeWord", removeWord)
+matcherManager.addMatcher("ban_word:removeWord", removeWord)
 
 
 easyLevel = on_command(cmd="简单违禁词", priority=8, block=False)
@@ -152,7 +153,7 @@ easyLevel = on_command(cmd="简单违禁词", priority=8, block=False)
 async def _(bot: Bot, event: GroupMessageEvent):
     tools.set_level(str(event.group_id), "easy")
     await easyLevel.send("设置成功")
-matcherPers.addMatcher("ban_word:easyLevel", easyLevel)
+matcherManager.addMatcher("ban_word:easyLevel", easyLevel)
 
 
 strictLevel = on_command(cmd="严格违禁词", priority=8, block=False)
@@ -160,7 +161,7 @@ strictLevel = on_command(cmd="严格违禁词", priority=8, block=False)
 async def _(bot: Bot, event: GroupMessageEvent):
     tools.set_level(str(event.group_id), "strict")
     await strictLevel.send("设置成功")
-matcherPers.addMatcher("ban_word:strictLevel", strictLevel)
+matcherManager.addMatcher("ban_word:strictLevel", strictLevel)
 
 
 noneLevel = on_command(cmd="关闭内置违禁词", aliases={"取消内置违禁词", "禁用内置违禁词"}, priority=8, block=False)
@@ -168,7 +169,7 @@ noneLevel = on_command(cmd="关闭内置违禁词", aliases={"取消内置违禁
 async def _(bot: Bot, event: GroupMessageEvent):
     tools.set_level(str(event.group_id), "none")
     await noneLevel.send("设置成功")
-matcherPers.addMatcher("ban_word:noneLevel", noneLevel)
+matcherManager.addMatcher("ban_word:noneLevel", noneLevel)
 
 @event_preprocessor
 async def _(event: GroupMessageEvent, bot: Bot):

@@ -3,9 +3,6 @@
 @Version: 1.0
 @Date: 2022/10/15 16:53
 """
-from dataclasses import dataclass, field
-from typing import Dict
-from nonebot.matcher import Matcher
 from nonebot.log import logger
 from utils.path import permissions_path, permission_special_base, permission_common_base
 from utils import json_tools
@@ -102,83 +99,3 @@ def get_plugin_permission(gid: str, plugin: str):
         return plugin_per_config[plugin]
     except KeyError:
         return None
-
-@dataclass
-class MatcherPermissions(object):
-    """
-    Matcher权限控制
-    """
-    __matcherPers__: Dict[str, Matcher] = field(default_factory=dict)
-
-    def addMatcher(self, name: str, matcher: Matcher):
-        """
-        添加Matcher权限控制
-        name: 特殊权限名称
-        matcher: Matcher对象
-        """
-        matcher.__matcher_name__ = name
-        self.__matcherPers__.update({name: matcher})
-
-    def removeMatcherByName(self, name: str):
-        """
-        移除Matcher权限控制
-        name: 特殊权限名称
-        """
-        self.__matcherPers__.pop(name)
-
-    def removeMatcherByMatcher(self, matcher: Matcher):
-        """
-        移除Matcher权限控制
-        matcher: Matcher对象
-        """
-        for name in self.__matcherPers__.keys():
-            try:
-                if self.__matcherPers__.get(name).__matcher_name__ == matcher.__matcher_name__:
-                    self.__matcherPers__.pop(name)
-            except AttributeError:
-                pass
-
-    def isMatcherExist(self, matcher: Matcher):
-        """
-        检测 Matcher对象 是否添加权限控制
-        matcher: Matcher对象
-        """
-        for name in self.__matcherPers__.keys():
-            try:
-                if self.__matcherPers__.get(name).__matcher_name__ == matcher.__matcher_name__:
-                    return True
-            except AttributeError:
-                pass
-        return False
-
-    def isNameExist(self, name: str):
-        """
-        检测 特殊权限名称 是否添加权限控制
-        name: 特殊权限名称
-        """
-        if name in self.__matcherPers__.keys():
-            return True
-        else:
-            return False
-
-    def getMatcher(self, name: str):
-        """
-        根据 特殊权限名称 获取 Matcher对象
-        name: 特殊权限名称
-        """
-        return self.__matcherPers__.get(name)
-
-    def getName(self, matcher: Matcher):
-        """
-        根据 Matcher对象 获取 特殊权限名称
-        matcher: Matcher对象
-        """
-        for name in self.__matcherPers__.keys():
-            try:
-                if self.__matcherPers__.get(name).__matcher_name__ == matcher.__matcher_name__:
-                    return name
-            except AttributeError:
-                pass
-
-
-matcherPers = MatcherPermissions()

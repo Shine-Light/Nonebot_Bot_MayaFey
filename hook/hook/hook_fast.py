@@ -40,7 +40,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
     plugin_name = matcher.plugin_name
     uid = str(event.user_id)
     gid = event.group_id
-    time_now: datetime = datetime.datetime.now()
+    time_now: datetime.datetime = datetime.datetime.now()
     role = users.get_role(str(gid), uid)
 
     # 超级用户及以上不受限制
@@ -63,7 +63,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
         d.update({uid: {"time": time_now, "count": 1}})
     else:
         try:
-            time_past: datetime = d[uid]['time']
+            time_past: datetime.datetime = d[uid]['time']
             time_delta = (time_now - time_past).seconds
             count = d[uid]['count']
             if time_delta <= fast_time and count + 1 >= fast_count:
@@ -71,7 +71,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
                 await bot.send(event, "检测到恶意触发,禁言5min", at_sender=True)
                 d.pop(uid)
                 raise IgnoredException("恶意触发")
-            elif time_delta > 10:
+            elif time_delta > fast_time:
                 d.pop(uid)
             else:
                 d.update({uid: {"time": time_now, "count": count + 1}})

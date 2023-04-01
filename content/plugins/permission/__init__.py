@@ -9,7 +9,8 @@ from nonebot.plugin import PluginMetadata
 from utils import database_mysql
 from utils import users, admin_tools
 from utils.other import add_target, translate
-from utils.permission import special_per, role_en, role_cn, get_special_per, permissions, permission_, get_lev, matcherPers
+from utils.permission import special_per, role_en, role_cn, get_special_per, permissions, permission_, get_lev
+from utils.matcherManager import matcherManager
 
 
 # 插件元数据定义
@@ -87,7 +88,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
         else:
             await per.finish(f"用户 {uid} 不存在")
-matcherPers.addMatcher("permission:per", per)
+matcherManager.addMatcher("permission:per", per)
 
 my_per = on_command(cmd="我的权限", priority=8)
 @my_per.handle()

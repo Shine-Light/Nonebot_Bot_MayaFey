@@ -8,7 +8,7 @@ from nonebot.adapters.onebot.v11 import GROUP, Message, GroupMessageEvent, Messa
 from .data_source import fortune_manager
 from .config import FortuneThemesDict
 from utils.other import add_target
-from utils.permission import matcherPers
+from utils.matcherManager import matcherManager
 
 require("nonebot_plugin_apscheduler")
 from nonebot_plugin_apscheduler import scheduler
@@ -49,8 +49,8 @@ change_theme = on_regex(rf"^[{command_start}]?设置(.*?)签$", permission=GROUP
 reset_themes = on_regex(rf"^[{command_start}]?重置(抽签)?主题$", permission=GROUP, priority=8, block=False)
 themes_list = on_command("主题列表", permission=GROUP, priority=8, block=False)
 show_themes = on_regex(rf"^[{command_start}]?查看(抽签)?主题$", permission=GROUP, priority=8)
-matcherPers.addMatcher("fortune:change_theme", change_theme)
-matcherPers.addMatcher("fortune:reset_themes", reset_themes)
+matcherManager.addMatcher("fortune:change_theme", change_theme)
+matcherManager.addMatcher("fortune:reset_themes", reset_themes)
 
 
 @show_themes.handle()

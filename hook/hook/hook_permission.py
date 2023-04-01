@@ -10,7 +10,8 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
 from utils.path import *
 from utils import json_tools, users
 from nonebot.exception import IgnoredException
-from utils.permission import permission_, matcherPers, special_per, get_special_per
+from utils.permission import permission_, special_per, get_special_per
+from utils.matcherManager import matcherManager
 from utils.users import get_role
 
 
@@ -49,9 +50,9 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
 @run_preprocessor
 async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
     gid = str(event.group_id)
-    if not matcherPers.isMatcherExist(matcher):
+    if not matcherManager.isMatcherExist(matcher):
         return
-    per_name = matcherPers.getName(matcher)
+    per_name = matcherManager.getName(matcher)
     if not special_per(
         get_role(gid, str(event.user_id)),
         per_name,
