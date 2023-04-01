@@ -35,6 +35,11 @@ __plugin_meta__ = PluginMetadata(
 
 @event_preprocessor
 async def check_pic(bot: Bot, event: GroupMessageEvent):
+    msg = event.get_plaintext()
+    if "初始化" in msg:
+        return
+    if "启用" in msg or "停用" in msg:
+        return
     uid = event.get_user_id()
     gid = event.group_id
     eid = event.message_id
