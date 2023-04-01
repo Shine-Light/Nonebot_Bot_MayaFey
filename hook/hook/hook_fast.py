@@ -67,10 +67,7 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot, state: T_State
             time_delta = (time_now - time_past).seconds
             count = d[uid]['count']
             if time_delta <= fast_time and count + 1 >= fast_count:
-                baning = banSb(gid, [int(uid)], time=300)
-                async for ban in baning:
-                    if ban:
-                        await ban
+                await banSb(gid, [int(uid)], time=300)
                 await bot.send(event, "检测到恶意触发,禁言5min", at_sender=True)
                 d.pop(uid)
                 raise IgnoredException("恶意触发")
