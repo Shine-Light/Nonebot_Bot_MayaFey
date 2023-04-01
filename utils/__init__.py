@@ -94,8 +94,6 @@ async def Dir_init():
         schedule_path.mkdir(exist_ok=True, parents=True)
     if not leave_base_path.exists():
         leave_base_path.mkdir(exist_ok=True, parents=True)
-    if not (config_path / "friends_request").exists():
-        (config_path / "friends_request").mkdir(exist_ok=True, parents=True)
     if not auto_baned_path.exists():
         auto_baned_path.mkdir(exist_ok=True, parents=True)
     if not memes_path.exists():
@@ -114,6 +112,10 @@ async def Dir_init():
         word_list_urls.mkdir(parents=True, exist_ok=True)
     if not guessMember_path.exists():
         guessMember_path.mkdir(parents=True, exist_ok=True)
+    if not fortune_config_path.exists():
+        fortune_config_path.mkdir(parents=True, exist_ok=True)
+    if not friends_request_info.exists():
+        friends_request_info.mkdir(parents=True, exist_ok=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):
