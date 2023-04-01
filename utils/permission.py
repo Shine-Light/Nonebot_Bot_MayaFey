@@ -34,7 +34,7 @@ def permission_(role: str, role_: str) -> bool:
 
 # 根据role获取等级
 def get_lev(role: str) -> int:
-    if permissions.get(role) and permissions.get(role).get("level"):
+    if permissions.get(role) and permissions.get(role).get("level") is not None:
         return permissions.get(role).get("level")
     else:
         logger.error(f"无法获取权限 {role},请检查权限配置")
