@@ -65,7 +65,7 @@ class Weather:
         self._data_validate()
 
     async def _get_data(self, url: str, params: dict) -> Response:
-        async with AsyncClient() as client:
+        async with AsyncClient(verify=False) as client:
             res = await client.get(url, params=params)
         return res
 
