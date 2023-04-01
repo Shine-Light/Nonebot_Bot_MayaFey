@@ -3,13 +3,13 @@
 @Version: 1.0
 @Date: 2022/3/27 19:55
 """
-from nonebot import logger, on_message
+from nonebot import logger
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageEvent
 from nonebot.exception import IgnoredException, ActionFailed
 from nonebot.message import event_preprocessor
 from nonebot.plugin import PluginMetadata
 from utils.admin_tools import banSb, image_moderation_async
-from utils.other import add_target, translate
+from utils.other import add_target
 from utils import users
 from .config import Config
 from .data import Reqeust
@@ -19,9 +19,17 @@ config = Config()
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "ban_pic"),
+    name="ban_pic",
     description="自动撤回违规图片",
-    usage="被动,无命令" + add_target(60)
+    usage="被动,无命令" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "baned",
+        "unset": False,
+        "total_unable": True,
+        "author": "Shine_Light",
+        "translate": "违禁图检测",
+    }
 )
 
 
@@ -84,16 +92,13 @@ async def check_pic(bot: Bot, event: GroupMessageEvent):
                             logger.info('检测到违规图片, 撤回')
                         except ActionFailed:
                             logger.info('检测到违规图片, 但权限不足, 撤回失败')
-                        baning = banSb(gid, ban_list=uid, time=300)
-                        async for baned in baning:
-                            if baned:
-                                try:
-                                    await baned
-                                except ActionFailed:
-                                    logger.info('检测到违规图片, 但权限不足, 禁言失败')
-                                else:
-                                    await bot.send(event=event, message=f"发送了违规图片,类型{label},现对你进行处罚,有异议请联系管理员", at_sender=True)
-                                    logger.info(f"检测到违规图片, 禁言操作成功, 用户: {uid[0]}")
+                        try:
+                            await banSb(gid, ban_list=[uid], time=300)
+                        except ActionFailed:
+                            logger.info('检测到违规图片, 但权限不足, 禁言失败')
+                        else:
+                            await bot.send(event=event, message=f"发送了违规图片,类型{label},现对你进行处罚,有异议请联系管理员", at_sender=True)
+                            logger.info(f"检测到违规图片, 禁言操作成功, 用户: {uid[0]}")
                         logger.info('检测到违规内容')
                         raise IgnoredException("违规图片")
                     elif result["status"] == 'error':
