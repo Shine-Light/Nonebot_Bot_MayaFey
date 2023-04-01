@@ -50,6 +50,12 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
 @run_preprocessor
 async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
     gid = str(event.group_id)
+    module_names = matcher.module_name.split('.')
+    msg = event.get_plaintext()
+    if "init" in module_names or "utils" in module_names:
+        return
+    if "启用" in msg or "停用" in msg:
+        return
     if not matcherManager.isMatcherExist(matcher):
         return
     per_name = matcherManager.getName(matcher)
