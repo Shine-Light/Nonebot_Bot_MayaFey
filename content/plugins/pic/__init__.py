@@ -3,23 +3,32 @@
 @Version: 1.0
 @Date: 2022/3/25 18:29
 """
+import httpx
 from nonebot import on_command
 from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment
 from nonebot.plugin import PluginMetadata
 from utils import requests_tools
 
-from utils.other import add_target, translate
+from utils.other import add_target
 
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
-    name=translate("e2c", "pic"),
+    name="pic",
     description="随机一张图片",
-    usage="/随机图片 头像|Bing|二次元图片" + add_target(60)
+    usage="/随机图片 头像|Bing|二次元图片" + add_target(60),
+    extra={
+        "generate_type": "group",
+        "permission_common": "member",
+        "unset": False,
+        "total_unable": False,
+        "author": "Shine_Light",
+        "translate": "随机图片",
+    }
 )
 
 
-url: str = "https://api.yimian.xyz/img?"
+url: str = "https://api.yimian.xyz/img/?"
 
 
 pic = on_command(cmd="随机图片", aliases={"图片"}, priority=8)
@@ -37,7 +46,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
             pass
 
     try:
-        await pic.send(message=MessageSegment.image(file=requests_tools.match_30X(url + "type=" + type_pic)))
+        await pic.send(message=MessageSegment.image(file=await requests_tools.get_img_bytes(await requests_tools.match_30X(url + "type=" + type_pic))))
+    except (ConnectionError, httpx.HTTPError) as e:
+        await pic.send("网络出现异常: " + str(e))
     except Exception as e:
         if str(e) == "<NetWorkError message=WebSocket API call timeout>":
             await pic.send("请求超时,请等待请求完成")

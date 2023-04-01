@@ -3,21 +3,28 @@
 @Version: 1.0
 @Date: 2022/3/24 20:52
 """
-import requests
+import httpx
 from nonebot import get_driver
 
 
 proxy = get_driver().config.proxy
 
 
-def match_30X(url_source: str) -> str:
+async def get_img_bytes(url: str) -> bytes:
+    async with httpx.AsyncClient(verify=False, timeout=10) as client:
+        r = await client.get(url)
+    return r.content
+
+
+async def match_30X(url_source: str) -> str:
     """捕获30X后的网址"""
-    r = requests.get(url_source, verify=False)
+    async with httpx.AsyncClient(verify=False, timeout=10) as client:
+        r = await client.get(url_source)
     try:
         url = r.headers['Location']
     except:
         try:
-            url = r.next.url
+            url = r.next_request.url
         except:
             return url_source
     return url
