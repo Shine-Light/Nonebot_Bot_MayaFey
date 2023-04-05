@@ -6,7 +6,7 @@
 from nonebot.plugin import PluginMetadata
 from utils.other import add_target
 
-from . import hook_enable, hook_fast, hook_lock, hook_total, hook_update, hook_permission, hook_reboot
+from . import hook_enable, hook_cd, hook_lock, hook_total, hook_update, hook_permission, hook_reboot
 
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
