@@ -148,6 +148,8 @@ guessMember_path = config_path / "guessMember"
 guessMember_cache_path = config_path / "guessMember" / "temp.jpg"
 # 权限文件
 permissions_path = permission_base / "permissions.json"
+# cd配置目录
+cd_path = config_path / "cd"
 
 # 俄罗斯轮盘游戏配置
 russian_path = config_path / "russian"

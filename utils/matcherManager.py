@@ -17,7 +17,7 @@ class MatcherManager(object):
     def addMatcher(self, name: str, matcher: Matcher):
         """
         添加Matcher
-        name: 特殊权限名称
+        name: Matcher名称
         matcher: Matcher对象
         """
         matcher.__matcher_name__ = name
@@ -26,7 +26,7 @@ class MatcherManager(object):
     def removeMatcherByName(self, name: str):
         """
         移除Matcher
-        name: 特殊权限名称
+        name: Matcher名称
         """
         self.__matchers__.pop(name)
 
@@ -57,8 +57,8 @@ class MatcherManager(object):
 
     def isNameExist(self, name: str):
         """
-        检测 特殊权限名称 是否存在
-        name: 特殊权限名称
+        检测 Matcher名称 是否存在
+        name: Matcher名称
         """
         if name in self.__matchers__.keys():
             return True
@@ -67,14 +67,14 @@ class MatcherManager(object):
 
     def getMatcher(self, name: str):
         """
-        根据 特殊权限名称 获取 Matcher对象
-        name: 特殊权限名称
+        根据 Matcher名称 获取 Matcher对象
+        name: Matcher名称
         """
         return self.__matchers__.get(name)
 
     def getName(self, matcher: Matcher):
         """
-        根据 Matcher对象 获取 特殊权限名称
+        根据 Matcher对象 获取 Matcher名称
         matcher: Matcher对象
         """
         for name, matcher_ in self.__matchers__.items():

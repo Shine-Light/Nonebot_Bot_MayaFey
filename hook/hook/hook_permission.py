@@ -10,7 +10,7 @@ from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
 from utils.path import *
 from utils import json_tools, users
 from nonebot.exception import IgnoredException
-from utils.permission import permission_, special_per, get_special_per
+from utils.permission import permission_, special_per, get_special_per, have_special_per
 from utils.matcherManager import matcherManager
 from utils.users import get_role
 
@@ -59,14 +59,15 @@ async def _(matcher: Matcher, event: GroupMessageEvent, bot: Bot):
     if not matcherManager.isMatcherExist(matcher):
         return
     per_name = matcherManager.getName(matcher)
-    if not special_per(
-        get_role(gid, str(event.user_id)),
-        per_name,
-        gid
-    ):
-        await bot.send_group_msg(
-            group_id=event.group_id,
-            message=f"[{matcher.__matcher_name__}] 无权限,权限需在 {get_special_per(gid, per_name)} 及以上"
-        )
-        logger.debug(f"Matcher权限检测 权限不足")
-        raise IgnoredException("权限不足")
+    if have_special_per(per_name, gid):
+        if not special_per(
+                get_role(gid, str(event.user_id)),
+                per_name,
+                gid
+        ):
+            await bot.send_group_msg(
+                group_id=event.group_id,
+                message=f"[{matcher.__matcher_name__}] 无权限,权限需在 {get_special_per(gid, per_name)} 及以上"
+            )
+            logger.debug(f"Matcher权限检测 权限不足")
+            raise IgnoredException("权限不足")

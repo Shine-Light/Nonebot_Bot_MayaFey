@@ -58,6 +58,17 @@ def role_en(name: str) -> str:
         return name
 
 
+def have_special_per(matcher_name: str, gid: str) -> bool:
+    """
+    检测Matcher是否存在特殊权限
+    matcher_name: matcher名称
+    gid: 群号
+    """
+    special_path = permission_special_base / f"{gid}.json"
+    specials: dict = json_tools.json_load(special_path)
+    return matcher_name in specials
+
+
 def special_per(role: str, name: str, gid: str) -> bool:
     """
     检测权限是否符合特殊权限

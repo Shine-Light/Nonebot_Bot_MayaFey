@@ -116,6 +116,8 @@ async def Dir_init():
         fortune_config_path.mkdir(parents=True, exist_ok=True)
     if not friends_request_info.exists():
         friends_request_info.mkdir(parents=True, exist_ok=True)
+    if not cd_path.exists():
+        cd_path.mkdir(parents=True, exist_ok=True)
     # 目录初始化结束
     # 文件初始化开始
     if not os.path.exists(translate_path):

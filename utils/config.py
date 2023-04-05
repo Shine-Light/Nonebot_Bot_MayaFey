@@ -13,7 +13,7 @@ from .json_tools import json_load, json_update, json_write
 from .path import config_path as global_config_path
 from .other import mk_sync, translate_update, translate
 from .const import GENERATE_TYPE_GROUP, GENERATE_TYPE_GENERAL, GENERATE_TYPE_NONE, GENERATE_TYPE_SINGLE
-from .path import permission_common_base, permission_special_base, unset_path, total_unable
+from .path import permission_common_base, permission_special_base, unset_path, total_unable, cd_path
 from .permission import get_plugin_permission, get_special_per
 
 
@@ -62,6 +62,13 @@ class PluginConfig(object):
             translate: 插件名称中文
             permission_special: 插件特殊模式权限
                 {matcher名称: 权限}
+            cd: 插件cd配置
+                {
+                    plugin: {count: 次数(默认5), time: 时间(默认10s), ban_time: 禁言时间(默认300s)},
+                    matcher: {
+                        matcher名称: 同plugin配置
+                    }
+                }
             configs: 插件配置
                 {配置名称: 值} 默认为存储在config.json
                 {配置文件路径: {
@@ -85,6 +92,7 @@ class PluginConfig(object):
     author: str = field(default_factory=str)
     permission_special: dict = field(default_factory=dict)
     translate: str = field(default_factory=str)
+    cd: dict = field(default_factory=dict)
     configs: Dict[str, Any] = field(default_factory=dict)
     configs_general: Dict[str, Any] = field(default_factory=dict)
 
@@ -117,6 +125,8 @@ class PluginConfig(object):
                 self.permission_special = self.plugin_meta.extra['permission_special']
             if "translate" in self.plugin_meta.extra:
                 self.translate = self.plugin_meta.extra['translate']
+            if "cd" in self.plugin_meta.extra:
+                self.cd = self.plugin_meta.extra['cd']
             if "configs" in self.plugin_meta.extra:
                 self.configs = self.plugin_meta.extra['configs']
             if "configs_general" in self.plugin_meta.extra:
@@ -180,6 +190,51 @@ class PluginConfig(object):
             for matcher in self.permission_special:
                 if not get_special_per(gid, matcher):
                     json_update(permission_special_base / f"{gid}.json", matcher, self.permission_special.get(matcher))
+
+        # cd配置初始化,不覆盖已存在的配置
+        if not (cd_path / gid).exists():
+            (cd_path / gid).mkdir(exist_ok=True, parents=True)
+            mk_sync("file", cd_path / gid / "cd.json", "w", content=json.dumps({self.plugin_name: self.cd}))
+        if not (cd_path / gid / "cd.json").exists():
+            mk_sync("file", cd_path / gid / "cd.json", "w", content=json.dumps({self.plugin_name: self.cd}))
+        conf_source: dict = json_load(cd_path / gid / "cd.json").get(self.plugin_name)
+        if not conf_source:
+            if self.cd:
+                conf_source = self.cd
+            else:
+                conf_source = {
+                    "plugin": {
+                        "count": 5,
+                        "time": 10,
+                        "ban_time": 300
+                    },
+                    "matcher": {}
+                }
+        if len(self.cd) != 0 and not self.cd.get("plugin") and not conf_source.get("plugin"):
+            conf_source = ({"plugin": self.cd, "matcher": {}})
+        if self.cd.get("matcher"):
+            if conf_source.get("matcher"):
+                for name, conf in self.cd.get("matcher").items():
+                    if name not in conf_source.get("matcher"):
+                        conf_source.get("matcher").update({name: conf})
+            else:
+                conf_source.update({"matcher": self.cd.get("matcher")})
+        if len(self.cd) == 0 and not conf_source:
+            conf_source.update({"plugin": {"count": 0, "time": 0, "ban_time": 0}, "matcher": {}})
+        if conf_source.get("plugin").get("time") is None:
+            conf_source.get("plugin").update({"time": 10})
+        if conf_source.get("plugin").get("count") is None:
+            conf_source.get("plugin").update({"count": 5})
+        if conf_source.get("plugin").get("ban_time") is None:
+            conf_source.get("plugin").update({"ban_time": 300})
+        for name, conf in conf_source.get("matcher").items():
+            if conf.get("time") is None:
+                conf.update({"time": 10})
+            if conf.get("count") is None:
+                conf.update({"count": 5})
+            if conf.get("ban_time") is None:
+                conf.update({"ban_time": 300})
+        json_update(cd_path / gid / "cd.json", self.plugin_name, conf_source)
 
     def init_config(self, gid: str):
         # 配置初始化,不覆盖已有配置,但允许新增配置
