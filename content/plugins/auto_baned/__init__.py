@@ -21,7 +21,7 @@ __plugin_meta__ = PluginMetadata(
         "unset": False,
         "total_unable": True,
         "author": "Shine_Light",
-        "translate": "防白嫖",
+        "translate": "防白嫖"
     }
 )
 

@@ -42,9 +42,8 @@
 - [X] 随机二次元  
 - [X] 全网热搜榜    
 - [X] 点歌台 ([nonebot-plugin-simplemusic](https://github.com/noneplugin/nonebot-plugin-simplemusic)修改而来)  
-- [X] 群词云  ([nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)  
-- [X] 表情包制作  ([nonebot-plugin-memes](https://github.com/noneplugin/nonebot-plugin-memes)修改而来)  
-- [X] 头像表情包制作  ([nonebot-plugin-petpet](https://github.com/noneplugin/nonebot-plugin-petpet)修改而来)
+- [X] 群词云  ([nonebot_plugin_admin](https://github.com/yzyyz1387/nonebot_plugin_admin)修改而来)   
+- [X] 头像表情包制作  ([nonebot-plugin-memes](https://github.com/noneplugin/nonebot-plugin-memes)修改而来)
 - [X] 答案之书  ([nonebot-plugin-answersbook](https://github.com/A-kirami/nonebot-plugin-answersbook)修改而来)
 - [X] 到账语音生成  
 - [X] 今日运势  ([nonebot_plugin_fortune](https://github.com/MinatoAquaCrews/nonebot_plugin_fortune)修改而来)  
@@ -90,7 +89,6 @@
 ### 被动功能
 - [X] 恶意触发命令检测  
 - [X] 违禁图片检测(百度和腾讯接口)  
-- [X] 闪照捕获  
 - [X] 拉群自接受  
 - [X] 好友自接受  
 - [X] 复读  

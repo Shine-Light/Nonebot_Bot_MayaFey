@@ -35,6 +35,14 @@
       "10024": 231,
       "10018": 232,
       "10019": 239
+    },
+    "Costumes": {
+      "200201": {
+        "sideIconName": "UI_AvatarIcon_Side_AyakaCostumeFruhling",
+        "icon": "UI_AvatarIcon_AyakaCostumeFruhling",
+        "art": "UI_Costume_AyakaCostumeFruhling",
+        "avatarId": 10000002
+      }
     }
   },
   "10000003": {
@@ -125,6 +133,14 @@
       "10060": 431,
       "10061": 432,
       "10062": 439
+    },
+    "Costumes": {
+      "200601": {
+        "sideIconName": "UI_AvatarIcon_Side_LisaCostumeStudentin",
+        "icon": "UI_AvatarIcon_LisaCostumeStudentin",
+        "art": "UI_Costume_LisaCostumeStudentin",
+        "avatarId": 10000006
+      }
     }
   },
   "10000014": {
@@ -2355,6 +2371,158 @@
       "10761": 7631,
       "10762": 7632,
       "10765": 7639
+    }
+  },
+  "10000077": {
+    "Element": "Grass",
+    "Name": "Yaoyao",
+    "NameCN": "瑶瑶",
+    "Slogan": "仙蕊玲珑",
+    "NameTextMapHash": 1732418482,
+    "QualityType": "QUALITY_PURPLE",
+    "iconName": "UI_AvatarIcon_Yaoyao",
+    "SideIconName": "UI_AvatarIcon_Side_Yaoyao",
+    "Base": {
+      "hpBase": 1030.3238525390625,
+      "attackBase": 17.808000564575195,
+      "defenseBase": 62.9474983215332
+    },
+    "Consts": [
+      "UI_Talent_S_Yaoyao_01",
+      "UI_Talent_S_Yaoyao_02",
+      "UI_Talent_U_Yaoyao_01",
+      "UI_Talent_S_Yaoyao_03",
+      "UI_Talent_U_Yaoyao_02",
+      "UI_Talent_S_Yaoyao_04"
+    ],
+    "SkillOrder": [
+      10771,
+      10772,
+      10775
+    ],
+    "Skills": {
+      "10771": "Skill_A_03",
+      "10772": "Skill_S_Yaoyao_01",
+      "10775": "Skill_E_Yaoyao_01"
+    },
+    "ProudMap": {
+      "10771": 7731,
+      "10772": 7732,
+      "10775": 7739
+    }
+  },
+  "10000078": {
+    "Element": "Grass",
+    "Name": "Alhatham",
+    "NameCN": "艾尔海森",
+    "Slogan": "诲韬诤言",
+    "NameTextMapHash": 4002157418,
+    "QualityType": "QUALITY_ORANGE",
+    "iconName": "UI_AvatarIcon_Alhatham",
+    "SideIconName": "UI_AvatarIcon_Side_Alhatham",
+    "Base": {
+      "hpBase": 1039.1187744140625,
+      "attackBase": 24.392200469970703,
+      "defenseBase": 60.847110748291016
+    },
+    "Consts": [
+      "UI_Talent_S_Alhatham_02",
+      "UI_Talent_S_Alhatham_01",
+      "UI_Talent_U_Alhatham_01",
+      "UI_Talent_S_Alhatham_03",
+      "UI_Talent_U_Alhatham_02",
+      "UI_Talent_S_Alhatham_04"
+    ],
+    "SkillOrder": [
+      10781,
+      10782,
+      10785
+    ],
+    "Skills": {
+      "10781": "Skill_A_01",
+      "10782": "Skill_S_Alhatham_01",
+      "10785": "Skill_E_Alhatham_01"
+    },
+    "ProudMap": {
+      "10781": 7831,
+      "10782": 7832,
+      "10785": 7839
+    }
+  },
+  "10000079": {
+    "Element": "Fire",
+    "Name": "Dehya",
+    "NameCN": "迪希雅",
+    "Slogan": "炽鬃之狮",
+    "NameTextMapHash": 2360533154,
+    "QualityType": "QUALITY_ORANGE",
+    "iconName": "UI_AvatarIcon_Dehya",
+    "SideIconName": "UI_AvatarIcon_Side_Dehya",
+    "Base": {
+      "hpBase": 1220.2496337890625,
+      "attackBase": 20.66819953918457,
+      "defenseBase": 48.88111114501953
+    },
+    "Consts": [
+      "UI_Talent_S_Dehya_01",
+      "UI_Talent_S_Dehya_02",
+      "UI_Talent_U_Dehya_01",
+      "UI_Talent_S_Dehya_03",
+      "UI_Talent_U_Dehya_02",
+      "UI_Talent_S_Dehya_04"
+    ],
+    "SkillOrder": [
+      10791,
+      10792,
+      10795
+    ],
+    "Skills": {
+      "10791": "Skill_A_04",
+      "10792": "Skill_S_Dehya_01",
+      "10795": "Skill_E_Dehya_01"
+    },
+    "ProudMap": {
+      "10791": 7931,
+      "10792": 7932,
+      "10795": 7939
+    }
+  },
+  "10000080": {
+    "Element": "Ice",
+    "Name": "Mika",
+    "NameCN": "米卡",
+    "Slogan": "晴霜的标绘",
+    "NameTextMapHash": 231911858,
+    "QualityType": "QUALITY_PURPLE",
+    "iconName": "UI_AvatarIcon_Mika",
+    "SideIconName": "UI_AvatarIcon_Side_Mika",
+    "Base": {
+      "hpBase": 1048.5596923828125,
+      "attackBase": 18.698400497436523,
+      "defenseBase": 59.80012512207031
+    },
+    "Consts": [
+      "UI_Talent_S_Mika_01",
+      "UI_Talent_S_Mika_02",
+      "UI_Talent_U_Mika_01",
+      "UI_Talent_S_Mika_03",
+      "UI_Talent_U_Mika_02",
+      "UI_Talent_S_Mika_04"
+    ],
+    "SkillOrder": [
+      10801,
+      10802,
+      10805
+    ],
+    "Skills": {
+      "10801": "Skill_A_03",
+      "10802": "Skill_S_Mika_01",
+      "10805": "Skill_E_Mika_01"
+    },
+    "ProudMap": {
+      "10801": 8031,
+      "10802": 8032,
+      "10805": 8039
     }
   }
 }

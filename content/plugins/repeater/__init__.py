@@ -97,4 +97,4 @@ async def _(event: GroupMessageEvent):
     except FinishedException:
         pass
     except Exception as e:
-        logger.error(e.__traceback__)
+        logger.error(str(e))
