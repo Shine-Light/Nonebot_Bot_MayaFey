@@ -5,7 +5,7 @@
 """
 import ujson as json
 
-import requests
+import httpx
 
 from nonebot import get_driver
 from nonebot.log import logger
@@ -37,33 +37,33 @@ moli_error_code = {
 }
 
 
-def get_tianx_config() -> dict:
+async def get_tianx_config() -> dict:
     key = config.ai_talk_tianx_key
     mode = config.ai_talk_tianx_mode
     priv = config.ai_talk_tianx_priv
     return {"key": key, "mode": mode, "priv": priv}
 
 
-def get_moli_config() -> dict:
+async def get_moli_config() -> dict:
     key = config.ai_talk_moli_key
     secret = config.ai_talk_moli_secret
     return {"key": key, "secret": secret}
 
 
-def get_api_url(msg: str, uid: str, nickname: str, gid: str = "12345678") -> dict:
+async def get_api_url(msg: str, uid: str, nickname: str, gid: str = "12345678") -> dict:
     if api_type == "qingyunke":
         return {"method": "GET", "url": f"http://api.qingyunke.com/api.php?key=free&appid=0&msg={msg}"}
     elif api_type == "tianx":
         user_hash = hash(uid)
         restype = 0
-        tianx_config = get_tianx_config()
+        tianx_config = await get_tianx_config()
         return {"method": "GET", "url":
             f"http://api.tianapi.com/robot/index?key={tianx_config['key']}"
             f"&question={msg}&mode={tianx_config['mode']}&uniqueid={user_hash}"
             f"&priv={tianx_config['priv']}&restype={restype}"
                 }
     elif api_type == "moli":
-        moli_config = get_moli_config()
+        moli_config = await get_moli_config()
         key = moli_config["key"]
         secret = moli_config["secret"]
         content = msg
@@ -84,43 +84,45 @@ def get_api_url(msg: str, uid: str, nickname: str, gid: str = "12345678") -> dic
         headers = {"Api-Key": key, "Api-Secret": secret, "Content-Type": "application/json;charset=UTF-8"}
         return {"method": "POST", "url": "https://api.mlyai.com/reply", "args": args, "headers": headers}
     else:
-        return None
+        return {}
 
 
-def request_url(api_url: dict) -> dict:
-    method = api_url["method"]
-    url = api_url["url"]
-    try:
-        headers = api_url["headers"]
-    except:
-        headers = None
-    if method == "GET":
-        return requests.get(url, verify=False, headers=headers).json()
-    else:
-        args = api_url["args"]
-        return requests.post(url, json.dumps(args), verify=False, headers=headers).json()
+async def request_url(api_url: dict) -> dict:
+    method: str = api_url["method"]
+    url: str = api_url["url"]
+    headers: dict|None = api_url.get('headers')
+    async with httpx.AsyncClient(verify=False, headers=headers) as client:
+        if method == "GET":
+            resp = await client.get(url)
+            return resp.json()
+        else:
+            args: dict = api_url["args"]
+            resp = await client.post(url, json=args)
+            return resp.json()
 
 
-def error_parse(code: int) -> str:
+async def error_parse(code: int) -> str:
     try:
         return tianx_error_code[code]
     except:
         return "未知错误"
 
 
-def parse_res(data: dict) -> dict:
+async def parse_res(data: dict) -> dict:
     if api_type == "qingyunke":
         if data["result"] == 0:
             return {
                 "type": "other",
                 "values": [
-                    {"type": "text",
-                     "value": data["content"]
-                     }
+                    {
+                        "type": "text",
+                        "value": data["content"]
+                    }
                 ]
             }
         else:
             logger.error(f"青云客API错误,状态码:{data['result']}")
+            return {}
     elif api_type == "tianx":
         if data["code"] == 200:
             values = []
@@ -137,6 +139,7 @@ def parse_res(data: dict) -> dict:
             }
         else:
             logger.warning(f"天行API错误,{error_parse(data['code'])}")
+            return {}
     elif api_type == "moli":
         moli_content_url = "https://files.molicloud.com/"
         if data["code"] == "00000":
@@ -170,3 +173,6 @@ def parse_res(data: dict) -> dict:
             }
         else:
             logger.warning(f"茉莉云API错误, {data['message']}")
+            return {}
+    else:
+        return {}

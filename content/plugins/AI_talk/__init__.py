@@ -48,17 +48,15 @@ async def _(bot: Bot, event: GroupMessageEvent):
     # 群聊处理
     uid = str(event.get_user_id())
     gid = str(event.group_id)
-    nickname = (await bot.get_group_member_info(group_id=int(gid),
-                                                user_id=int(uid),
-                                                no_cache=True))["nickname"]
-    api_url = get_api_url(msg, uid, nickname, gid)
+    nickname = event.sender.nickname or 'unknown'
+    api_url = await get_api_url(msg, uid, nickname, gid)
     # 未配置
     if not api_url:
         logger.warning("AI聊天未生效,未配置AI聊天")
         return
 
-    data = request_url(api_url)
-    parsed = parse_res(data)
+    data = await request_url(api_url)
+    parsed = await parse_res(data)
     if not parsed:
         return
     msgs = []
@@ -95,14 +93,14 @@ async def _(bot: Bot, event: PrivateMessageEvent):
     # 私聊处理
     uid = str(event.get_user_id())
     nickname = (await bot.get_stranger_info(user_id=int(uid), no_cache=True))["nickname"]
-    api_url = get_api_url(msg, uid, nickname)
+    api_url = await get_api_url(msg, uid, nickname)
     # 未配置
     if not api_url:
         logger.warning("AI聊天未生效,未配置AI聊天")
         return
 
-    data = request_url(api_url)
-    parsed = parse_res(data)
+    data = await request_url(api_url)
+    parsed = await parse_res(data)
     if not parsed:
         return
     msgs = []
