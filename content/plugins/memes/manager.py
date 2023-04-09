@@ -1,17 +1,18 @@
 import re
-import yaml
 from enum import IntEnum
 from pathlib import Path
-from pydantic import BaseModel
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
+import yaml
+from meme_generator.manager import get_memes
+from meme_generator.meme import Meme
 from nonebot.log import logger
+from pydantic import BaseModel
 
-from .utils import Meme
-from .data_source import memes
+from .config import memes_config
 from utils.path import memes_path
 
-data_path = memes_path
+config_path = memes_path / "meme_manager.yml"
 
 
 class MemeMode(IntEnum):
@@ -35,9 +36,15 @@ class ActionResult(IntEnum):
 
 
 class MemeManager:
-    def __init__(self, path: Path = data_path / "meme_list.yml"):
+    def __init__(self, path: Path = config_path):
         self.__path = path
         self.__meme_list: Dict[str, MemeConfig] = {}
+        self.memes = list(
+            filter(
+                lambda meme: meme.key not in memes_config.memes_disabled_list,
+                sorted(get_memes(), key=lambda meme: meme.key),
+            )
+        )
         self.__load()
         self.__dump()
 
@@ -50,7 +57,7 @@ class MemeManager:
             if not meme:
                 results[name] = ActionResult.NOTFOUND
                 continue
-            config = self.__meme_list[meme.name]
+            config = self.__meme_list[meme.key]
             if user_id not in config.black_list:
                 config.black_list.append(user_id)
             if user_id in config.white_list:
@@ -68,7 +75,7 @@ class MemeManager:
             if not meme:
                 results[name] = ActionResult.NOTFOUND
                 continue
-            config = self.__meme_list[meme.name]
+            config = self.__meme_list[meme.key]
             if user_id not in config.white_list:
                 config.white_list.append(user_id)
             if user_id in config.black_list:
@@ -86,21 +93,27 @@ class MemeManager:
             if not meme:
                 results[name] = ActionResult.NOTFOUND
                 continue
-            config = self.__meme_list[meme.name]
+            config = self.__meme_list[meme.key]
             config.mode = mode
             results[name] = ActionResult.SUCCESS
         self.__dump()
         return results
 
     def find(self, meme_name: str) -> Optional[Meme]:
-        for meme in memes:
-            if meme_name.lower() == meme.name.lower():
+        for meme in self.memes:
+            if meme_name.lower() == meme.key.lower():
                 return meme
-            if re.fullmatch(meme.pattern, meme_name, re.IGNORECASE):
-                return meme
+            for keyword in sorted(meme.keywords, reverse=True):
+                if meme_name.lower() == keyword.lower():
+                    return meme
+            for pattern in meme.patterns:
+                if re.fullmatch(pattern, meme_name, re.IGNORECASE):
+                    return meme
 
-    def check(self, user_id: str, meme: Meme) -> bool:
-        config = self.__meme_list[meme.name]
+    def check(self, user_id: str, meme_key: str) -> bool:
+        if meme_key not in self.__meme_list:
+            return False
+        config = self.__meme_list[meme_key]
         if config.mode == MemeMode.BLACK:
             if user_id in config.black_list:
                 return False
@@ -126,7 +139,7 @@ class MemeManager:
         except:
             meme_list = {}
             logger.warning("表情列表解析失败，将重新生成")
-        self.__meme_list = {meme.name: MemeConfig() for meme in memes}
+        self.__meme_list = {meme.key: MemeConfig() for meme in self.memes}
         self.__meme_list.update(meme_list)
 
     def __dump(self):

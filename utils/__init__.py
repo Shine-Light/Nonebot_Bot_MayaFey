@@ -100,10 +100,8 @@ async def Dir_init():
         memes_path.mkdir(exist_ok=True, parents=True)
     if not memes_res_path.exists():
         memes_res_path.mkdir(exist_ok=True, parents=True)
-    if not petpet_path.exists():
-        petpet_path.mkdir(exist_ok=True, parents=True)
-    if not petpet_res_path.exists():
-        petpet_res_path.mkdir(exist_ok=True, parents=True)
+    if not memes_cache_path.exists():
+        memes_cache_path.mkdir(exist_ok=True, parents=True)
     if not what2eat_path.exists():
         what2eat_path.mkdir(parents=True, exist_ok=True)
     if not curfew_path.exists():

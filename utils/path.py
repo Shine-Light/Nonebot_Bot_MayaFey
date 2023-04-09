@@ -76,6 +76,8 @@ permission_special_base = permission_base / "special"
 memes_path = config_path / "memes"
 # 表情包资源目录
 memes_res_path = img_path / "memes"
+# 表情包缓存目录
+memes_cache_path = memes_res_path / "cache"
 # 更新插件目录
 update_path = plugins_path / "update"
 # 更新插件配置
@@ -134,10 +136,6 @@ friends_request_info = friends_request_path / "requests.json"
 auto_baned_path = config_path / "auto_baned"
 # 随机老婆配置目录
 DailyWife_path = config_path / "DailyWife"
-# 头像表情包制作配置
-petpet_path = config_path / "petpet"
-# 表情包资源目录
-petpet_res_path = img_path / "petpet"
 # 吃什么配置目录
 what2eat_path = config_path / "what2eat"
 # 宵禁配置目录

@@ -3,6 +3,7 @@
 @Version: 1.0
 @Date: 2023/4/1 17:47
 """
+from typing import Type
 from dataclasses import dataclass, field
 from typing import Dict
 from nonebot.matcher import Matcher
@@ -12,9 +13,9 @@ class MatcherManager(object):
     """
     Matcher管理, 用于Matcher级别控制
     """
-    __matchers__: Dict[str, Matcher] = field(default_factory=dict)
+    __matchers__: Dict[str, Type[Matcher]] = field(default_factory=dict)
 
-    def addMatcher(self, name: str, matcher: Matcher):
+    def addMatcher(self, name: str, matcher: Type[Matcher]):
         """
         添加Matcher
         name: Matcher名称
@@ -30,7 +31,7 @@ class MatcherManager(object):
         """
         self.__matchers__.pop(name)
 
-    def removeMatcherByMatcher(self, matcher: Matcher):
+    def removeMatcherByMatcher(self, matcher: Type[Matcher]):
         """
         移除Matcher
         matcher: Matcher对象
@@ -42,7 +43,7 @@ class MatcherManager(object):
             except AttributeError:
                 pass
 
-    def isMatcherExist(self, matcher: Matcher):
+    def isMatcherExist(self, matcher: Type[Matcher]):
         """
         检测 Matcher对象 是否存在
         matcher: Matcher对象
@@ -72,7 +73,7 @@ class MatcherManager(object):
         """
         return self.__matchers__.get(name)
 
-    def getName(self, matcher: Matcher):
+    def getName(self, matcher: Type[Matcher]):
         """
         根据 Matcher对象 获取 Matcher名称
         matcher: Matcher对象
