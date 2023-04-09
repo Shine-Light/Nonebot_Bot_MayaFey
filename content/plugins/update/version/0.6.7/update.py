@@ -210,7 +210,7 @@ try:
         await download_to_plugin("ban_word/__init__")
         await download_to_plugin("fortune/__init__")
         await download_to_plugin("perimssion/__init__")
-        await download_to_hook("hook_perimssion")
+        await download_to_hook("hook_permission")
         await download_to_utils("matcherManager")
         await download_to_utils("permission")
         await download_to_utils("users")
