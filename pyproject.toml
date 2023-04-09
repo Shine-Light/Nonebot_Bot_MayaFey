@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "maya fey"
-version = "0.6.5"
+version = "0.6.6"
 description = ""
 authors = ["Shine-Light <shine_light@qq.com>"]
 
@@ -22,10 +22,11 @@ jieba = "^0.42.1"
 Jinja2 = "^3.0.3"
 loguru = "^0.6.0"
 Markdown = "^3.3.6"
-nonebot2 = "^2.0.0rc3"
+nonebot2 = "^2.0.0rc4"
 nonebot-plugin-imageutils = "^0.1.17"
 nonebot-plugin-apscheduler = "^0.2.0"
 nonebot-plugin-htmlrender = "^0.2.0.1"
+meme-generator = "^0.0.9"
 nonebot-adapter-onebot = "^2.2.1"
 Pillow = "^9.4.0"
 playwright = "^1.31.1"
