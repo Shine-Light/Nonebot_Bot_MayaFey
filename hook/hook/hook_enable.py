@@ -4,7 +4,7 @@
 @Date: 2022/7/11 15:31
 """
 from nonebot.message import event_preprocessor
-from nonebot.adapters.onebot.v11 import GroupMessageEvent, Bot
+from nonebot.adapters.onebot.v11 import Event, Bot
 from nonebot.exception import IgnoredException
 from utils.json_tools import json_load, json_write
 from utils.path import enable_config_path
@@ -14,9 +14,16 @@ a = []
 
 # 机器人启动检测
 @event_preprocessor
-async def enable_check(bot: Bot, event: GroupMessageEvent):
-    gid = str(event.group_id)
-    msg = event.get_plaintext()
+async def enable_check(bot: Bot, event: Event):
+    # 非群聊消息忽略检测
+    if not event.dict().get("group_id"):
+        return
+        
+    gid = str(event.dict().get("group_id"))
+    try:
+        msg = event.get_plaintext()
+    except ValueError:
+        msg = ""
     if "初始化" in msg:
         return
     if event.get_user_id == bot.self_id:
