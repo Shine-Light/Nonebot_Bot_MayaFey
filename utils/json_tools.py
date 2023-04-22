@@ -3,6 +3,7 @@
 @Version: 1.0
 @Date: 2022/3/24 21:30
 """
+import aiofiles
 import ujson as json
 from pathlib import Path
 
@@ -39,3 +40,38 @@ def json_update(url: Path, key, value):
     js = json_load(url)
     js.update({key: value})
     json_write(url, js)
+
+
+# 读取json文件
+async def json_load_async(url: Path) -> dict:
+    """
+    异步读取json文件
+    url: 文件路径
+    返回dict对象
+    """
+    async with aiofiles.open(url, 'r', encoding='utf-8') as file:
+        return json.loads(await file.read())
+
+
+# 写入json文件
+async def json_write_async(url: Path, jsons: dict):
+    """
+    异步写入json文件
+    url: 文件路径
+    jsons: dict对象
+    """
+    async with aiofiles.open(url, 'w', encoding='utf-8') as file:
+        await file.write(json.dumps(jsons, ensure_ascii=False, indent=4))
+
+
+# 更新json文件
+async def json_update_async(url: Path, key, value):
+    """
+    异步更新json文件
+    url: 文件路径
+    key: 键
+    value: 值
+    """
+    js = json_load(url)
+    js.update({key: value})
+    await json_write_async(url, js)

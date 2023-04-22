@@ -152,9 +152,9 @@ async def _():
     database_mysql.Database_init()
 
 
-async def init(bot: Bot, event: GroupMessageEvent):
+async def init(bot: Bot, gid: str):
     # 用户表初始化开始
-    gid = str(event.group_id)
+    gid = str(gid)
     members = await bot.get_group_member_list(group_id=int(gid))
     cursor.execute(f"SELECT * FROM users WHERE gid='{gid}';")
     query: tuple = cursor.fetchall()
@@ -255,7 +255,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     try:
         # 各插件初始化
         gid = str(event.group_id)
-        await init(bot, event)
+        await init(bot, gid)
         await credit.tools.init(bot, event)
         await plugin_control.init(gid)
         await sign.tools.init(bot, event)
