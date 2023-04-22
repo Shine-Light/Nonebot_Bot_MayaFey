@@ -8,8 +8,6 @@ import base64
 import ujson as json
 import random
 import re
-
-import aiofiles
 import nonebot
 
 from tencentcloud.common import credential
@@ -22,6 +20,7 @@ from tencentcloud.ims.v20201229 import ims_client, models
 from typing import Union, Optional
 from nonebot import logger, get_driver, get_bot
 from nonebot.adapters.onebot.v11 import Message, Bot
+from utils import users
 
 su = nonebot.get_driver().config.superusers
 TencentID = nonebot.get_driver().config.tenid
@@ -76,7 +75,7 @@ async def participle_simple_handle() -> set:
     return sum_
 
 
-async def banSb(gid: Union[str, int], ban_list: list, time: int = None):
+async def banSb(gid: Union[str, int], ban_list: list, time: Union[int, None] = None):
     """
     构造禁言
     :param gid: 群号
@@ -100,6 +99,19 @@ async def banWholeGroup(gid: Union[str, int], enable: bool = True):
     """
     bot: Bot = get_bot()
     await bot.set_group_whole_ban(group_id=int(gid), enable=enable)
+
+
+async def kick(gid: Union[str, int], kicks: list[Union[str, int]], block: bool = False):
+    """
+    踢出/拉黑
+    gid: 群号
+    kicks: 踢出人员名单
+    block: 是否拉黑, 默认 False
+    """
+    bot: Bot = get_bot()
+    for kick in kicks:
+        await bot.set_group_kick(group_id=int(gid), user_id=int(kick), reject_add_request=block)
+        users.member_leave(str(kick), str(gid))
 
 
 async def image_moderation_async(img: Union[str, bytes]) -> dict:
@@ -148,7 +160,7 @@ def bytes_to_base64(data):
     return base64.b64encode(data).decode("utf-8")
 
 
-def At(data: Union[str, dict, Message]):
+def At(data: Union[str, dict, Message]) -> list:
     """
     检测at了谁，返回[qq, qq, qq,...]
     包含全体成员直接返回['all']

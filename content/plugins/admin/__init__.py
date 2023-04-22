@@ -12,7 +12,7 @@ from nonebot.plugin import PluginMetadata
 from nonebot.params import CommandArg
 
 from utils.other import add_target
-from utils.admin_tools import banSb, At, banWholeGroup
+from utils import admin_tools
 from .config import plugin_config
 
 
@@ -55,11 +55,11 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
         time = int(args.extract_plain_text().strip())
     except ValueError:
         time = None
-    sb = At(event.original_message)
+    sb = admin_tools.At(event.original_message)
     gid = event.group_id
     if sb:
         try:
-            await banSb(gid, ban_list=sb, time=time)
+            await admin_tools.banSb(gid, ban_list=sb, time=time)
         except ActionFailed as e:
             await ban.finish(str(e))
         logger.info("禁言操作成功")
@@ -72,11 +72,11 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
 unban = on_command("解", priority=4, block=False)
 @unban.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    sb = At(event.json())
+    sb = admin_tools.At(event.json())
     gid = event.group_id
     if sb:
         try:
-            await banSb(gid, ban_list=sb, time=0)
+            await admin_tools.banSb(gid, ban_list=sb, time=0)
         except ActionFailed as e:
             await unban.finish(str(e))
         logger.info("解禁操作成功")
@@ -89,17 +89,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
     """
     /踢 @user 踢出某人
     """
-    sb = At(event.json())
+    sb = admin_tools.At(event.json())
     gid = event.group_id
     if sb:
         if 'all' not in sb:
             try:
-                for qq in sb:
-                    await bot.set_group_kick(
-                        group_id=gid,
-                        user_id=int(qq),
-                        reject_add_request=False
-                    )
+                await admin_tools.kick(gid, sb, False)
             except ActionFailed as e:
                 await kick.finish(str(e))
             logger.info(f"踢人操作成功")
@@ -114,17 +109,12 @@ async def _(bot: Bot, event: GroupMessageEvent):
     """
     黑 @user 踢出并拉黑某人
     """
-    sb = At(event.json())
+    sb = admin_tools.At(event.json())
     gid = event.group_id
     if sb:
         if 'all' not in sb:
             try:
-                for qq in sb:
-                    await bot.set_group_kick(
-                        group_id=gid,
-                        user_id=int(qq),
-                        reject_add_request=True
-                    )
+                await admin_tools.kick(gid, sb, True)
             except ActionFailed as e:
                 await kick_.finish(str(e))
             logger.info(f"踢人并拉黑操作成功")
@@ -139,7 +129,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     """
     管理员+ @user 添加群管理员
     """
-    sb = At(event.json())
+    sb = admin_tools.At(event.json())
     gid = event.group_id
     if sb:
         if 'all' not in sb:
@@ -164,7 +154,7 @@ async def _(bot: Bot, event: GroupMessageEvent):
     """
     管理员- @user 取消群管理员
     """
-    sb = At(event.json())
+    sb = admin_tools.At(event.json())
     gid = event.group_id
     if sb:
         if 'all' not in sb:
@@ -189,7 +179,7 @@ ban_all = on_command(cmd="全员禁", aliases={"禁言全员", "禁言全员", "
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
     try:
-        await banWholeGroup(gid=gid, enable=True)
+        await admin_tools.banWholeGroup(gid=gid, enable=True)
     except ActionFailed as e:
         await unban.finish(str(e))
     logger.info(f"禁言全员操作成功")
@@ -201,7 +191,7 @@ un_ban_all = on_command(cmd="解全员禁", aliases={"解禁全员", "全员解�
 async def _(bot: Bot, event: GroupMessageEvent):
     gid = event.group_id
     try:
-        await banWholeGroup(gid=gid, enable=False)
+        await admin_tools.banWholeGroup(gid=gid, enable=False)
     except ActionFailed as e:
         await unban.finish(str(e))
     logger.info(f"解禁全员操作成功")
@@ -212,7 +202,7 @@ title_set = on_command(cmd="设置头衔", aliases={"设置称号"}, priority=5,
 @title_set.handle()
 async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
     title = args.extract_plain_text().strip()
-    sb = At(event.original_message)
+    sb = admin_tools.At(event.original_message)
     if sb:
         if not title:
             await title_set.finish("头衔呢?")
@@ -230,7 +220,7 @@ async def _(bot: Bot, event: GroupMessageEvent, args: Message = CommandArg()):
 title_unset = on_command(cmd="取消头衔", aliases={"取消称号"}, priority=5, block=False)
 @title_unset.handle()
 async def _(bot: Bot, event: GroupMessageEvent):
-    sb = At(event.original_message)
+    sb = admin_tools.At(event.original_message)
     if sb:
         if "all" in sb:
             await title_unset.finish("不能取消所有人的头衔!")

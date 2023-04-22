@@ -7,3 +7,5 @@ GENERATE_TYPE_GROUP = "group"  # 配置分群管理
 GENERATE_TYPE_SINGLE = "single"  # 配置不分群
 GENERATE_TYPE_GENERAL = "general"  # 只生成通用配置
 GENERATE_TYPE_NONE = "none"  # 不生成配置
+
+DATETIME_FORMAT_STR = "%Y-%m-%d %H:%M:%S" # datetime 格式化字符串

@@ -6,7 +6,7 @@
 import datetime
 
 from utils import database_mysql
-from utils.permission import get_lev
+from utils.permission import permission_
 from nonebot import logger, get_driver, require
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
 from nonebot.permission import Permission
@@ -57,6 +57,20 @@ def update_role(gid: str, uid: str, role: str) -> bool:
     except:
         return False
     logger.info(f"更新用户 {uid} 权限 {role}")
+    return True
+
+
+def update_role_with_check(gid: str, uid: str, role: str) -> bool:
+    """
+    进行检查的权限更新, 当新权限等级低于旧权限等级时不修改
+    """
+    try:
+        if permission_('admin', get_role(gid, uid)):
+            update_role(gid, uid, role)
+        else:
+            return False
+    except:
+        return False
     return True
 
 
