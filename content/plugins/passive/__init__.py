@@ -141,14 +141,16 @@ async def _(bot: Bot, event: GroupIncreaseNoticeEvent):
 
     gid = str(event.group_id)
     uid = str(event.get_user_id())
+    exists = await users.is_user_exist(gid, uid)
     if uid in superusers:
         role = "Van"
     else:
         role = "member"
     await users.user_init_one(gid, uid, role)  # 新人默认为member或Van
-    await sign_init_one(gid, uid)
-    await credit_init_one(gid, uid)
     await control_init(gid)
+    if not exists:
+        await sign_init_one(gid, uid)
+        await credit_init_one(gid, uid)
 
 
 # 离群事件
