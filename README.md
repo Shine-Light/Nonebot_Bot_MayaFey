@@ -1,6 +1,6 @@
 # Nonebot_Bot_MayaFey
 ## 本项目
-基于[Nonebot2](https://https://v2.nonebot.dev/)和[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)制作的群聊机器人
+基于[Nonebot2](https://v2.nonebot.dev/)和[go-cqhttp](https://github.com/Mrs4s/go-cqhttp)制作的群聊机器人
 
 ## 适配
 目前只适配了 go-cqhttp,有兴趣的可以自己尝试其他 Onebot,但请自行承担可能存在的兼容性问题  
@@ -87,7 +87,7 @@
 - [X] 21点  ([nonebot-plugin-blackjack](https://github.com/yaowan233/nonebot-plugin-blackjack)修改而来)  
 - [X] 猜群友
 ### 被动功能
-- [X] 恶意触发命令检测  
+- [X] cd  
 - [X] 违禁图片检测(百度和腾讯接口)  
 - [X] 拉群自接受  
 - [X] 好友自接受  
@@ -110,6 +110,10 @@
 [go-cqhttp](https://github.com/Mrs4s/go-cqhttp)  
 [htmlrender](https://github.com/kexue-z/nonebot-plugin-htmlrender)  
 以及各位插件开发者
+
+## 捐赠
+[爱发电](https://afdian.net/a/Shine_Light)  
+<img width="410px" src="./.github/afdian-Shine_Light.jpg">
 
 ## License
 [MIT License](https://opensource.org/licenses/MIT)
