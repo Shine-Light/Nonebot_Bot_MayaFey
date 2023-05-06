@@ -2358,14 +2358,14 @@ reference = "aliyun"
 
 [[package]]
 name = "pypinyin"
-version = "0.46.0"
+version = "0.48.0"
 description = "汉字拼音转换模块/工具."
 category = "main"
 optional = false
 python-versions = ">=2.6, !=3.0.*, !=3.1.*, !=3.2.*, <4"
 files = [
-    {file = "pypinyin-0.46.0-py2.py3-none-any.whl", hash = "sha256:7251f4fa0b1e43ad91f6121d9a842e8acd72a6a34deea5e87d2a97621eadc11f"},
-    {file = "pypinyin-0.46.0.tar.gz", hash = "sha256:0d2e41e95dbc20a232c0f5d3850654eebbfcba303d96358d2c46592725bb989c"},
+    {file = "pypinyin-0.48.0-py2.py3-none-any.whl", hash = "sha256:38b8a478b4af17c5b4211482ea35c68eb0ca3a81661e5fb2abe6f9cc66d1634b"},
+    {file = "pypinyin-0.48.0.tar.gz", hash = "sha256:63d18b8f10dd38a3e57f26b6833a983d9176f2e9c4a53157c23e1343d0b3dbf8"},
 ]
 
 [package.source]
@@ -3377,4 +3377,4 @@ reference = "aliyun"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "fd3b03eb38510d70858f2f5fc1bf595e98320767dcc2609488f0694b4ce7f34c"
+content-hash = "ffb180fc48aca850dc49502b36f2cfb2c8155af90d7fd31feade95c704728fa0"
