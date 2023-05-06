@@ -45,8 +45,8 @@ __plugin_meta__ = PluginMetadata(
         },
         "unset": False,
         "total_unable": False,
-        "author": "Shine_Light",
-        "translate": "KafCoppelia",
+        "author": "KafCoppelia",
+        "translate": "睡眠助手",
     }
 )
 
