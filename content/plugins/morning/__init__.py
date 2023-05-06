@@ -30,7 +30,7 @@ message_morning: str = '''
 # 插件元数据定义
 __plugin_meta__ = PluginMetadata(
     name="morning",
-    description="积分查询和排行",
+    description="早晚安记录作息，培养优质睡眠😴",
     usage=message_morning,
     extra={
         "generate_type": "group",
@@ -46,7 +46,7 @@ __plugin_meta__ = PluginMetadata(
         "unset": False,
         "total_unable": False,
         "author": "Shine_Light",
-        "translate": "睡眠助手",
+        "translate": "KafCoppelia",
     }
 )
 
