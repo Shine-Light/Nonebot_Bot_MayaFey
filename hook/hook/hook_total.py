@@ -19,6 +19,7 @@ fts = "%Y-%m"
 @run_preprocessor
 async def total(matcher: Matcher, event: GroupMessageEvent):
     module_names = matcher.module_name.split('.')
+    plugin_name = matcher.plugin_name
     month = time.strftime(fts, time.localtime())
     msg = event.get_plaintext()
     if "init" in module_names or "utils" in module_names:
@@ -26,9 +27,8 @@ async def total(matcher: Matcher, event: GroupMessageEvent):
     if "启用" in msg or "停用" in msg:
         return
     unable: list = open(total_unable, 'r', encoding='utf-8').read().split(",")
-    if module_names in unable:
+    if plugin_name in unable:
         return
-    plugin_name = matcher.plugin_name
     gid = str(event.group_id)
     total_path = total_base / month / f"{gid}.json"
     if not Path.exists(total_base / month):
