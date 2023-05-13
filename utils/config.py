@@ -367,6 +367,22 @@ class PluginConfig(object):
             return
         json_update(self.__config_general_path__, config_name, config_value)
 
+    def dict(self) -> dict:
+        return {
+            "plugin_meta": self.plugin_meta,
+            "description": self.description,
+            "usage":self.usage,
+            "generate_type": self.generate_type,
+            "permission_common": self.permission_common,
+            "unset": self.unset,
+            "total_unable":self.total_unable,
+            "version": self.version,
+            "author": self.author,
+            "permission_special": self.permission_special,
+            "translate":  self.translate,
+            "cd": self.cd,
+        }
+
 
 @dataclass
 class ConfigManager(object):

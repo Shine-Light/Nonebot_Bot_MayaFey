@@ -3,6 +3,8 @@
 @Version: 1.0
 @Date: 2022/10/15 16:53
 """
+import re
+
 from nonebot.log import logger
 from utils.path import permissions_path, permission_special_base, permission_common_base
 from utils import json_tools
@@ -60,7 +62,7 @@ def role_en(name: str) -> str:
 
 def have_special_per(matcher_name: str, gid: str) -> bool:
     """
-    检测Matcher是否存在特殊权限
+    检测Matcher是否存在 Matcher 权限
     matcher_name: matcher名称
     gid: 群号
     """
@@ -71,9 +73,9 @@ def have_special_per(matcher_name: str, gid: str) -> bool:
 
 def special_per(role: str, name: str, gid: str) -> bool:
     """
-    检测权限是否符合特殊权限
+    检测权限是否符合 Matcher 权限
     role: 待检测权限
-    name: 目标特殊权限名称
+    name: 目标 Matcher 权限名称
     gid: 群号
     """
     special_path = permission_special_base / f"{gid}.json"
@@ -81,14 +83,14 @@ def special_per(role: str, name: str, gid: str) -> bool:
     try:
         return permission_(role, specials[name])
     except KeyError:
-        logger.error(f"找不到特殊权限: {name}, 跳过权限检测")
+        logger.error(f"找不到Matcher权限: {name}, 跳过权限检测")
         return True
 
 
 def get_special_per(gid: str, name: str) -> str:
     """
-    获取特殊权限
-    name: 特殊权限名称
+    获取 Matcher 权限
+    name: Matcher 权限名称
     gid: 群号
     """
     try:
@@ -101,7 +103,7 @@ def get_special_per(gid: str, name: str) -> str:
 
 def get_plugin_permission(gid: str, plugin: str):
     """
-    获取插件普通权限
+    获取插件 Plugin 权限
     gid: 群号
     plugin: 插件名
     """
@@ -110,3 +112,20 @@ def get_plugin_permission(gid: str, plugin: str):
         return plugin_per_config[plugin]
     except KeyError:
         return None
+
+
+def get_plugin_spcial_permissions(gid: str, plugin: str) -> dict:
+    """
+    获取插件所有 Matcher 权限
+    gid: 群号
+    plugin: 插件名
+    """
+    spec_permissions = json_tools.json_load(permission_special_base / f"{gid}.json")
+    plugin_spec_permission = {}
+    for plugin_spec, permission in spec_permissions.items():
+        if re.findall(rf"^{plugin}:", plugin_spec, flags=re.IGNORECASE):
+            plugin_spec_permission.update({
+                plugin_spec: permission
+            })
+    return plugin_spec_permission
+    

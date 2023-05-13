@@ -5,7 +5,8 @@
 """
 import datetime
 
-from utils import database_mysql
+from typing import Union
+from utils import database_mysql, const
 from utils.permission import permission_
 from nonebot import logger, get_driver, require
 from nonebot.adapters.onebot.v11 import GroupMessageEvent
@@ -97,6 +98,28 @@ def get_dateLast(gid, uid) -> str:
         return datetime.datetime.strftime(re[0], ftr)
 
 
+def update_countAll(gid: str, uid: str, count_all: int) -> bool:
+    cursor.execute(f"UPDATE sign SET count_all={count_all} WHERE uid='{uid}' AND gid='{gid}';")
+    cursor.fetchone()
+    return cursor.rowcount > 0
+
+
+def update_countContinue(gid: str, uid: str, count_continue: int) -> bool:
+    cursor.execute(f"UPDATE sign SET count_continue={count_continue} WHERE uid='{uid}' AND gid='{gid}';")
+    cursor.fetchone()
+    return cursor.rowcount > 0
+
+
+def update_dateLast(gid: str, uid: str, date_last: Union[datetime.datetime, str]) -> bool:
+    if type(date_last) is datetime.datetime:
+        date_last = date_last.strftime(const.DATE_FORMAT_STR)
+    else:
+        datetime.datetime.strptime(date_last, const.DATE_FORMAT_STR)
+    cursor.execute(f"UPDATE sign SET date_last='{date_last}' WHERE uid='{uid}' AND gid='{gid}';")
+    cursor.fetchone()
+    return cursor.rowcount > 0
+
+
 def get_credit(gid, uid) -> int:
     cursor.execute(f"SELECT credit FROM credit LEFT JOIN users ON credit.uid=users.uid AND credit.gid=users.gid WHERE alive=1 AND credit.uid='{uid}' AND credit.gid='{gid}';")
     re = cursor.fetchone()
@@ -104,6 +127,12 @@ def get_credit(gid, uid) -> int:
         return re[0]
     else:
         return -1
+
+
+def set_credit(gid: str, uid: str, credit: int) -> bool:
+    cursor.execute(f"UPDATE credit SET credit={credit} WHERE gid='{gid}' AND uid='{uid}';")
+    cursor.fetchone()
+    return cursor.rowcount > 0
 
 
 def set_member_later(gid, uid, time: int):
@@ -120,6 +149,11 @@ def get_ban_count(uid: str, gid: str) -> int:
         return count[0]
     else:
         return 0
+
+
+def set_ban_count(uid: str, gid: str, ban_count: int) -> int:
+    cursor.execute(f"UPDATE users SET ban_count={ban_count} WHERE gid='{gid}' and uid='{uid}';")
+    return cursor.rowcount > 0
 
 
 def get_all_Van_in_database():

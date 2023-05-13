@@ -42,6 +42,18 @@ def json_update(url: Path, key, value):
     json_write(url, js)
 
 
+# 删除属性
+def json_pop(url: Path, key):
+    """
+    删除属性
+    url: 文件路径
+    key: 键
+    """
+    js = json_load(url)
+    js.pop(key)
+    json_write(url, js)
+
+
 # 读取json文件
 async def json_load_async(url: Path) -> dict:
     """
@@ -72,6 +84,18 @@ async def json_update_async(url: Path, key, value):
     key: 键
     value: 值
     """
-    js = json_load(url)
+    js = await json_load_async(url)
     js.update({key: value})
+    await json_write_async(url, js)
+
+
+# 删除属性
+async def json_pop_async(url: Path, key):
+    """
+    删除属性
+    url: 文件路径
+    key: 键
+    """
+    js = await json_load_async(url)
+    js.pop(key)
     await json_write_async(url, js)

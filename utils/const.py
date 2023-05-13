@@ -9,3 +9,5 @@ GENERATE_TYPE_GENERAL = "general"  # 只生成通用配置
 GENERATE_TYPE_NONE = "none"  # 不生成配置
 
 DATETIME_FORMAT_STR = "%Y-%m-%d %H:%M:%S" # datetime 格式化字符串
+DATE_FORMAT_STR = "%Y-%m-%d" # date 格式化字符串
+DATE_MONTH_FORMAT_STR = "%Y-%m" # date-month 格式化字符串
