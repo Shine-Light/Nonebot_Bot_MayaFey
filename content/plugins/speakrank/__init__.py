@@ -30,7 +30,7 @@ __plugin_meta__ = PluginMetadata(
         "generate_type": "group",
         "permission_common": "baned",
         "unset": False,
-        "total_unable": False,
+        "total_unable": True,
         "author": "yzyyz1387",
         "translate": "发言排行榜",
     }

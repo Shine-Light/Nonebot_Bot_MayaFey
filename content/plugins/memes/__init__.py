@@ -61,19 +61,7 @@ from utils.other import add_target
 from utils.matcherManager import matcherManager
 from utils.path import memes_res_path
 
-__plugin_meta__ = PluginMetadata(
-    name="表情包制作",
-    description="制作各种沙雕表情包",
-    usage="发送“表情包制作”查看表情包列表",
-    extra={
-        "unique_name": "memes",
-        "author": "meetwq <meetwq@gmail.com>",
-        "version": "0.4.5",
-    },
-)
-
 memes_cache_dir = memes_res_path / 'cache'
-
 
 # 插件元数据定义
 _plugin_meta__ = PluginMetadata(
