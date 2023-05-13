@@ -11,8 +11,7 @@ from nonebot import on_command
 from nonebot.plugin import PluginMetadata
 from utils import json_tools, other
 from utils.path import *
-
-from utils.other import add_target
+from utils.other import add_target, translate
 
 
 # 插件元数据定义
@@ -26,7 +25,7 @@ __plugin_meta__ = PluginMetadata(
         "unset": False,
         "total_unable": False,
         "author": "Shine_Light",
-        "translate": "猜群友",
+        "translate": "插件统计",
     }
 )
 fts = "%Y-%m"
