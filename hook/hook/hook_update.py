@@ -30,22 +30,34 @@ async def updating(bot: Bot):
     js = json_tools.json_load(path.updating_path)
     state: bool = js["updating"]
     if state:
-        gid = int(js['gid'])
+        target: dict = js['target']
         error = js["error"]
         if error:
-            await bot.send_group_msg(message=f"更新中出错:{error}", group_id=gid)
-            json_tools.json_write(path.updating_path, {"updating": False, "error": "", "gid": ""})
+            if target['target_type'] == "group":
+                await bot.send_group_msg(message=f"更新中出错:{error}", group_id=target["target"])
+            elif target['target_type'] == "private":
+                await bot.send_private_msg(message=f"更新中出错:{error}", user_id=target["target"])
+            if target['target_type'] == "api":
+                json_tools.json_update(path.updating_path, "updating", False)
+            else:
+                json_tools.json_write(path.updating_path, {"updating": False, "error": "", "target": {"target": "", "target_type": ""}})
         else:
             try:
                 with open("__version__", "w+", encoding="utf-8") as f:
                     f.write(await tools.get_version_last())
+                json_tools.json_write(path.updating_path, {"updating": False, "error": "", "target": {"target": "", "target_type": ""}})
 
-                json_tools.json_write(path.updating_path, {"updating": False, "error": "", "gid": ""})
-                await bot.send_group_msg(message="更新成功,请自行执行一次初始化命令", group_id=gid)
-                await bot.send_group_msg(message=Message([MessageSegment.image(await tools.get_update_log()),
-                                                          MessageSegment.text(
-                                                              "完整日志地址:https://mayafey.shinelight.xyz/updatelog/")]),
-                                         group_id=gid)
+                msg = MessageSegment.image(await tools.get_update_log()) + MessageSegment.text("完整日志地址:https://mayafey.shinelight.xyz/updatelog/")
+                if target['target_type'] == "group":
+                    await bot.send_group_msg(message="更新成功,请自行执行一次初始化命令", group_id=target['target'])
+                    await bot.send_group_msg(message=msg, group_id=target['target'])
+                else:
+                    if target['target_type'] == "private":
+                        await bot.send_private_msg(message="更新成功,请自行执行一次初始化命令", user_id=target['target'])
+                        await bot.send_private_msg(message=msg, user_id=target['target'])
             except Exception as e:
-                await bot.send_group_msg(message=f"更新日志发送失败,账号可能风控", group_id=gid)
+                if target['target_type'] == "group":
+                    await bot.send_group_msg(message=f"更新日志发送失败,账号可能风控", group_id=target["target"])
+                elif target['target_type'] == "private":
+                    await bot.send_private_msg(message=f"更新日志发送失败,账号可能风控", user_id=target["target"])
                 logger.error(str(e))

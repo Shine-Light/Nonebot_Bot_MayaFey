@@ -54,12 +54,15 @@ async def get_state(version: str) -> dict:
     return state
 
 
-async def update(gid: str) -> str:
+async def update(target: str, target_type: str) -> str:
     try:
         clean_ignore_flag()
         js = json_tools.json_load(path.updating_path)
         js['updating'] = True
-        js['gid'] = gid
+        js['target'] = {
+            "target": target,
+            "target_type": target_type
+        }
         json_tools.json_write(path.updating_path, js)
         version_old = get_version()
         version = str(await get_version_last())

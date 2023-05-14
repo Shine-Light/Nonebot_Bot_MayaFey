@@ -7,7 +7,7 @@ from nonebot import on_command, require, get_bot, get_driver
 from nonebot.exception import FinishedException, ActionFailed
 from nonebot.log import logger
 from nonebot.matcher import Matcher
-from nonebot.adapters.onebot.v11 import Bot, GroupMessageEvent, MessageSegment, Message, PrivateMessageEvent
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, MessageSegment, PrivateMessageEvent
 from . import tools
 from utils.other import add_target, reboot
 from nonebot.plugin import PluginMetadata
@@ -33,7 +33,7 @@ __plugin_meta__ = PluginMetadata(
 
 update = on_command("更新", aliases={"update"}, priority=2, block=True)
 @update.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: MessageEvent):
     try:
         if await tools.check_update():
             state = await tools.get_state(await tools.get_version_last())
@@ -50,14 +50,20 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 
 @update.got("choice")
-async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
+async def _(bot: Bot, event: MessageEvent, matcher: Matcher):
     choice = matcher.get_arg("choice")
+    if event.dict().get("group_id"):
+        target = str(event.group_id)
+        type = "group"
+    else:
+        target = str(event.user_id)
+        type = "private"
     try:
         if choice.extract_plain_text().upper() in ["Y", "是", "确认", "更新", "确认更新"]:
             await update.send("正在自动更新,更新期间机器人无法使用,请勿关闭程序")
-            await tools.update(str(event.group_id))
+            await tools.update(target, type)
             await update.send("正在重启...")
-            await reboot()
+            reboot()
         else:
             await update.send("取消更新...")
     except Exception as e:
@@ -66,7 +72,7 @@ async def _(bot: Bot, event: GroupMessageEvent, matcher: Matcher):
 
 check_update = on_command("检查更新", aliases={"check_update"}, priority=8, block=False)
 @check_update.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: MessageEvent):
     if await tools.check_update():
         state = await tools.get_state(await tools.get_version_last())
         if state["auto"]:
@@ -79,10 +85,9 @@ async def _(bot: Bot, event: GroupMessageEvent):
 
 update_log = on_command("更新日志", aliases={"update_log", "更新记录"}, priority=8, block=False)
 @update_log.handle()
-async def _(bot: Bot, event: GroupMessageEvent):
+async def _(bot: Bot, event: MessageEvent):
     img = await tools.get_update_log()
-    await update_log.send(Message([MessageSegment.image(img),
-                                   MessageSegment.text("完整日志地址:https://mayafey.shinelight.xyz/updatelog/")]))
+    await update_log.send(MessageSegment.image(img) + MessageSegment.text("完整日志地址:https://mayafey.shinelight.xyz/updatelog/"))
 
 
 update_ignore = on_command("忽略更新", aliases={"忽略本次更新", "跳过更新", "跳过本次更新"}, priority=8, block=False)
