@@ -43,6 +43,8 @@ msgpack = "^1.0.5"
 cryptography = "^40.0.2"
 pymdown-extensions = "^9.10"
 python-markdown-math = "^0.8"
+PyJWT = "^2.6.0"
+psutil = "^5.9.0"
 
 [tool.poetry.dev-dependencies]
 
