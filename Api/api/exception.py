@@ -62,5 +62,5 @@ async def action_error_handle(request, exception):
 async def file_error_handle(request, exception):
     return JSONResponse(
         status_code=200,
-        content=Result(101, f"文件不存在,可能未初始化").dict()
+        content=Result(101, f"文件 {exception.filename} 不存在,可能未初始化").dict()
     )

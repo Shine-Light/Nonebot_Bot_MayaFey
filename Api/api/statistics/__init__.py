@@ -31,7 +31,10 @@ async def plugin_call_total(group: Group) -> Result:
     data = {}
     for monthly in path.total_base.glob("*"):
         if monthly.is_dir():
-            total_month = await json_tools.json_load_async(monthly / f"{group.group_id}.json")
+            try:
+                total_month = await json_tools.json_load_async(monthly / f"{group.group_id}.json")
+            except FileNotFoundError:
+                continue
             await remove_total_unable(total_month)
             for plugin, count in total_month.items():
                 if plugin in data:
