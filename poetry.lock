@@ -1647,13 +1647,13 @@ reference = "aliyun"
 
 [[package]]
 name = "meme-generator"
-version = "0.0.12"
+version = "0.0.13"
 description = "Python package for making fun pictures"
 optional = false
 python-versions = ">=3.8,<4.0"
 files = [
-    {file = "meme_generator-0.0.12-py3-none-any.whl", hash = "sha256:00d7f0d2de47c2386013a2a9f0a3235d3423582adc55499dd1556f10fab26ef4"},
-    {file = "meme_generator-0.0.12.tar.gz", hash = "sha256:c52c5ce77bbf74ab13aea2e09265cae0168ba42c11f5145e7759aec61d2bbd17"},
+    {file = "meme_generator-0.0.13-py3-none-any.whl", hash = "sha256:5a9a81d5cc7065f3d65599846edad68672a44b804dc06c68358970ad9c67add2"},
+    {file = "meme_generator-0.0.13.tar.gz", hash = "sha256:fea6a0b786a3a0e55d1b1217809e00bea91296fc4e00093f003b789d6bb110d0"},
 ]
 
 [package.dependencies]
@@ -3514,4 +3514,4 @@ reference = "aliyun"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "f8a4655aebd5a4e358c09a704be71a53b88b6e7370c307ab27f536cf4f616952"
+content-hash = "b9d2dee273ed2553418b84de003d7f767d1190baf90f70359f9c8e033df33717"
