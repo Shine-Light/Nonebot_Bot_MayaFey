@@ -16,7 +16,7 @@ from .json_tools import json_load, json_write
 from .path import config_path, translate_path
 from .url import avatar_base_url
 
-nicknames = get_driver().config.nickname
+nicknames = list(get_driver().config.nickname)
 
 
 async def mk(type_, path_, *mode, **kwargs):
