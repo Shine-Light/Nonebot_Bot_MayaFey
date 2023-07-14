@@ -2386,13 +2386,13 @@ reference = "aliyun"
 
 [[package]]
 name = "pymdown-extensions"
-version = "10.0.1"
+version = "10.1"
 description = "Extension pack for Python Markdown."
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "pymdown_extensions-10.0.1-py3-none-any.whl", hash = "sha256:ae66d84013c5d027ce055693e09a4628b67e9dec5bce05727e45b0918e36f274"},
-    {file = "pymdown_extensions-10.0.1.tar.gz", hash = "sha256:b44e1093a43b8a975eae17b03c3a77aad4681b3b56fce60ce746dbef1944c8cb"},
+    {file = "pymdown_extensions-10.1-py3-none-any.whl", hash = "sha256:ef25dbbae530e8f67575d222b75ff0649b1e841e22c2ae9a20bad9472c2207dc"},
+    {file = "pymdown_extensions-10.1.tar.gz", hash = "sha256:508009b211373058debb8247e168de4cbcb91b1bff7b5e961b2c3e864e00b195"},
 ]
 
 [package.dependencies]
@@ -3515,4 +3515,4 @@ reference = "aliyun"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "b9d2dee273ed2553418b84de003d7f767d1190baf90f70359f9c8e033df33717"
+content-hash = "5f43548569fede7afdb3be13eb9810b6242cb17861ee663a66217c0446fa01c4"
