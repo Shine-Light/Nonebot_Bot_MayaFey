@@ -2850,13 +2850,13 @@ reference = "aliyun"
 
 [[package]]
 name = "tencentcloud-sdk-python"
-version = "3.0.944"
+version = "3.0.958"
 description = "Tencent Cloud SDK for Python"
 optional = false
 python-versions = "*"
 files = [
-    {file = "tencentcloud-sdk-python-3.0.944.tar.gz", hash = "sha256:98ea112296f080cef1e3485221a860e5e29e46a08f701d1108eadf4755beede2"},
-    {file = "tencentcloud_sdk_python-3.0.944-py2.py3-none-any.whl", hash = "sha256:bf253cdac17039c87c48ca81635d0d30ce85c90308be34a40641efcc3a88e80c"},
+    {file = "tencentcloud-sdk-python-3.0.958.tar.gz", hash = "sha256:4cf01eaf25cda9aad10ea3c2b551b73e72339ad916fb72d2de7648cdacc63ed5"},
+    {file = "tencentcloud_sdk_python-3.0.958-py2.py3-none-any.whl", hash = "sha256:20881df0c1fda7992256a950aaeb6aa7b774f81ad563960086acd68ffafafd67"},
 ]
 
 [package.dependencies]
@@ -3502,4 +3502,4 @@ reference = "aliyun"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.9"
-content-hash = "3047aaff36cbbbbe694368d3f9f8ed10766c9b71b4499960cdde4f10d12f98fa"
+content-hash = "4b5547458c4afd44ed28164a688b4ac02605910fb88dcf4bf889b63e7c331f78"
