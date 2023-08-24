@@ -42,13 +42,19 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 
+command_start = get_driver().config.command_start
+if len(command_start) == 1 and list(command_start)[0] == "":
+    command_start_reg = ""
+else:
+    command_start_reg = rf"[{''.join(command_start)}]?"
+
 general_divine = on_command("今日运势", aliases={"抽签", "运势"}, permission=GROUP, priority=8, block=False)
-specific_divine = on_regex(rf"^[{command_start}]?(.*?)抽签$", permission=GROUP, priority=8, block=False)
-limit_setting = on_regex(rf"^[{command_start}]?指定(.*?)签$", permission=GROUP, priority=8, block=False)
-change_theme = on_regex(rf"^[{command_start}]?设置(.*?)签$", permission=GROUP, priority=8, block=False)
-reset_themes = on_regex(rf"^[{command_start}]?重置(抽签)?主题$", permission=GROUP, priority=8, block=False)
+specific_divine = on_regex(rf"^{command_start_reg}(.*?)抽签$", permission=GROUP, priority=8, block=False)
+limit_setting = on_regex(rf"^{command_start_reg}指定(.*?)签$", permission=GROUP, priority=8, block=False)
+change_theme = on_regex(rf"^{command_start_reg}设置(.*?)签$", permission=GROUP, priority=8, block=False)
+reset_themes = on_regex(rf"^{command_start_reg}重置(抽签)?主题$", permission=GROUP, priority=8, block=False)
 themes_list = on_command("主题列表", permission=GROUP, priority=8, block=False)
-show_themes = on_regex(rf"^[{command_start}]?查看(抽签)?主题$", permission=GROUP, priority=8)
+show_themes = on_regex(rf"^{command_start_reg}查看(抽签)?主题$", permission=GROUP, priority=8)
 matcherManager.addMatcher("fortune:change_theme", change_theme)
 matcherManager.addMatcher("fortune:reset_themes", reset_themes)
 

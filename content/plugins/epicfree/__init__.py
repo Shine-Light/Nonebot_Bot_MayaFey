@@ -40,8 +40,12 @@ __plugin_meta__ = PluginMetadata(
     }
 )
 command_start = get_driver().config.command_start
+if len(command_start) == 1 and list(command_start)[0] == "":
+    command_start_reg = ""
+else:
+    command_start_reg = rf"[{''.join(command_start)}]?"
 
-epic_matcher = on_regex(rf"^([{''.join(command_start)}])?(epic)?喜(加|\+|＋)(一|1)$", priority=2, flags=IGNORECASE)
+epic_matcher = on_regex(rf"^{command_start_reg}(epic)?喜(加|\+|＋)(一|1)$", priority=2, flags=IGNORECASE)
 @epic_matcher.handle()
 async def query_handle(bot: Bot, event: Event):
     free = await get_epic_free()
@@ -51,7 +55,7 @@ async def query_handle(bot: Bot, event: Event):
         await bot.send_private_forward_msg(user_id=event.user_id, messages=free)  # type: ignore
 
 
-sub_matcher = on_regex(rf"^([{''.join(command_start)}])?喜(加|\+|＋)(一|1)(私聊)?订阅(删除|取消)?$", priority=1)
+sub_matcher = on_regex(rf"^{command_start_reg}喜(加|\+|＋)(一|1)(私聊)?订阅(删除|取消)?$", priority=1)
 matcherManager.addMatcher("epicfree:sub_matcher", sub_matcher)
 @sub_matcher.handle()
 async def sub_handle(bot: Bot, event: GroupMessageEvent, state: T_State):
