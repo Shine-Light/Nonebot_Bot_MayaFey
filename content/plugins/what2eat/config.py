@@ -26,7 +26,7 @@ class DownloadError(Exception):
         return self.msg
     
 async def download_url(url: str) -> Optional[Any]:
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(verify=False) as client:
         for i in range(3):
             try:
                 response = await client.get(url)

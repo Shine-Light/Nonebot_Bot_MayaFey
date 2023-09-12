@@ -14,7 +14,7 @@ class ResourceError(Exception):
 
 
 async def download_url(url: str) -> Union[httpx.Response, None]:
-    async with httpx.AsyncClient() as client:
+    async with httpx.AsyncClient(verify=False) as client:
         for i in range(3):
             try:
                 resp = await client.get(url, timeout=20)
